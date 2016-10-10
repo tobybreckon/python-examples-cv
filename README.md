@@ -1,5 +1,6 @@
 # python-examples-cv
-OpenCV Python examples used for teaching within the Computer Science programme at Durham University (UK) by Toby Breckon.
+OpenCV Python examples used for teaching within the Computer Science programme 
+at Durham University (UK) by Toby Breckon.
 
 Demo source code is provided "as is" to aid your learning and understanding of topics on the course.
 

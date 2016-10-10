@@ -55,8 +55,8 @@ camR = cv2.VideoCapture();
 windowNameL = "LEFT Camera Input"; # window name
 windowNameR = "RIGHT Camera Input"; # window name
 
-print "s : swap cameras left and right"
-print "c : continue to next stage"
+print("s : swap cameras left and right");
+print("c : continue to next stage");
 
 if ((camL.open(camera_to_use)) and (camR.open(camera_to_use + 1))):
 
@@ -101,7 +101,7 @@ if ((camL.open(camera_to_use)) and (camR.open(camera_to_use + 1))):
             camR = tmp;
 
 else:
-    print "Cannot open pair of cameras connected."
+    print("Cannot open pair of cameras connected.");
 
 #####################################################################
 
@@ -130,8 +130,8 @@ imgpointsL = [] # 2d points in image plane.
 # count number of chessboard detection (across both images)
 chessboard_pattern_detections = 0;
 
-print
-print "--> hold up chessboard"
+print();
+print("--> hold up chessboard");
 
 while (not(do_calibration)):
 
@@ -199,19 +199,19 @@ while (not(do_calibration)):
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
-print "START - intrinsic calibration ..."
+print("START - intrinsic calibration ...");
 
 ret, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(objpoints, imgpointsL, grayL.shape[::-1],None,None);
 ret, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(objpoints, imgpointsR, grayR.shape[::-1],None,None);
 
-print "FINSIHED - intrinsic calibration"
+print("FINSIHED - intrinsic calibration");
 
 # perform undistortion of the images
 
 keep_processing = True;
 
-print
-print "-> performing undistortion"
+print();
+print("-> performing undistortion");
 
 while (keep_processing):
 
@@ -249,7 +249,7 @@ for i in xrange(len(objpoints)):
     errorL = cv2.norm(imgpointsL[i],imgpointsL2, cv2.NORM_L2)/len(imgpointsL2)
     tot_errorL += errorL
 
-print "LEFT: Re-projection error: ", tot_errorL/len(objpoints)
+print("LEFT: Re-projection error: ", tot_errorL/len(objpoints));
 
 tot_errorR = 0
 for i in xrange(len(objpoints)):
@@ -257,7 +257,7 @@ for i in xrange(len(objpoints)):
     errorR = cv2.norm(imgpointsR[i],imgpointsR2, cv2.NORM_L2)/len(imgpointsR2)
     tot_errorR += errorR
 
-print "RIGHT: Re-projection error: ", tot_errorR/len(objpoints)
+print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints));
 
 #####################################################################
 
@@ -270,14 +270,14 @@ print "RIGHT: Re-projection error: ", tot_errorR/len(objpoints)
 
 termination_criteria_extrinsics = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
 
-print
-print "START - extrinsic calibration ..."
+print();
+print("START - extrinsic calibration ...");
 (rms_stereo, camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r, R, T, E, F) = \
 cv2.stereoCalibrate(objpoints, imgpointsL, imgpointsR, mtxL, distL, mtxR, distR,  grayL.shape[::-1], criteria=termination_criteria_extrinsics, flags=0);
 
-print "START - extrinsic calibration ..."
+print("STOP - extrinsic calibration ...");
 
-print "STEREO: RMS left to  right re-projection error: ", rms_stereo
+print("STEREO: RMS left to  right re-projection error: ", rms_stereo);
 
 #####################################################################
 
@@ -295,8 +295,8 @@ RL, RR, PL, PR, _, _, _ = cv2.stereoRectify(camera_matrix_l, dist_coeffs_l, came
 mapL1, mapL2 = cv2.initUndistortRectifyMap(camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1);
 mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayL.shape[::-1], cv2.CV_32FC1);
 
-print
-print "-> performing rectification"
+print();
+print("-> performing rectification");
 
 keep_processing = True;
 
@@ -351,8 +351,8 @@ while (keep_processing):
 #        StereoSGBM_create(minDisparity, numDisparities, blockSize[, P1[, P2[,
 # disp12MaxDiff[, preFilterCap[, uniquenessRatio[, speckleWindowSize[, speckleRange[, mode]]]]]]]]) -> retval
 
-print
-print "-> calc. disparity image"
+print();
+print("-> calc. disparity image");
 
 max_disparity = 128;
 stereoProcessor = cv2.StereoSGBM_create(0, max_disparity, 21);

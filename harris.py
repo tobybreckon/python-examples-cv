@@ -120,7 +120,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     cv2.destroyAllWindows()
 
 else:
-    print "No video file specified or camera connected."
+    print("No video file specified or camera connected.");
 
 #####################################################################
 

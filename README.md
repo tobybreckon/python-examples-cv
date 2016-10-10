@@ -2,6 +2,8 @@
 OpenCV Python examples used for teaching within the Computer Science programme 
 at Durham University (UK) by Toby Breckon.
 
+All tested with OpenCV 3.1 and Python 3.x.
+
 Demo source code is provided "as is" to aid your learning and understanding of topics on the course.
 
 Most run with a webcam connected or from a command line supplied video file of a format OpenCV supports on your system (otherwise edit the script to provide your own image source).

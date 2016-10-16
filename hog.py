@@ -6,7 +6,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 School of Engineering & Computing Science,
+# Copyright (c) 2015 / 2016 School of Engineering & Computing Science,
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 

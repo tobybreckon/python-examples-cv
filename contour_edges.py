@@ -1,6 +1,6 @@
 #####################################################################
 
-# Example :  contour edges for a a video file
+# Example :  contour edges from canny edges for a video file
 # specified on the command line (e.g. python FILE.py video_file) or from an
 # attached web camera
 

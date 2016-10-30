@@ -18,7 +18,7 @@ import sys
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 0;
+camera_to_use = 1;
 EVENT_LOOP_DELAY = 40;	# delay for GUI window
                         # 40 ms equates to 1000ms/25fps = 40ms per frame
 

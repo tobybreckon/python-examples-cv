@@ -13,7 +13,7 @@
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # based in part on code from: Learning OpenCV 3 Computer Vision with Python
-# Chapater 8 code samples, Minichino / Howse
+# Chapter 8 code samples, Minichino / Howse, Packt Publishing.
 
 #####################################################################
 

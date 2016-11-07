@@ -1,5 +1,5 @@
 # python-examples-cv
-OpenCV Python examples used for teaching within the Computer Science programme 
+OpenCV Python Computer Vision examples used for teaching within the Computer Science programme 
 at Durham University (UK) by Toby Breckon.
 
 All tested with OpenCV 3.1 and Python 3.x.

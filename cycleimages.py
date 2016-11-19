@@ -11,21 +11,18 @@
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-# version: 0.2 (bug fix on waitKey() usage - line 39)
-# version: 0.3 (python 3 - line 33)
-
 #####################################################################
 
 import cv2
 import os
 
-directory_to_cycle = "directory-name-goes-here" # edit this
+directory_to_cycle = "/tmp/" # edit this
 
 #####################################################################
 
-# display all images in directory
+# display all images in directory (sorted by filename)
 
-for filename in os.listdir(directory_to_cycle):
+for filename in sorted(os.listdir(directory_to_cycle)):
 
     # if it is a PNG file
 

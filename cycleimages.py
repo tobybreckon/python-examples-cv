@@ -16,7 +16,7 @@
 import cv2
 import os
 
-directory_to_cycle = "/tmp/" # edit this
+directory_to_cycle = "path-to-directory-to-cycle" # edit this
 
 #####################################################################
 

@@ -1,6 +1,6 @@
 #####################################################################
 
-# Example : SURF / SIFt detection from a video file specified on the
+# Example : SURF / SIFT detection from a video file specified on the
 # command line (e.g. python FILE.py video_file) or from an
 # attached web camera (default to SIFT)
 
@@ -28,7 +28,7 @@ import numpy as np
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 selection_in_progress = False; # support interactive region selection
 
@@ -100,10 +100,17 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     # create a Fast Linear Approx. Nearest Neightbours (Kd-tree) object for
     # fast feature matching
 
-    FLANN_INDEX_KDTREE = 0;
-    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 1); # for trees > 1, things break
-    search_params = dict(checks=50);   # or pass empty dictionary
-    flann = cv2.FlannBasedMatcher(index_params,search_params);
+    # FLANN_INDEX_KDTREE = 0;
+    # index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 1); # for trees > 1, things break
+    # search_params = dict(checks=50);   # or pass empty dictionary
+    # matcher = cv2.FlannBasedMatcher(index_params,search_params);
+
+    # ^ ^ ^ ^ yes - in an ideal world, but in the world where this issue
+    # still remains open in OpenCV (https://github.com/opencv/opencv/issues/5667)
+    # just use the slower Brute Force matcher and go to bed
+    # summary: python OpenCV bindings issue, ok to use in C++
+
+    matcher = cv2.BFMatcher();
 
     while (keep_processing):
 
@@ -173,8 +180,8 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
            keypoints, descriptors = feature_object.detectAndCompute(gray_frame,None);
 
-           # print len(descriptors);
-           # print len(descriptors_cropped_region);
+           #print(len(descriptors));
+           #print(len(descriptors_cropped_region));
 
            # get best matches (and second best matches) between current and cropped region features
            # using a k Nearst Neighboour (kNN) radial matcher with k=2
@@ -182,11 +189,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
            matches = [];
            if (len(descriptors) > 0):
                 #flann.clear();
-                matches = flann.knnMatch(descriptors_cropped_region, descriptors, k=2);
+                matches = matcher.knnMatch(descriptors_cropped_region, trainDescriptors = descriptors, k = 2)
 
            # Need to isolate only good matches, so create a mask
 
-           matchesMask = [[0,0] for i in xrange(len(matches))]
+           matchesMask = [[0,0] for i in range(len(matches))]
 
            # perform a first match to second match ratio test as original SIFT paper (known as Lowe's ration)
            # using the matching distances of the first and second matches
@@ -289,5 +296,3 @@ else:
     print("No video file specified or camera connected.");
 
 #####################################################################
-
-

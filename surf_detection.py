@@ -28,7 +28,7 @@ import numpy as np
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
 
 selection_in_progress = False; # support interactive region selection
 

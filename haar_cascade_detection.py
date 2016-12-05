@@ -24,7 +24,7 @@ import sys
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 #####################################################################
 
@@ -43,6 +43,9 @@ windowName = "Face Detection using Haar Cascades"; # window name
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
 eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml');
+
+if (face_cascade.empty() or eye_cascade.empty()):
+    print("Failed to load cascade from file.");
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera

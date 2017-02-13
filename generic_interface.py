@@ -6,7 +6,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 / 2016 School of Engineering & Computing Science,
+# Copyright (c) 2015 - 2017 School of Engineering & Computing Science,
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
@@ -47,7 +47,15 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         if (cap.isOpened):
             ret, frame = cap.read();
 
+            # when we reach the end of the video (file) exit cleanly
+
+            if (ret == 0):
+                keep_processing = False;
+                continue;
+
+        # ***
         # *** do any processing here ****
+        # ***
 
         # display image
 

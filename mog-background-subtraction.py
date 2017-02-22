@@ -18,7 +18,7 @@ import sys
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 #####################################################################
 
@@ -26,13 +26,19 @@ camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
 
 cap = cv2.VideoCapture();
 
+# check versions to work around this bug in OpenCV 3.1
+# https://github.com/opencv/opencv/issues/6055
+
+(major, minor, _) = cv2.__version__.split(".")
+if ((major == '3') and (minor == '1')):
+    cv2.ocl.setUseOpenCL(False);
+
 # define display window name
 
 windowName = "Live Camera Input"; # window name
 windowNameBG = "Background Model"; # window name
 windowNameFG = "Foreground Objects"; # window name
 windowNameFGP = "Foreground Probabiity"; # window name
-
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -57,6 +63,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         if (cap.isOpened):
             ret, frame = cap.read();
+
+            # when we reach the end of the video (file) exit cleanly
+
+            if (ret == 0):
+                keep_processing = False;
+                continue;
 
         # add current frame to background model and retrieve current foreground objects
 
@@ -103,5 +115,3 @@ else:
     print("No video file specified or camera connected.");
 
 #####################################################################
-
-

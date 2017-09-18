@@ -129,5 +129,3 @@ else:
     print("No video file specified or camera connected.");
 
 #####################################################################
-
-

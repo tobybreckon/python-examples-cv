@@ -6,7 +6,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2016 School of Engineering & Computing Science,
+# Copyright (c) 2017 Dept. Engineering & Dept. Computer Science,
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
@@ -19,7 +19,7 @@ import numpy as np
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 #####################################################################
 
@@ -79,6 +79,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         sigmaU = max(1, sigmaU);
         sigmaL = max(1, sigmaL);
 
+        # check sigma are correct
+
+        if (sigmaL >= sigmaU):
+            sigmaL = sigmaU - 1;
+            print("auto-correcting sigmas such that U > L");
+
         # convert to grayscale
 
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY);
@@ -93,7 +99,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         # perform abs_diff() to get DoG
 
         DoG = cv2.absdiff(smoothedU, smoothedL);
-        DoG = DoG * (255 / np.max(DoG)); # auto-scale to 0 -> 255 based on max DoG response
+
+        # auto-scale to full 0 -> 255 range based on max DoG response
+        # noting that as both inputs to absdiff() are 0->255,
+        # result will be within range 0->255
+
+        DoG = DoG * (np.max(DoG) / 255);
 
         # display image
 
@@ -127,5 +138,3 @@ else:
     print("No video file specified or camera connected.");
 
 #####################################################################
-
-

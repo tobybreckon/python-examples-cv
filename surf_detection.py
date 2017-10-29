@@ -28,11 +28,13 @@ import numpy as np
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 selection_in_progress = False; # support interactive region selection
 
-compute_object_position_via_homography = False;  # compute homography ?
+compute_object_position_via_homography = False;  # compute homography H ?
+transform_image_via_homography = False;  # transform whole image via H
+
 MIN_MATCH_COUNT = 10; # number of matches to compute homography
 
 #####################################################################
@@ -62,6 +64,15 @@ def on_mouse(event, x, y, flags, params):
         ebox = [x, y];
         selection_in_progress = False;
         boxes.append(ebox);
+
+#####################################################################
+
+# controls
+
+print("x - exit");
+print("s - switch to SIFT features (default: SURF)");
+print("h - compute homography H (bounding box shown)");
+print("t - transform cropped image region into live image via H");
 
 #####################################################################
 
@@ -221,18 +232,38 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
                 H, mask = cv2.findHomography(source_pts, destination_pts, cv2.RANSAC, 5.0)
 
-                # extract the bounding co-ordinates of the cropped/selected region
+                if (transform_image_via_homography):
 
-                h,w,c = crop.shape;
-                boundingbox_points = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2);
+                    # if we are transforming the whole image
 
-                # transform the bounding co-ordinates by homography H
+                    h,w,c = frame.shape;
 
-                dst = cv2.perspectiveTransform(boundingbox_points,H);
+                    # create empty image and transform cropped area into it
 
-                # draw the corresponding
+                    transformOverlay = np.zeros((w,h,1), np.uint8);
+                    transformOverlay = cv2.warpPerspective(crop, H, (w,h),
+                        flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0);
 
-                frame = cv2.polylines(frame,[np.int32(dst)],True,(0,0,255),3, cv2.LINE_AA)
+                    # add both together to get output where re-inserted cropped
+                    # region is brighter than the surronding area so we can see
+                    # visualize the warped image insertion
+
+                    frame = cv2.addWeighted(frame, 0.5, transformOverlay, 0.5, 0);
+
+                else:
+
+                    # extract the bounding co-ordinates of the cropped/selected region
+
+                    h,w,c = crop.shape;
+                    boundingbox_points = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2);
+
+                    # transform the bounding co-ordinates by homography H
+
+                    dst = cv2.perspectiveTransform(boundingbox_points,H);
+
+                    # draw the corresponding
+
+                    frame = cv2.polylines(frame,[np.int32(dst)],True,(0,0,255),3, cv2.LINE_AA)
 
             else:
                 print("Not enough matches for found for homography - %d/%d" % (len(good_matches),MIN_MATCH_COUNT));
@@ -277,6 +308,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         elif (key == ord('h')):
             compute_object_position_via_homography = not(compute_object_position_via_homography);
+
+        # compute transform of whole image via homography
+
+        elif (key == ord('t')):
+            transform_image_via_homography = not(transform_image_via_homography);
 
         # use SIFT points
 

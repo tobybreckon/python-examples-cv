@@ -10,13 +10,11 @@
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
 # Copyright (c) 2016 Toby Breckon
-#                    Durham University, UK
+#                    Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # based in part on tutorial at:
 # http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html#matcher
-
-# version 0.2 - fixed bug with segmentation faults on FLANN object rebuilds
 
 #####################################################################
 

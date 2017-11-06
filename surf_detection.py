@@ -1,11 +1,10 @@
 #####################################################################
 
-# Example : SURF / SIFT detection from a video file specified on the
-# command line (e.g. python FILE.py video_file) or from an
-# attached web camera (default to SIFT)
+# Example : SURF / SIFT or ORB feature point detection from a video
+# file specified on the command line (e.g. python FILE.py video_file)
+# or from an attached web camera (default to SURF or ORB)
 
-# N.B. use mouse to select region, press h for homography calculation
-# press s to switch from SURF to SIFT
+# N.B. use mouse to select region
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -25,13 +24,32 @@ import numpy as np
 
 #####################################################################
 
+# check if the OpenCV we are using has the extra modules available
+
+def extraOpenCVModulesPresent():
+
+    # we only need to check this once and remember the result
+    # so we can do this via a stored function attribute (static variable)
+    # which is preserved across calls
+
+    if not hasattr(extraOpenCVModulesPresent, "already_checked"):
+        (is_built, not_built) = cv2.getBuildInformation().split("Disabled:")
+        already_checked = ('xfeatures2d' in is_built);
+
+    return already_checked;
+
+#####################################################################
+
 keep_processing = True;
 camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
+
+#####################################################################
 
 selection_in_progress = False; # support interactive region selection
 
 compute_object_position_via_homography = False;  # compute homography H ?
 transform_image_via_homography = False;  # transform whole image via H
+show_ellipse_fit = False; # show ellipse fitted to matched points
 
 MIN_MATCH_COUNT = 10; # number of matches to compute homography
 
@@ -66,9 +84,11 @@ def on_mouse(event, x, y, flags, params):
 #####################################################################
 
 # controls
-
+print("** click and drag to select region");
+print("");
 print("x - exit");
-print("s - switch to SIFT features (default: SURF)");
+print("e - fit ellipse to matched points");
+print("s - switch to SIFT features (default: SURF or ORB)");
 print("h - compute homography H (bounding box shown)");
 print("t - transform cropped image region into live image via H");
 
@@ -101,25 +121,48 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     cv2.setMouseCallback(windowName, on_mouse, 0);
     cropped = False;
 
-    # Create a SURF feature object with a Hessian Threshold set to 400
-    # if this fails see (http://www.pyimagesearch.com/2015/07/16/where-did-sift-and-surf-go-in-opencv-3/)
+    # create feature point objects
 
-    feature_object = cv2.xfeatures2d.SURF_create(400);
+    if (extraOpenCVModulesPresent()):
+
+        # if we have SURF available then use it (with Hessian Threshold = 400)
+        # SURF features - [Bay et al, 2006 - https://en.wikipedia.org/wiki/Speeded_up_robust_features]
+        feature_object = cv2.xfeatures2d.SURF_create(400);
+        FLANN_INDEX_KDTREE = 1;
+        index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 1);
+
+    else:
+
+        print("Sorry - SURF unavailable: falling back to ORB");
+
+        # otherwise fall back to ORB (with Max Features = 800)
+        #  ORB features - [Rublee et al., 2011 - https://en.wikipedia.org/wiki/Oriented_FAST_and_rotated_BRIEF]
+
+        feature_object = cv2.ORB_create(800)
+        # if using ORB points
+        # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
+        # N.B. "commented values are recommended as per the docs,
+        # but it didn't provide required results in some cases"
+
+        FLANN_INDEX_LSH = 6;
+        index_params= dict(algorithm = FLANN_INDEX_LSH,
+                        table_number = 6, # 12
+                        key_size = 12,     # 20
+                        multi_probe_level = 1); #2
 
     # create a Fast Linear Approx. Nearest Neightbours (Kd-tree) object for
     # fast feature matching
-
-    # FLANN_INDEX_KDTREE = 0;
-    # index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 1); # for trees > 1, things break
-    # search_params = dict(checks=50);   # or pass empty dictionary
-    # matcher = cv2.FlannBasedMatcher(index_params,search_params);
-
     # ^ ^ ^ ^ yes - in an ideal world, but in the world where this issue
-    # still remains open in OpenCV (https://github.com/opencv/opencv/issues/5667)
+    # still remains open in OpenCV 3,1 (https://github.com/opencv/opencv/issues/5667)
     # just use the slower Brute Force matcher and go to bed
-    # summary: python OpenCV bindings issue, ok to use in C++
+    # summary: python OpenCV bindings issue, ok to use in C++ or OpenCV > 3.1
 
-    matcher = cv2.BFMatcher();
+    (major, minor, _) = cv2.__version__.split(".");
+    if ((int(major) == 3) and (int(minor) == 1)):
+        matcher = cv2.BFMatcher();
+    elif ((int(major) >= 3) and (int(minor) >= 1)):
+        search_params = dict(checks=50);   # or pass empty dictionary
+        matcher = cv2.FlannBasedMatcher(index_params,search_params);
 
     while (keep_processing):
 
@@ -202,16 +245,25 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
            # Need to isolate only good matches, so create a mask
 
-           matchesMask = [[0,0] for i in range(len(matches))]
+           # matchesMask = [[0,0] for i in range(len(matches))]
 
            # perform a first match to second match ratio test as original SIFT paper (known as Lowe's ration)
            # using the matching distances of the first and second matches
 
            good_matches = [];
-           for i,(m,n) in enumerate(matches):
-                if m.distance < 0.7*n.distance:
-                    matchesMask[i]=[1,0];
-                    good_matches.append(m);
+           try:
+               for (m,n) in matches:
+                   if m.distance < 0.7*n.distance:
+                       good_matches.append(m);
+           except ValueError:
+               print("caught error - no matches from current frame");
+
+          # fit an ellipse to the detection
+
+           if (show_ellipse_fit):
+               destination_pts = np.float32([ keypoints[m.trainIdx].pt for m in good_matches ]).reshape(-1,1,2);
+               ellipseFit = cv2.fitEllipse(destination_pts);
+               cv2.ellipse(frame, ellipseFit, (0, 0, 255), 2, 8);
 
            # if set to compute homography also
 
@@ -268,8 +320,8 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
            # draw the matches
 
-           draw_params = dict(matchColor = (0,255,0), singlePointColor = (255,0,0), matchesMask = matchesMask, flags = 0);
-           display_matches = cv2.drawMatchesKnn(crop,keypoints_cropped_region,frame,keypoints,matches,None,**draw_params);
+           draw_params = dict(matchColor = (0,255,0), singlePointColor = (255,0,0), flags = 0);
+           display_matches = cv2.drawMatches(crop,keypoints_cropped_region,frame,keypoints,good_matches,None,**draw_params);
            cv2.imshow(windowName2,display_matches);
 
         #####################################################################
@@ -312,15 +364,26 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         elif (key == ord('t')):
             transform_image_via_homography = not(transform_image_via_homography);
 
+        # compute ellipse fit to matched points
+
+        elif (key == ord('e')):
+            show_ellipse_fit = not(show_ellipse_fit);
+        
         # use SIFT points
 
         elif (key == ord('s')):
-            # Create a SIFT feature object with a Hessian Threshold set to 400
-            # if this fails see (http://www.pyimagesearch.com/2015/07/16/where-did-sift-and-surf-go-in-opencv-3/)
 
-            feature_object = cv2.xfeatures2d.SIFT_create(400);
-            cropped = False;
+            if (extraOpenCVModulesPresent()):
+                # Create a SIFT feature object with a Hessian Threshold set to 400
+                # if this fails see (http://www.pyimagesearch.com/2015/07/16/where-did-sift-and-surf-go-in-opencv-3/)
 
+                feature_object = cv2.xfeatures2d.SIFT_create(400);
+                keypoints_cropped_region = [];
+                keypoints = [];
+                matches = [];
+                cropped = False;
+            else:
+                print("sorry - SIFT xfeatures2d module not available");
 
     # close all windows
 

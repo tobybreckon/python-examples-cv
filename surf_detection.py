@@ -139,7 +139,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         #  ORB features - [Rublee et al., 2011 - https://en.wikipedia.org/wiki/Oriented_FAST_and_rotated_BRIEF]
 
         feature_object = cv2.ORB_create(800)
-        # if using ORB points
+        # if using ORB points use FLANN object that can handle binary descriptors
         # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
         # N.B. "commented values are recommended as per the docs,
         # but it didn't provide required results in some cases"
@@ -153,7 +153,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     # create a Fast Linear Approx. Nearest Neightbours (Kd-tree) object for
     # fast feature matching
     # ^ ^ ^ ^ yes - in an ideal world, but in the world where this issue
-    # still remains open in OpenCV 3,1 (https://github.com/opencv/opencv/issues/5667)
+    # still remains open in OpenCV 3.1 (https://github.com/opencv/opencv/issues/5667)
     # just use the slower Brute Force matcher and go to bed
     # summary: python OpenCV bindings issue, ok to use in C++ or OpenCV > 3.1
 
@@ -368,7 +368,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         elif (key == ord('e')):
             show_ellipse_fit = not(show_ellipse_fit);
-        
+
         # use SIFT points
 
         elif (key == ord('s')):

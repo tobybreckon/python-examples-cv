@@ -158,11 +158,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     # summary: python OpenCV bindings issue, ok to use in C++ or OpenCV > 3.1
 
     (major, minor, _) = cv2.__version__.split(".");
-    if ((int(major) == 3) and (int(minor) == 1)):
-        matcher = cv2.BFMatcher();
-    elif ((int(major) >= 3) and (int(minor) >= 1)):
+    if ((int(major) >= 3) and (int(minor) >= 1)):
         search_params = dict(checks=50);   # or pass empty dictionary
         matcher = cv2.FlannBasedMatcher(index_params,search_params);
+    else:
+        matcher = cv2.BFMatcher();
 
     while (keep_processing):
 

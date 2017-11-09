@@ -1,15 +1,15 @@
 #####################################################################
 
-# Example : SURF / SIFT or ORB feature point detection from a video
-# file specified on the command line (e.g. python FILE.py video_file)
-# or from an attached web camera (default to SURF or ORB)
+# Example : SURF / SIFT or ORB feature point detection and matching
+# from a video file specified on the command line (e.g. python FILE.py
+# video_file) or from an attached web camera (default to SURF or ORB)
 
 # N.B. use mouse to select region
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2016 Toby Breckon
-#                    Computer Science, Durham University, UK
+# Copyright (c) 2016/17 Toby Breckon
+#                       Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # based in part on tutorial at:
@@ -50,7 +50,7 @@ selection_in_progress = False; # support interactive region selection
 compute_object_position_via_homography = False;  # compute homography H ?
 transform_image_via_homography = False;  # transform whole image via H
 show_ellipse_fit = False; # show ellipse fitted to matched points
-
+show_detection_only = False; # show detction of points only
 MIN_MATCH_COUNT = 10; # number of matches to compute homography
 
 #####################################################################
@@ -87,6 +87,7 @@ def on_mouse(event, x, y, flags, params):
 print("** click and drag to select region");
 print("");
 print("x - exit");
+print("d - display detected feature points on live image");
 print("e - fit ellipse to matched points");
 print("s - switch to SIFT features (default: SURF or ORB)");
 print("h - compute homography H (bounding box shown)");
@@ -324,6 +325,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
            display_matches = cv2.drawMatches(crop,keypoints_cropped_region,frame,keypoints,good_matches,None,**draw_params);
            cv2.imshow(windowName2,display_matches);
 
+        # if running in detection only then draw detections
+
+        if (show_detection_only):
+           keypoints, descriptors = feature_object.detectAndCompute(gray_frame,None);
+           frame = cv2.drawKeypoints(frame,keypoints,None,(255,0,0),4)
+
         #####################################################################
 
         # display live image
@@ -368,6 +375,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         elif (key == ord('e')):
             show_ellipse_fit = not(show_ellipse_fit);
+
+        # just shown feature points
+
+        elif (key == ord('d')):
+            show_detection_only = not(show_detection_only);
 
         # use SIFT points
 

@@ -41,7 +41,7 @@ def extraOpenCVModulesPresent():
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
 #####################################################################
 
@@ -263,8 +263,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
            if (show_ellipse_fit):
                destination_pts = np.float32([ keypoints[m.trainIdx].pt for m in good_matches ]).reshape(-1,1,2);
-               ellipseFit = cv2.fitEllipse(destination_pts);
-               cv2.ellipse(frame, ellipseFit, (0, 0, 255), 2, 8);
+
+               # least squares ellipse fitting requires at least 5 points
+
+               if (len(destination_pts) > 5):
+                   ellipseFit = cv2.fitEllipse(destination_pts);
+                   cv2.ellipse(frame, ellipseFit, (0, 0, 255), 2, 8);
 
            # if set to compute homography also
 

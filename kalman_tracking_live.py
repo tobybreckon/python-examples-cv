@@ -1,6 +1,6 @@
 #####################################################################
 
-# Example : kalman filtering base don cam shift object track processing
+# Example : kalman filtering based cam shift object track processing
 # from a video file specified on the command line (e.g. python FILE.py video_file)
 # or from an attached web camera
 

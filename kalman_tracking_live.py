@@ -1,4 +1,4 @@
-#####################################################################
+f#####################################################################
 
 # Example : kalman filtering based cam shift object track processing
 # from a video file specified on the command line (e.g. python FILE.py video_file)
@@ -241,9 +241,6 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
             # select all Hue values (0-> 180) but eliminate values with very low
             # saturation or value (due to lack of useful colour information)
-
-
-            print(float(s_lower));
 
             mask = cv2.inRange(img_hsv, np.array((0., float(s_lower),float(v_lower))), np.array((180.,float(s_upper),float(v_upper))));
 

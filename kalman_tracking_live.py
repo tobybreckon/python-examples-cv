@@ -168,7 +168,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
                 hsv_crop =  cv2.cvtColor(crop, cv2.COLOR_BGR2HSV);
 
-                # select all Hue values (0-> 180) but eliminate values with very low
+                # select all Hue and Sat. values (0-> 180) but eliminate values with very low
                 # saturation or value (due to lack of useful colour information)
 
                 mask = cv2.inRange(hsv_crop, np.array((0., float(s_lower),float(v_lower))), np.array((180.,float(s_upper),float(v_upper))));

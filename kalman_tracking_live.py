@@ -14,6 +14,8 @@
 
 # based in part on code from: Learning OpenCV 3 Computer Vision with Python
 # Chapter 8 code samples, Minichino / Howse, Packt Publishing.
+# and also code from:
+# https://docs.opencv.org/3.3.1/dc/df6/tutorial_py_histogram_backprojection.html
 
 #####################################################################
 
@@ -25,7 +27,7 @@ import numpy as np
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
 
 selection_in_progress = False; # support interactive region selection
 
@@ -172,10 +174,10 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
                 mask = cv2.inRange(hsv_crop, np.array((0., float(s_lower),float(v_lower))), np.array((180.,float(s_upper),float(v_upper))));
                 # mask = cv2.inRange(hsv_crop, np.array((0., 60.,32.)), np.array((180.,255.,255.)));
 
-                # construct a histogram of hue values and normalized it
+                # construct a histogram of hue and saturation values and normalize it
 
-                crop_hist = cv2.calcHist([hsv_crop],[0],mask,[180],[0,180]);
-                # cv2.normalize(crop_hist,crop_hist,0,255,cv2.NORM_MINMAX);
+                crop_hist = cv2.calcHist([hsv_crop],[0, 1],mask,[180, 255],[0,180, 0, 255]);
+                cv2.normalize(crop_hist,crop_hist,0,255,cv2.NORM_MINMAX);
 
                 # set intial position of object
 
@@ -202,7 +204,9 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
             img_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV);
 
-            img_bproject = cv2.calcBackProject([img_hsv],[0],crop_hist,[0,180],1);
+            # back projection of histogram based on Hue and Saturation only
+
+            img_bproject = cv2.calcBackProject([img_hsv],[0,1],crop_hist,[0,180,0,255],1);
             cv2.imshow(windowName2,img_bproject);
 
             # apply camshift to predict new location (observation)

@@ -14,6 +14,7 @@
 
 import cv2
 import sys
+import math
 
 #####################################################################
 
@@ -31,16 +32,20 @@ cap = cv2.VideoCapture();
 windowName = "Live Camera Input"; # window name
 
 # if command line arguments are provided try to read video_name
-# otherwise default to capture from attached H/W camera
+# otherwise default to capture from attached camera
 
 if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
-    or (cap.open(camera_to_use))):
+    or (cap.open(camera_to_use) or cap.open(camera_to_use - 1))):
 
     # create window by name (as resizable)
 
     cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
 
     while (keep_processing):
+
+        # start a timer (to see how long processing and display takes)
+
+        start_t = cv2.getTickCount();
 
         # if video file successfully open then read frame from video
 
@@ -61,6 +66,10 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         cv2.imshow(windowName,frame);
 
+        # stop the timer and convert to ms. (to see how long processing and display takes)
+
+        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000;
+
         # start the event loop - essential
 
         # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
@@ -68,8 +77,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
+        # here we use a wait time in ms. that takes account of processing time already used in the loop
 
-        key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+
+        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF;
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 

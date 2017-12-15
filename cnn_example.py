@@ -13,6 +13,15 @@
 # based on provided examples at: https://github.com/opencv/opencv/tree/master/samples/dnn
 # see here for how to load Caffe/TensorFlow/... models etc.
 
+# implements a version of:
+
+# MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
+# Andrew G. Howard, Menglong Zhu, Bo Chen, Dmitry Kalenichenko, Weijun Wang, Tobias Weyand, Marco Andreetto, Hartwig Adam
+# research paper: https://arxiv.org/abs/1704.04861
+
+# requires Caffe network model files (.prototxt / .caffemodel) downloaded from:
+# https://github.com/chuanqi305/MobileNet-SSD/
+
 #####################################################################
 
 import cv2
@@ -25,7 +34,6 @@ import numpy as np
 keep_processing = True;
 camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
 
-cnn_model_to_load = "MobileNetSSD_deploy";
 cnn_model_to_load = "MobileNetSSD_deploy";
 
 #####################################################################

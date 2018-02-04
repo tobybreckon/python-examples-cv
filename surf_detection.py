@@ -34,9 +34,9 @@ def extraOpenCVModulesPresent():
 
     if not hasattr(extraOpenCVModulesPresent, "already_checked"):
         (is_built, not_built) = cv2.getBuildInformation().split("Disabled:")
-        already_checked = ('xfeatures2d' in is_built);
+        extraOpenCVModulesPresent.already_checked = ('xfeatures2d' in is_built);
 
-    return already_checked;
+    return extraOpenCVModulesPresent.already_checked;
 
 #####################################################################
 

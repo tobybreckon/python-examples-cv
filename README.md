@@ -51,10 +51,8 @@ If referencing these examples in your own work please use:
   publisher = 	 {Wiley-Blackwell},
   year = 	 {2010},
   isbn = {0470844736},
-  comment =   {<a class="demolink" href="http://www.fundipbook.com/">book website</a>},
   doi = 	 {10.1002/9780470689776},
   note = {ISBN-13: 978-0470844731},
-  category =     {textbook}
 }
 ```
 

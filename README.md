@@ -43,6 +43,21 @@ N.B. you may need to change the line near the top that specifies the camera devi
 
 ---
 
+If referencing these examples in your own work please use:
+```
+@Book{solomonbreckon10fundamentals,
+  author = 	 {Solomon, C.J. and Breckon, T.P.},
+  title = 	 {Fundamentals of Digital Image Processing: A Practical Approach with Examples in Matlab},
+  publisher = 	 {Wiley-Blackwell},
+  year = 	 {2010},
+  isbn = {0470844736},
+  doi = 	 {10.1002/9780470689776},
+  note = {ISBN-13: 978-0470844731},
+}
+```
+
+---
+
 If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
 
 _"may the source be with you"_ - anon.

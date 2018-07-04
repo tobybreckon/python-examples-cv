@@ -19,7 +19,7 @@ import math
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 0; # 0 if you have one camera, 1 or > 1 otherwise
+camera_to_use = 1; # 0 if you have one camera, 1 or > 1 otherwise
 
 #####################################################################
 
@@ -85,10 +85,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
-        # e.g. if user presses "x" then exit
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord('f')):
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
 
     # close all windows
 

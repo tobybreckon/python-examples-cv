@@ -43,7 +43,45 @@ N.B. you may need to change the line near the top that specifies the camera devi
 
 ---
 
-If referencing these examples in your own work please use:
+### References
+
+If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please use a reference to the related research work from which thestupid of these sample OpenCV reference implementations were derived (presented in bibtex format).
+
+For the SGBM stereo vision example, reference:
+```
+@Article{mroz12stereo,
+  author = 	 {Mroz, F. and Breckon, T.P.},
+  title = 	 {An Empirical Comparison of Real-time Dense Stereo Approaches for use in the Automotive Environment},
+  journal =  {EURASIP Journal on Image and Video Processing},
+  year =     {2012},
+  volume = 	 {2012},
+  number = 	 {13},
+  pages = 	 {1-19},
+  publisher = {Springer}, 
+  url = 	 {http://community.dur.ac.uk/toby.breckon/publications/papers/mroz12stereo.pdf},
+  doi = 	 {10.1186/1687-5281-2012-13}
+}
+```
+
+For the Mixture of Gaussian (MOG) background subtraction and Kalman filtering example, reference:
+```
+@InProceedings{kundegorski14photogrammetric,
+  author = 	 {Kundegorski, M.E. and Breckon, T.P.},
+  title = 	 {A Photogrammetric Approach for Real-time 3D Localization and Tracking of Pedestrians in Monocular Infrared Imagery},
+  booktitle = {Proc. SPIE Optics and Photonics for Counterterrorism, Crime Fighting and Defence},
+  year = 	    {2014},
+  month =     {September},
+  volume =    {9253},
+  number =    {01},
+  publisher = {SPIE},
+  pages =     {1-16},
+  url = 	 {http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski14photogrammetric.pdf},
+  doi = 	 {10.1117/12.2065673}
+}
+```
+
+
+For all other examples, please reference:
 ```
 @Book{solomonbreckon10fundamentals,
   author = 	 {Solomon, C.J. and Breckon, T.P.},

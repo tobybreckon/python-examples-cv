@@ -45,7 +45,7 @@ N.B. you may need to change the line near the top that specifies the camera devi
 
 ### References
 
-If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please use a reference to the related research work from which thestupid of these sample OpenCV reference implementations were derived (presented in bibtex format).
+If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please reference the related research work from which these sample OpenCV reference implementations were derived (presented in bibtex format).
 
 For the SGBM stereo vision example, reference:
 ```

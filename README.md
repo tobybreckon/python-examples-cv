@@ -81,7 +81,7 @@ For the Mixture of Gaussian (MOG) background subtraction and Kalman filtering ex
 ```
 
 
-For all other examples, please reference:
+For the DoG, Canny, contour, Harris  and Sobel examples, please reference:
 ```
 @Book{solomonbreckon10fundamentals,
   author = 	 {Solomon, C.J. and Breckon, T.P.},
@@ -93,6 +93,8 @@ For all other examples, please reference:
   note = {ISBN-13: 978-0470844731},
 }
 ```
+
+For all other examples reference the original paper as outlined in the OpenCV manual or the header comment of the ```.py``` example file.
 
 ---
 

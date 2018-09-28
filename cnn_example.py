@@ -141,8 +141,6 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
             # provided that is above a threshold
 
-            print(confidence_threshold);
-
             if confidence > confidence_threshold:
 
                 # get the class number id and the bounding box

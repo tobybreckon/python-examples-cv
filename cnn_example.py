@@ -61,7 +61,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
     net = cv2.dnn.readNetFromCaffe(cnn_model_to_load + ".prototxt", cnn_model_to_load + ".caffemodel");
 
-    # provide mappings from class numbers to string labels
+# provide mappings from class numbers to string labels - these are the PASCAL VOC classees
 
     classNames = {  0: 'background',
                     1: 'aeroplane', 2: 'bicycle', 3: 'bird', 4: 'boat',
@@ -87,6 +87,12 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
                 keep_processing = False;
                 continue;
 
+
+        # get size of input
+
+        cols = frame.shape[1];
+        rows = frame.shape[0];
+
         # transform the image into a network input "blob" (i.e. tensor)
         # by scaling the image to the input size of the network, in this case
         # not swapping the R and G channels (i.e. used when network trained on
@@ -94,6 +100,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         # to 0->1 by specifing the mean value for each channel
 
         swapRBchannels = False;             # do not swap channels
+        crop = False;                       # crop image or not
         meanChannelVal = 255.0 / 2.0;       # mean channel value
 
         inWidth = 300;                      # network input width
@@ -102,7 +109,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         inScaleFactor = 0.007843;           # input scale factor
 
         blob = cv2.dnn.blobFromImage(frame, inScaleFactor, (inWidth, inHeight),
-                (meanChannelVal, meanChannelVal, meanChannelVal), swapRBchannels);
+                (meanChannelVal, meanChannelVal, meanChannelVal), swapRBchannels, crop);
 
         # set this transformed image -> tensor blob as the network input
 
@@ -113,24 +120,7 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
         detections = net.forward();
 
         # process the detections from the CNN to give bounding boxes
-
-        # firstly recompute the frame size / crop based on the input send to the CNN
-
-        cols = frame.shape[1];
-        rows = frame.shape[0];
-
-        if cols / float(rows) > WHRatio:
-            cropSize = (int(rows * WHRatio), rows);
-        else:
-            cropSize = (cols, int(cols / WHRatio));
-
-        y1 = int((rows - cropSize[1]) / 2);
-        y2 = y1 + cropSize[1];
-        x1 = int((cols - cropSize[0]) / 2);
-        x2 = x1 + cropSize[0];
-        frame = frame[y1:y2, x1:x2];
-
-        # for each detection returned from the network
+        # i.e. for each detection returned from the network
 
         for i in range(detections.shape[2]):
 

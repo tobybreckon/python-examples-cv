@@ -38,6 +38,12 @@ cnn_model_to_load = "MobileNetSSD_deploy";
 
 #####################################################################
 
+def trackbar_callback(pos):
+    global confidence_threshold;
+    confidence_threshold = pos / 100.0;
+
+#####################################################################
+
 # define video capture object
 
 cap = cv2.VideoCapture();
@@ -55,6 +61,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
     # create window by name (as resizable)
 
     cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+
+    # add track bar to window for confidence threshold
+
+    confidence_threshold = 0.7;
+    cv2.createTrackbar('Confidence threshold, %', windowName, int(confidence_threshold * 100), 99, trackbar_callback);
 
     # init CNN model - here from Caffe, although OpenCV can import from
     # mosyt deep learning templates
@@ -128,9 +139,11 @@ if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
 
             confidence = detections[0, 0, i, 2];
 
-            # provided that is above a threshold (0.2)
+            # provided that is above a threshold
 
-            if confidence > 0.2:
+            print(confidence_threshold);
+
+            if confidence > confidence_threshold:
 
                 # get the class number id and the bounding box
 

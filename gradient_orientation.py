@@ -7,6 +7,8 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
+# https://www.learnopencv.com/histogram-of-oriented-gradients/
+
 # Copyright (c) 2018 Dept. Computer Science,
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html

@@ -136,6 +136,13 @@ stereo_camera = StereoCamera(args)
 windowNameL = "LEFT Camera Input"; # window name
 windowNameR = "RIGHT Camera Input"; # window name
 
+# create window by name (as resizable)
+
+cv2.namedWindow(windowNameL, cv2.WINDOW_NORMAL);
+cv2.namedWindow(windowNameR, cv2.WINDOW_NORMAL);
+
+# controls
+
 print("s : swap cameras left and right")
 print("e : export camera calibration to file")
 print("l : load camera calibration from file")
@@ -218,6 +225,8 @@ chessboard_pattern_detections = 0;
 
 print()
 print("--> hold up chessboard")
+print("press space when ready to start calibration stage  ...")
+print()
 
 while (not(do_calibration)):
 
@@ -294,7 +303,9 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
     keep_processing = True;
 
     print()
-    print("-> performing undistortion")
+    print("-> dislaying undistortion")
+    print("press space to continue to next stage ...")
+    print()
 
 while (keep_processing):
 
@@ -329,7 +340,7 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
         errorL = cv2.norm(imgpointsL[i],imgpointsL2, cv2.NORM_L2)/len(imgpointsL2)
         tot_errorL += errorL
 
-        print("LEFT: Re-projection error: ", tot_errorL/len(objpoints))
+    print("LEFT: Re-projection error: ", tot_errorL/len(objpoints))
 
     tot_errorR = 0
     for i in range(len(objpoints)):
@@ -337,7 +348,7 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
         errorR = cv2.norm(imgpointsR[i],imgpointsR2, cv2.NORM_L2)/len(imgpointsR2)
         tot_errorR += errorR
 
-        print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints))
+    print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints))
 
 #####################################################################
 
@@ -379,7 +390,8 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
     mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayL.shape[::-1], cv2.CV_32FC1);
 
     print()
-    print("-> performing rectification")
+    print("-> displaying rectification")
+    print("press space to continue to next stage ...")
 
     keep_processing = True;
 
@@ -411,22 +423,6 @@ while (keep_processing):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
-    elif (key == ord('e')):
-
-        # export to named folder path as numpy data
-
-        try:
-            os.mkdir('calibration')
-        except OSError:
-            print("Exporting to existing calibration archive directory.")
-        folderName = time.strftime('%d-%m %H%M-error-') + rms_stereo + '-zed-' + str(args.zed) + '-ximea-' + str(args.ximea)
-        os.mkdir(folderName)
-        os.chdir(folderName)
-        np.save('mapL1', mapL1)
-        np.save('mapL2', mapL2)
-        np.save('mapR1', mapR1)
-        np.save('mapR2', mapR2)
-        print("Exported to path: ", folderName)
 
 #####################################################################
 
@@ -446,7 +442,12 @@ while (keep_processing):
 # disp12MaxDiff[, preFilterCap[, uniquenessRatio[, speckleWindowSize[, speckleRange[, mode]]]]]]]]) -> retval
 
 print()
-print("-> calc. disparity image")
+print("-> display disparity image")
+print("press x to exit
+print("press e to export calibration")
+print("press f for fullscreen disparity")
+
+print()
 
 max_disparity = 128;
 stereoProcessor = cv2.StereoSGBM_create(0, max_disparity, 21);
@@ -454,6 +455,7 @@ stereoProcessor = cv2.StereoSGBM_create(0, max_disparity, 21);
 keep_processing = True;
 
 windowNameD = "SGBM Stereo Disparity - Output"; # window name
+cv2.namedWindow(windowNameD, cv2.WINDOW_NORMAL);
 
 while (keep_processing):
 
@@ -492,9 +494,9 @@ while (keep_processing):
     cv2.imshow(windowNameL,undistorted_rectifiedL);
     cv2.imshow(windowNameR,undistorted_rectifiedR);
 
-    #display disparity
+    #display disparity - which ** for display purposes only ** we re-scale to 0 ->255
 
-    cv2.imshow(windowNameD, disparity_scaled);
+    cv2.imshow(windowNameD, (disparity_scaled * (256. / max_disparity)).astype(np.uint8));
 
     # start the event loop - essential
 
@@ -508,6 +510,22 @@ while (keep_processing):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
+    elif (key == ord('f')):
+        cv2.setWindowProperty(windowNameD, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+    elif (key == ord('e')):
+        # export to named folder path as numpy data
+        try:
+            os.mkdir('calibration')
+        except OSError:
+            print("Exporting to existing calibration archive directory.")
+        folderName = time.strftime('%d-%m %H%M-error-') + rms_stereo + '-zed-' + str(args.zed) + '-ximea-' + str(args.ximea)
+        os.mkdir(folderName)
+        os.chdir(folderName)
+        np.save('mapL1', mapL1)
+        np.save('mapL2', mapL2)
+        np.save('mapR1', mapR1)
+        np.save('mapR2', mapR2)
+        print("Exported to path: ", folderName)
 
 #####################################################################
 

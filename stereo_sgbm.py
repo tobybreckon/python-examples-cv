@@ -16,6 +16,8 @@
 # http://docs.ros.org/electric/api/cob_camera_calibration/html/calibrator_8py_source.html
 # OpenCV 3.0 example - stereo_match.py
 
+# Andy Pound, Durham University, 2016 - calibration save/load approach
+
 #####################################################################
 
 # TODO:
@@ -175,6 +177,7 @@ while (keep_processing):
 
         stereo_camera.swap_cameras();
     elif (key == ord('l')):
+
         # load calibration from file
 
         os.chdir(args.calibration_path)
@@ -410,7 +413,7 @@ while (keep_processing):
         exit();
     elif (key == ord('e')):
 
-        # export code from Andy Pound - Durham University, 2016
+        # export to named folder path as numpy data
 
         try:
             os.mkdir('calibration')

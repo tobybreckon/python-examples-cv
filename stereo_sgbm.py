@@ -1,12 +1,11 @@
 #####################################################################
 
 # Example : stereo vision from 2 connected cameras using Semi-Global
-# Block Matching
+# Block Matching. For usage: python3 ./stereo_sgbm.py -h
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 School of Engineering & Computing Science,
-#                    Durham University, UK
+# Copyright (c) 2015/18 Engineering & Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # Acknowledgements:
@@ -34,7 +33,7 @@ import numpy as np
 import argparse
 
 #####################################################################
-# wrap different kinds of stereo camera
+# wrap different kinds of stereo camera - standard (v4l/vfw), ximea, ZED
 
 class StereoCamera:
     def __init__(self, args):
@@ -102,7 +101,7 @@ class StereoCamera:
 
             _, frameL = self.camL.retrieve();
             _, frameR = self.camR.retrieve();
-
+#
         return frameL, frameR;
 
 #####################################################################
@@ -110,7 +109,7 @@ class StereoCamera:
 
 parser = argparse.ArgumentParser(description='Perform full stereo calibration and SGBM matching.')
 parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
-parser.add_argument("--zed", help="use a sterolabs ZED stereo camera", action="store_true")
+parser.add_argument("--zed", help="use a Stereolabs ZED stereo camera", action="store_true")
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
 
 args = parser.parse_args()
@@ -133,7 +132,9 @@ windowNameL = "LEFT Camera Input"; # window name
 windowNameR = "RIGHT Camera Input"; # window name
 
 print("s : swap cameras left and right")
-print("c : continue to next stage")
+print("space : continue to next stage")
+print("x : exit")
+
 
 while (keep_processing):
 
@@ -160,7 +161,7 @@ while (keep_processing):
 
     # e.g. if user presses "x" then exit
 
-    if (key == ord('c')):
+    if (key == ord(' ')):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
@@ -253,7 +254,7 @@ while (not(do_calibration)):
         # start the event loop
 
         key = cv2.waitKey(100) & 0xFF; # wait 500ms between frames
-        if (key == ord('c')):
+        if (key == ord(' ')):
             do_calibration = True;
         elif (key == ord('x')):
             exit();
@@ -292,7 +293,7 @@ while (keep_processing):
 
     key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
-    if (key == ord('c')):
+    if (key == ord(' ')):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
@@ -380,7 +381,7 @@ while (keep_processing):
 
     # e.g. if user presses "x" then exit
 
-    if (key == ord('c')):
+    if (key == ord(' ')):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
@@ -461,7 +462,7 @@ while (keep_processing):
 
     # e.g. if user presses "x" then exit
 
-    if (key == ord('c')):
+    if (key == ord(' ')):
         keep_processing = False;
     elif (key == ord('x')):
         exit();

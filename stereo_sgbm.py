@@ -5,7 +5,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015/18 Engineering & Computer Science, Durham University, UK
+# Copyright (c) 2015-18 Engineering & Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # Acknowledgements:
@@ -20,16 +20,15 @@
 
 # TODO:
 
-# add slider for some parameters
+# add sliders for some parameters
 # add StereoBM option
-# add load/save parameters using NumPy:
-# http://docs.scipy.org/doc/numpy/reference/routines.io.html
 
 #####################################################################
 
 import cv2
 import sys
 import numpy as np
+import os
 import argparse
 
 #####################################################################
@@ -111,12 +110,16 @@ parser = argparse.ArgumentParser(description='Perform full stereo calibration an
 parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
 parser.add_argument("--zed", help="use a Stereolabs ZED stereo camera", action="store_true")
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-cp", "--calibration_path", type=str, help="specify path to calibration files to load", default=0)
 
 args = parser.parse_args()
 
 #####################################################################
 
+# flag values to enter processing loops - do not change
+
 keep_processing = True;
+do_calibration = False;
 
 #####################################################################
 
@@ -132,6 +135,8 @@ windowNameL = "LEFT Camera Input"; # window name
 windowNameR = "RIGHT Camera Input"; # window name
 
 print("s : swap cameras left and right")
+print("e : export camera calibration to file")
+print("l : load camera calibration from file")
 print("space : continue to next stage")
 print("x : exit")
 
@@ -169,12 +174,23 @@ while (keep_processing):
         # swap the cameras if specified
 
         stereo_camera.swap_cameras();
+    elif (key == ord('l')):
+        # load calibration from file
+
+        os.chdir(args.calibration_path)
+        print('Using calibration files: ', args.calibration_path);
+        mapL1 = np.load('mapL1.npy')
+        mapL2 = np.load('mapL2.npy')
+        mapR1 = np.load('mapR1.npy')
+        mapR2 = np.load('mapR2.npy')
+
+        keep_processing = False;
+        do_calibration = True; # set to True to skip next loop
 
 #####################################################################
 
 # STAGE 2: perform intrinsic calibration (removal of image distortion in each image)
 
-do_calibration = False;
 termination_criteria_subpix = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # set up a set of real-world "object points" for the chessboard pattern
@@ -261,19 +277,21 @@ while (not(do_calibration)):
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
-print("START - intrinsic calibration ...")
+if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
 
-ret, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(objpoints, imgpointsL, grayL.shape[::-1],None,None);
-ret, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(objpoints, imgpointsR, grayR.shape[::-1],None,None);
+    print("START - intrinsic calibration ...")
 
-print("FINSIHED - intrinsic calibration")
+    ret, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(objpoints, imgpointsL, grayL.shape[::-1],None,None);
+    ret, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(objpoints, imgpointsR, grayR.shape[::-1],None,None);
 
-# perform undistortion of the images
+    print("FINISHED - intrinsic calibration")
 
-keep_processing = True;
+    # perform undistortion of the images
 
-print()
-print("-> performing undistortion")
+    keep_processing = True;
+
+    print()
+    print("-> performing undistortion")
 
 while (keep_processing):
 
@@ -300,21 +318,23 @@ while (keep_processing):
 
 # show mean re-projection error of the object points onto the image(s)
 
-tot_errorL = 0
-for i in range(len(objpoints)):
-    imgpointsL2, _ = cv2.projectPoints(objpoints[i], rvecsL[i], tvecsL[i], mtxL, distL)
-    errorL = cv2.norm(imgpointsL[i],imgpointsL2, cv2.NORM_L2)/len(imgpointsL2)
-    tot_errorL += errorL
+if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
 
-print("LEFT: Re-projection error: ", tot_errorL/len(objpoints))
+    tot_errorL = 0
+    for i in range(len(objpoints)):
+        imgpointsL2, _ = cv2.projectPoints(objpoints[i], rvecsL[i], tvecsL[i], mtxL, distL)
+        errorL = cv2.norm(imgpointsL[i],imgpointsL2, cv2.NORM_L2)/len(imgpointsL2)
+        tot_errorL += errorL
 
-tot_errorR = 0
-for i in range(len(objpoints)):
-    imgpointsR2, _ = cv2.projectPoints(objpoints[i], rvecsR[i], tvecsR[i], mtxR, distR)
-    errorR = cv2.norm(imgpointsR[i],imgpointsR2, cv2.NORM_L2)/len(imgpointsR2)
-    tot_errorR += errorR
+        print("LEFT: Re-projection error: ", tot_errorL/len(objpoints))
 
-print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints))
+    tot_errorR = 0
+    for i in range(len(objpoints)):
+        imgpointsR2, _ = cv2.projectPoints(objpoints[i], rvecsR[i], tvecsR[i], mtxR, distR)
+        errorR = cv2.norm(imgpointsR[i],imgpointsR2, cv2.NORM_L2)/len(imgpointsR2)
+        tot_errorR += errorR
+
+        print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints))
 
 #####################################################################
 
@@ -327,14 +347,15 @@ print("RIGHT: Re-projection error: ", tot_errorR/len(objpoints))
 
 termination_criteria_extrinsics = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
 
-print()
-print("START - extrinsic calibration ...")
-(rms_stereo, camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r, R, T, E, F) = \
-cv2.stereoCalibrate(objpoints, imgpointsL, imgpointsR, mtxL, distL, mtxR, distR,  grayL.shape[::-1], criteria=termination_criteria_extrinsics, flags=0);
+if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
+    print()
+    print("START - extrinsic calibration ...")
+    (rms_stereo, camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r, R, T, E, F) = \
+    cv2.stereoCalibrate(objpoints, imgpointsL, imgpointsR, mtxL, distL, mtxR, distR,  grayL.shape[::-1], criteria=termination_criteria_extrinsics, flags=0);
 
-print("START - extrinsic calibration ...")
+    print("START - extrinsic calibration ...")
 
-print("STEREO: RMS left to  right re-projection error: ", rms_stereo)
+    print("STEREO: RMS left to  right re-projection error: ", rms_stereo)
 
 #####################################################################
 
@@ -345,17 +366,19 @@ print("STEREO: RMS left to  right re-projection error: ", rms_stereo)
 # that the rectified image is decimated and shifted so that all the pixels from the original images
 # from the cameras are retained in the rectified images (no source image pixels are lost)." - ?
 
-RL, RR, PL, PR, _, _, _ = cv2.stereoRectify(camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,  grayL.shape[::-1], R, T, alpha=-1);
+if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
+    RL, RR, PL, PR, _, _, _ = cv2.stereoRectify(camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,  grayL.shape[::-1], R, T, alpha=-1);
 
 # compute the pixel mappings to the rectified versions of the images
 
-mapL1, mapL2 = cv2.initUndistortRectifyMap(camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1);
-mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayL.shape[::-1], cv2.CV_32FC1);
+if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
+    mapL1, mapL2 = cv2.initUndistortRectifyMap(camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1);
+    mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayL.shape[::-1], cv2.CV_32FC1);
 
-print()
-print("-> performing rectification")
+    print()
+    print("-> performing rectification")
 
-keep_processing = True;
+    keep_processing = True;
 
 while (keep_processing):
 
@@ -385,6 +408,18 @@ while (keep_processing):
         keep_processing = False;
     elif (key == ord('x')):
         exit();
+    elif (key == ord('e')):
+
+        # export code from Andy Pound - Durham University, 2016
+
+        os.mkdir('calibration')
+        folderName = time.strftime('%d-%m %H%M-error-') + rms_stereo + '-zed-' + str(args.zed) + '-ximea-' + str(args.ximea)
+        os.mkdir(folderName)
+        os.chdir(folderName)
+        np.save('mapL1', mapL1)
+        np.save('mapL2', mapL2)
+        np.save('mapR1', mapR1)
+        np.save('mapR2', mapR2)
 
 #####################################################################
 

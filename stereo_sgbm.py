@@ -22,8 +22,8 @@
 
 # TODO:
 
-# add sliders for some parameters
-# add StereoBM option
+# add sliders for some stereo parameters
+
 
 #####################################################################
 
@@ -141,14 +141,24 @@ windowNameR = "RIGHT Camera Input"; # window name
 cv2.namedWindow(windowNameL, cv2.WINDOW_NORMAL);
 cv2.namedWindow(windowNameR, cv2.WINDOW_NORMAL);
 
+# set sizes and set windows
+
+frameL, frameR = stereo_camera.get_frames()
+
+height, width, channels = frameL.shape
+cv2.resizeWindow(windowNameL, width, height);
+height, width, channels = frameR.shape
+cv2.resizeWindow(windowNameR, width, height);
+
 # controls
 
 print("s : swap cameras left and right")
 print("e : export camera calibration to file")
 print("l : load camera calibration from file")
-print("space : continue to next stage")
 print("x : exit")
-
+print()
+print("space : continue to next stage")
+print()
 
 while (keep_processing):
 
@@ -281,7 +291,7 @@ while (not(do_calibration)):
 
         # start the event loop
 
-        key = cv2.waitKey(100) & 0xFF; # wait 500ms between frames
+        key = cv2.waitKey(500) & 0xFF; # wait 500ms between frames - i.e. 2 fps
         if (key == ord(' ')):
             do_calibration = True;
         elif (key == ord('x')):
@@ -443,7 +453,7 @@ while (keep_processing):
 
 print()
 print("-> display disparity image")
-print("press x to exit
+print("press x to exit")
 print("press e to export calibration")
 print("press f for fullscreen disparity")
 

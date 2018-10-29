@@ -536,7 +536,7 @@ while (keep_processing):
         except OSError:
             print("Exporting to existing calibration archive directory.")
         os.chdir('calibration')
-        folderName = time.strftime('%d-%m-%y-%H:%M-rms-') + ('%.2f' % rms_stereo) + '-zed-' + str(int(args.zed)) + '-ximea-' + str(int(args.ximea))
+        folderName = time.strftime('%d-%m-%y-%H-%M-rms-') + ('%.2f' % rms_stereo) + '-zed-' + str(int(args.zed)) + '-ximea-' + str(int(args.ximea))
         os.mkdir(folderName)
         os.chdir(folderName)
         np.save('mapL1', mapL1)

@@ -32,6 +32,13 @@ import sys
 import numpy as np
 import os
 import argparse
+import time
+
+#####################################################################
+# define target framerates in fps (may not be achieved)
+
+calibration_capture_framerate = 2;
+disparity_processing_framerate = 25
 
 #####################################################################
 # wrap different kinds of stereo camera - standard (v4l/vfw), ximea, ZED
@@ -291,7 +298,7 @@ while (not(do_calibration)):
 
         # start the event loop
 
-        key = cv2.waitKey(500) & 0xFF; # wait 500ms between frames - i.e. 2 fps
+        key = cv2.waitKey(int(1000/calibration_capture_framerate)) & 0xFF; # wait 500ms between frames - i.e. 2 fps
         if (key == ord(' ')):
             do_calibration = True;
         elif (key == ord('x')):
@@ -333,7 +340,7 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    key = cv2.waitKey(int(1000/disparity_processing_framerate)) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
     if (key == ord(' ')):
         keep_processing = False;
@@ -423,7 +430,7 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    key = cv2.waitKey(int(1000/disparity_processing_framerate)) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
     # It can also be set to detect specific key strokes by recording which key is pressed
 
@@ -510,7 +517,7 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    key = cv2.waitKey(int(1000/disparity_processing_framerate)) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
     # It can also be set to detect specific key strokes by recording which key is pressed
 
@@ -528,7 +535,8 @@ while (keep_processing):
             os.mkdir('calibration')
         except OSError:
             print("Exporting to existing calibration archive directory.")
-        folderName = time.strftime('%d-%m %H%M-error-') + rms_stereo + '-zed-' + str(args.zed) + '-ximea-' + str(args.ximea)
+        os.chdir('calibration')
+        folderName = time.strftime('%d-%m-%y-%H:%M-rms-') + ('%.2f' % rms_stereo) + '-zed-' + str(int(args.zed)) + '-ximea-' + str(int(args.ximea))
         os.mkdir(folderName)
         os.chdir(folderName)
         np.save('mapL1', mapL1)

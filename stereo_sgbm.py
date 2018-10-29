@@ -462,6 +462,7 @@ print()
 print("-> display disparity image")
 print("press x to exit")
 print("press e to export calibration")
+print("press c for false colour mapped disparity")
 print("press f for fullscreen disparity")
 
 print()
@@ -470,6 +471,7 @@ max_disparity = 128;
 stereoProcessor = cv2.StereoSGBM_create(0, max_disparity, 21);
 
 keep_processing = True;
+apply_colourmap = False;
 
 windowNameD = "SGBM Stereo Disparity - Output"; # window name
 cv2.namedWindow(windowNameD, cv2.WINDOW_NORMAL);
@@ -513,7 +515,12 @@ while (keep_processing):
 
     #display disparity - which ** for display purposes only ** we re-scale to 0 ->255
 
-    cv2.imshow(windowNameD, (disparity_scaled * (256. / max_disparity)).astype(np.uint8));
+    if (apply_colourmap):
+
+        disparity_colour_mapped = cv2.applyColorMap((disparity_scaled * (256. / max_disparity)).astype(np.uint8), cv2.COLORMAP_HOT);
+        cv2.imshow(windowNameD, disparity_colour_mapped);
+    else:
+        cv2.imshow(windowNameD, (disparity_scaled * (256. / max_disparity)).astype(np.uint8));
 
     # start the event loop - essential
 
@@ -525,6 +532,8 @@ while (keep_processing):
 
     if (key == ord(' ')):
         keep_processing = False;
+    elif (key == ord('c')):
+        apply_colourmap = not(apply_colourmap);
     elif (key == ord('x')):
         exit();
     elif (key == ord('f')):

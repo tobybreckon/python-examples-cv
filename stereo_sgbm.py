@@ -15,10 +15,7 @@
 # py_tutorials/py_calib3d/py_table_of_contents_calib3d/py_table_of_contents_calib3d.html
 
 # http://docs.ros.org/electric/api/cob_camera_calibration/html/calibrator_8py_source.html
-
 # OpenCV 3.0 example - stereo_match.py
-
-# version 0.2 - fixed disparity scaling issues (March 2016)
 
 #####################################################################
 
@@ -34,12 +31,93 @@
 import cv2
 import sys
 import numpy as np
+import argparse
+
+#####################################################################
+# wrap different kinds of stereo camera
+
+class StereoCamera:
+    def __init__(self, args):
+
+        self.xiema = args.ximea;
+        self.zed = args.zed;
+        self.cameras_opened =  False;
+
+        if args.ximea:
+
+            # ximea requires specific API offsets in the open commands
+
+            self.camL = cv2.VideoCapture();
+            self.camR = cv2.VideoCapture();
+
+            if not((self.camL.open(cv2.CAP_XIAPI)) and (self.camR.open(cv2.CAP_XIAPI + 1))):
+                print("Cannot open pair of Ximea cameras connected.");
+            exit();
+
+        elif args.zed:
+
+            # ZED is a single camera interface with L/R returned as 1 image
+
+            self.camZED = cv2.VideoCapture();
+            if not(self.camZED.open(args.camera_to_use)):
+                print("Cannot open connected ZED stereo camera as camera #: ", args.camera_to_use);
+                exit();
+        else:
+
+            # by default two standard system connected cams
+
+            self.camL = cv2.VideoCapture();
+            self.camR = cv2.VideoCapture();
+            if not((self.camL.open(args.camera_to_use)) and (self.camR.open(args.camera_to_use + 1))):
+                print("Cannot open pair of system cameras connected starting at camera #:", args.camera_to_use)
+                exit();
+
+        cameras_opened = True;
+
+    def swap_cameras(self):
+        if not(self.zed):
+            # swap the cameras - for all but ZED camera
+            tmp = self.camL;
+            self.camL = self.camR;
+            self.camR = tmp;
+
+    def get_frames(self): # return left, right
+        if self.zed:
+
+            # grab single frame from camera (read = grab/retrieve)
+            # and split into Left and Right
+
+            _, frame = self.camZED.read()
+            height,width, channels = frame.shape
+            frameL= frame[:,0:int(width/2),:]
+            frameR = frame[:,int(width/2):width,:]
+        else:
+            # grab frames from camera (to ensure best time sync.)
+
+            self.camL.grab();
+            self.camR.grab();
+
+            # then retrieve the images in slow(er) time
+            # (do not be tempted to use read() !)
+
+            _, frameL = self.camL.retrieve();
+            _, frameR = self.camR.retrieve();
+
+        return frameL, frameR;
+
+#####################################################################
+# deal with optional arguments
+
+parser = argparse.ArgumentParser(description='Perform full stereo calibration and SGBM matching.')
+parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
+parser.add_argument("--zed", help="use a sterolabs ZED stereo camera", action="store_true")
+parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+
+args = parser.parse_args()
 
 #####################################################################
 
 keep_processing = True;
-# camera_to_use = 0; # 0 if you have no built in webcam, 1 otherwise
-camera_to_use = cv2.CAP_XIAPI; # for the Xiema cameras (opencv built with driver)
 
 #####################################################################
 
@@ -47,8 +125,7 @@ camera_to_use = cv2.CAP_XIAPI; # for the Xiema cameras (opencv built with driver
 
 # define video capture object
 
-camL = cv2.VideoCapture();
-camR = cv2.VideoCapture();
+stereo_camera = StereoCamera(args)
 
 # define display window names
 
@@ -58,50 +135,39 @@ windowNameR = "RIGHT Camera Input"; # window name
 print("s : swap cameras left and right")
 print("c : continue to next stage")
 
-if ((camL.open(camera_to_use)) and (camR.open(camera_to_use + 1))):
+while (keep_processing):
 
-    while (keep_processing):
+    # get frames from camera
 
-        # grab frames from camera (to ensure best time sync.)
+    frameL, frameR = stereo_camera.get_frames()
 
-        camL.grab();
-        camR.grab();
+    # display image
 
-        # then retrieve the images in slow(er) time
-        # (do not be tempted to use read() !)
+    cv2.imshow(windowNameL,frameL);
+    cv2.imshow(windowNameR,frameR);
 
-        ret, frameL = camL.retrieve();
-        ret, frameR = camR.retrieve();
+    # start the event loop - essential
 
-        # display image
+    # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
+    # It waits for specified milliseconds for any keyboard event.
+    # If you press any key in that time, the program continues.
+    # If 0 is passed, it waits indefinitely for a key stroke.
+    # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
 
-        cv2.imshow(windowNameL,frameL);
-        cv2.imshow(windowNameR,frameR);
+    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
-        # start the event loop - essential
+    # It can also be set to detect specific key strokes by recording which key is pressed
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
-        # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
+    # e.g. if user presses "x" then exit
 
-        key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    if (key == ord('c')):
+        keep_processing = False;
+    elif (key == ord('x')):
+        exit();
+    elif (key == ord('s')):
+        # swap the cameras if specified
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
-
-        # e.g. if user presses "x" then exit
-
-        if (key == ord('c')):
-            keep_processing = False;
-        elif (key == ord('s')):
-            # swap the cameras if specified
-            tmp = camL;
-            camL = camR;
-            camR = tmp;
-
-else:
-    print("Cannot open pair of cameras connected.")
+        stereo_camera.swap_cameras();
 
 #####################################################################
 
@@ -135,16 +201,9 @@ print("--> hold up chessboard")
 
 while (not(do_calibration)):
 
-        # grab frames from camera (to ensure best time sync.)
+        # get frames from camera
 
-        camL.grab();
-        camR.grab();
-
-        # then retrieve the images in slow(er) time
-        # (do not be tempted to use read() !)
-
-        retR, frameL = camL.retrieve();
-        retL, frameR = camR.retrieve();
+        frameL, frameR = stereo_camera.get_frames()
 
         # convert to grayscale
 
@@ -215,16 +274,9 @@ print("-> performing undistortion")
 
 while (keep_processing):
 
-    # grab frames from camera (to ensure best time sync.)
+    # get frames from camera
 
-    camL.grab();
-    camR.grab();
-
-    # then retrieve the images in slow(er) time
-    # (do not be tempted to use read() !)
-
-    ret, frameL = camL.retrieve();
-    ret, frameR = camR.retrieve();
+    frameL, frameR = stereo_camera.get_frames()
 
     undistortedL = cv2.undistort(frameL, mtxL, distL, None, None)
     undistortedR = cv2.undistort(frameR, mtxR, distR, None, None)
@@ -302,16 +354,9 @@ keep_processing = True;
 
 while (keep_processing):
 
-    # grab frames from camera (to ensure best time sync.)
+    # get frames from camera
 
-    camL.grab();
-    camR.grab();
-
-    # then retrieve the images in slow(er) time
-    # (do not be tempted to use read() !)
-
-    ret, frameL = camL.retrieve();
-    ret, frameR = camR.retrieve();
+    frameL, frameR = stereo_camera.get_frames()
 
     # undistort and rectify based on the mappings (could improve interpolation and image border settings here)
 
@@ -363,16 +408,9 @@ windowNameD = "SGBM Stereo Disparity - Output"; # window name
 
 while (keep_processing):
 
-    # grab frames from camera (to ensure best time sync.)
+    # get frames from camera
 
-    camL.grab();
-    camR.grab();
-
-    # then retrieve the images in slow(er) time
-    # (do not be tempted to use read() !)
-
-    ret, frameL = camL.retrieve();
-    ret, frameR = camR.retrieve();
+    frameL, frameR = stereo_camera.get_frames()
 
     # remember to convert to grayscale (as the disparity matching works on grayscale)
 
@@ -389,11 +427,16 @@ while (keep_processing):
     # (which for reasons best known to the OpenCV developers is returned scaled by 16)
 
     disparity = stereoProcessor.compute(undistorted_rectifiedL,undistorted_rectifiedR);
-    cv2.filterSpeckles(disparity, 0, 4000, 128);
+    cv2.filterSpeckles(disparity, 0, 4000, max_disparity);
 
     # scale the disparity to 8-bit for viewing
+    # divide by 16 and convert to 8-bit image (then range of values should
+    # be 0 -> max_disparity) but in fact is (-1 -> max_disparity - 1)
+    # so we fix this also using a initial threshold between 0 and max_disparity
+    # as disparity=-1 means no disparity available
 
-    disparity_scaled = (disparity / 16.).astype(np.uint8) + abs(disparity.min())
+    _, disparity = cv2.threshold(disparity,0, max_disparity * 16, cv2.THRESH_TOZERO);
+    disparity_scaled = (disparity / 16.).astype(np.uint8);
 
     # display image
 

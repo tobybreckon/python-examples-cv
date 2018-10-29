@@ -255,6 +255,8 @@ while (not(do_calibration)):
         key = cv2.waitKey(100) & 0xFF; # wait 500ms between frames
         if (key == ord('c')):
             do_calibration = True;
+        elif (key == ord('x')):
+            exit();
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
@@ -292,6 +294,8 @@ while (keep_processing):
 
     if (key == ord('c')):
         keep_processing = False;
+    elif (key == ord('x')):
+        exit();
 
 # show mean re-projection error of the object points onto the image(s)
 
@@ -378,6 +382,8 @@ while (keep_processing):
 
     if (key == ord('c')):
         keep_processing = False;
+    elif (key == ord('x')):
+        exit();
 
 #####################################################################
 
@@ -457,6 +463,8 @@ while (keep_processing):
 
     if (key == ord('c')):
         keep_processing = False;
+    elif (key == ord('x')):
+        exit();
 
 #####################################################################
 

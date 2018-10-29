@@ -119,7 +119,7 @@ parser = argparse.ArgumentParser(description='Perform full stereo calibration an
 parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
 parser.add_argument("--zed", help="use a Stereolabs ZED stereo camera", action="store_true")
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-cp", "--calibration_path", type=str, help="specify path to calibration files to load", default=0)
+parser.add_argument("-cp", "--calibration_path", type=str, help="specify path to calibration files to load", default=-1)
 
 args = parser.parse_args()
 
@@ -201,6 +201,10 @@ while (keep_processing):
 
         stereo_camera.swap_cameras();
     elif (key == ord('l')):
+
+        if (args.calibration_path == -1):
+            print("Error - no calibration path specified:");
+            exit();
 
         # load calibration from file
 
@@ -467,14 +471,20 @@ print("press f for fullscreen disparity")
 
 print()
 
+# set up defaults for disparity calculation
+
 max_disparity = 128;
 stereoProcessor = cv2.StereoSGBM_create(0, max_disparity, 21);
 
 keep_processing = True;
 apply_colourmap = False;
 
+# set up disparity window to be correct size
+
 windowNameD = "SGBM Stereo Disparity - Output"; # window name
 cv2.namedWindow(windowNameD, cv2.WINDOW_NORMAL);
+height, width, channels = frameL.shape;
+cv2.resizeWindow(windowNameD, width, height);
 
 while (keep_processing):
 

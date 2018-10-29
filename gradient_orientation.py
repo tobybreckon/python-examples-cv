@@ -41,7 +41,7 @@ windowNameAngle = "Gradient Angle"; # window name
 # otherwise default to capture from attached camera
 
 if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
-    or (cap.open(camera_to_use) or cap.open(camera_to_use - 1))):
+    or (cap.open(camera_to_use)) or (cap.open(camera_to_use - 1))):
 
     # create window by name (as resizable)
 

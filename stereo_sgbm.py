@@ -412,7 +412,10 @@ while (keep_processing):
 
         # export code from Andy Pound - Durham University, 2016
 
-        os.mkdir('calibration')
+        try:
+            os.mkdir('calibration')
+        except OSError:
+            print("Exporting to existing calibration archive directory.")
         folderName = time.strftime('%d-%m %H%M-error-') + rms_stereo + '-zed-' + str(args.zed) + '-ximea-' + str(args.ximea)
         os.mkdir(folderName)
         os.chdir(folderName)
@@ -420,6 +423,7 @@ while (keep_processing):
         np.save('mapL2', mapL2)
         np.save('mapR1', mapR1)
         np.save('mapR2', mapR2)
+        print("Exported to path: ", folderName)
 
 #####################################################################
 

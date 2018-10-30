@@ -135,12 +135,16 @@ else:
 
 print("START - intrinsic calibration ...");
 
-ret, mtx, dist, rvecs, tvecs= cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None);
+ret, K, D, rvecs, tvecs= cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None);
 
 print("FINISHED - intrinsic calibration");
+print();
+print("Intrinsic Camera Calibration Matrix, K - from intrinsic calibration:");
+print(K);
+print("Intrinsic Distortion Co-effients, D - from intrinsic calibration:");
+print(D);
 
-print("Intrinsic Distortion Co-effients - from intrinsic calibration:");
-print(dist);
+
 
 #####################################################################
 
@@ -159,7 +163,9 @@ while (keep_processing):
     cam.grab();
     ret, frame = cam.retrieve();
 
-    undistorted = cv2.undistort(frame, mtx, dist, None, None)
+    # undistort image using camera matrix K and distortion coefficients D
+
+    undistorted = cv2.undistort(frame, K, D, None, None)
 
     # display both images
 

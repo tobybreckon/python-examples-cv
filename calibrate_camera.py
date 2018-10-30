@@ -131,7 +131,7 @@ else:
 
 #####################################################################
 
-# perform calibration on both cameras - uses [Zhang, 2000]
+# perform calibration - uses [Zhang, 2000]
 
 print("START - intrinsic calibration ...");
 

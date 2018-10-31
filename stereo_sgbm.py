@@ -69,9 +69,19 @@ class StereoCamera:
             if not(self.camZED.open(args.camera_to_use)):
                 print("Cannot open connected ZED stereo camera as camera #: ", args.camera_to_use);
                 exit();
+
+            # report resolution currently in use for ZED (as various options exist)
+            # can use .get()/.set() to read/change also
+
+            _, frame = self.camZED.read()
+            height,width, channels = frame.shape
+            print();
+            print("ZED left/right resolution: ", int(width/2), " x ",  int(height));
+            print();
+
         else:
 
-            # by default two standard system connected cams
+            # by default two standard system connected cams from the default video backend
 
             self.camL = cv2.VideoCapture();
             self.camR = cv2.VideoCapture();

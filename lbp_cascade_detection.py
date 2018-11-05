@@ -19,6 +19,7 @@
 import cv2
 import argparse
 import sys
+import math
 
 #####################################################################
 
@@ -85,8 +86,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # draw each face bounding box and extract regions of interest (roi)
 
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-            roi_gray = gray[y:y+(h * 0.5), x:x+w]
-            roi_color = frame[y:y+(h * 0.5), x:x+w]
+            roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w]
+            roi_color = frame[y:y+math.floor(h * 0.5), x:x+w]
 
         # display image
 

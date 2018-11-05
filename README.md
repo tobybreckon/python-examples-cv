@@ -37,9 +37,24 @@ python3 ./<insert file name of one of the examples>.py [optional video file]
 
 Demo source code is provided _"as is"_ to aid learning and understanding of topics on the course and beyond.
 
-Most run with a webcam connected or from a command line supplied video file of a format OpenCV supports on your system (otherwise edit the script to provide your own image source).
+Most run with a webcam connected or from a command line supplied video file of a format OpenCV supports on your system (otherwise edit the script to provide your own image source). For examples each individual ```.py``` example file can be used as follows:
 
-N.B. you may need to change the line near the top that specifies the camera device to use on some examples below - change "0" if you have one webcam, I have it set to "1" to skip my built-in laptop webcam and use the connected USB camera.
+```
+$ python3 ./generic_interface.py -h
+usage: generic_interface.py [-h] [-c CAMERA_TO_USE] [video_file]
+
+Perform ./generic_interface.py example operation on incoming camera/video
+image
+
+positional arguments:
+  video_file            specify optional video file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CAMERA_TO_USE, --camera_to_use CAMERA_TO_USE
+                        specify camera to use
+
+```
 
 ---
 
@@ -57,7 +72,7 @@ For the SGBM stereo vision example, reference:
   volume = 	 {2012},
   number = 	 {13},
   pages = 	 {1-19},
-  publisher = {Springer}, 
+  publisher = {Springer},
   url = 	 {http://community.dur.ac.uk/toby.breckon/publications/papers/mroz12stereo.pdf},
   doi = 	 {10.1186/1687-5281-2012-13}
 }

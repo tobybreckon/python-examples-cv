@@ -21,6 +21,7 @@
 import cv2
 import argparse
 import sys
+import math
 
 #####################################################################
 
@@ -87,8 +88,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # draw each face bounding box and extract regions of interest (roi)
 
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-            roi_gray = gray[y:y+(h * 0.5), x:x+w]
-            roi_color = frame[y:y+(h * 0.5), x:x+w]
+            roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w]
+            roi_color = frame[y:y+math.floor(h * 0.5), x:x+w]
 
             # detect eyes using haar cascade trained on eyes
 
@@ -115,10 +116,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
-        # e.g. if user presses "x" then exit
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord('f')):
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
 
     # close all windows
 

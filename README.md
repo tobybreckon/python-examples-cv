@@ -56,13 +56,15 @@ optional arguments:
 
 ```
 
+For several of the demos that largely rely on effective demonstration using just a single output window - press the _"f"_ key to run fullscreen. In all examples press _"x"_ to exit.
+
 ---
 
 ### References:
 
-If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please reference the related research work from which these sample OpenCV reference implementations were derived (presented in bibtex format).
+If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please reference the related research work from which these sample OpenCV reference implementations were derived (in terms of parameters choice etc., presented in bibtex format).
 
-For the SGBM stereo vision example, reference:
+For the SGBM stereo vision and camera calibration examples, reference:
 ```
 @Article{mroz12stereo,
   author = 	 {Mroz, F. and Breckon, T.P.},

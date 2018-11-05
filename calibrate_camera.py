@@ -18,13 +18,19 @@
 #####################################################################
 
 import cv2
+import argparse
 import sys
 import numpy as np
 
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 0; # 0 if you have no built in webcam, 1 otherwise
+
+# parse command line arguments for camera ID or video file
+
+parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
+parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+args = parser.parse_args()
 
 #####################################################################
 
@@ -73,7 +79,7 @@ print("press c : to continue to calibration")
 
 # open connected camera
 
-if cam.open(camera_to_use):
+if cam.open(args.camera_to_use):
 
     while (not(do_calibration)):
 

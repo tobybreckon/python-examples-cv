@@ -13,14 +13,21 @@
 #####################################################################
 
 import cv2
+import argparse
 import sys
 
 #####################################################################
 
 keep_processing = True;
-camera_to_use = 1;
 EVENT_LOOP_DELAY = 40;	# delay for GUI window
                         # 40 ms equates to 1000ms/25fps = 40ms per frame
+
+# parse command line arguments for camera ID or video file
+
+parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
+parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+args = parser.parse_args()
 
 #####################################################################
 
@@ -49,8 +56,8 @@ windowName = "HOG pedestrain detection"; # window name
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
 
-if (((len(sys.argv) == 2) and (cap.open(str(sys.argv[1]))))
-    or (cap.open(camera_to_use))):
+if (((args.video_file) and (cap.open(str(args.video_file))))
+    or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 

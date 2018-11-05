@@ -123,10 +123,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
-        # e.g. if user presses "x" then exit
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord('f')):
+            cv2.setWindowProperty(windowName2, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
 
     # close all windows
 

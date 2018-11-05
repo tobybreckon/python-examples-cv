@@ -97,9 +97,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # if user presses "x" then exit
 
-        key = cv2.waitKey(200) & 0xFF; # wait 200ms (i.e. 1000ms / 5 fps = 200 ms)
+        key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord('f')):
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
 
     # close all windows
 

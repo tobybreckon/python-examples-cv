@@ -134,8 +134,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # e.g. if user presses "x" then exit
 
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord('f')):
+            cv2.setWindowProperty(windowNameDoG, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
 
     # close all windows
 

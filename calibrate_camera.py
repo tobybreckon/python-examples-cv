@@ -180,7 +180,7 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    key = cv2.waitKey(1000) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
     if (key == ord('x')):
         keep_processing = False;

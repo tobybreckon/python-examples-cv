@@ -72,7 +72,7 @@ imgpoints = [] # 2d points in image plane.
 chessboard_pattern_detections = 0;
 
 print()
-print("--> hold up chessboard")
+print("--> hold up chessboard (grabbing images at 1 fps)")
 print("press c : to continue to calibration")
 
 #####################################################################
@@ -128,7 +128,7 @@ if cam.open(args.camera_to_use):
 
         # start the event loop
 
-        key = cv2.waitKey(100) & 0xFF; # wait 500ms between frames
+        key = cv2.waitKey(1000) & 0xFF; # wait 1s. between frames
         if (key == ord('c')):
             do_calibration = True;
 
@@ -180,7 +180,7 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+    key = cv2.waitKey(1000) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
     if (key == ord('x')):
         keep_processing = False;

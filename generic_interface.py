@@ -54,7 +54,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         start_t = cv2.getTickCount();
 
-        # if video file successfully open then read frame from video
+        # if camera /video file successfully open then read frame
 
         if (cap.isOpened):
             ret, frame = cap.read();

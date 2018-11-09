@@ -517,7 +517,7 @@ while (keep_processing):
     # (which for reasons best known to the OpenCV developers is returned scaled by 16)
 
     disparity = stereoProcessor.compute(undistorted_rectifiedL,undistorted_rectifiedR);
-    cv2.filterSpeckles(disparity, 0, 4000, max_disparity);
+    cv2.filterSpeckles(disparity, 0, 40, max_disparity);
 
     # scale the disparity to 8-bit for viewing
     # divide by 16 and convert to 8-bit image (then range of values should

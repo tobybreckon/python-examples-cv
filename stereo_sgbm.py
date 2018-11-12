@@ -33,6 +33,7 @@ import numpy as np
 import os
 import argparse
 import time
+import yaml
 
 #####################################################################
 # define target framerates in fps (may not be achieved)
@@ -572,6 +573,16 @@ while (keep_processing):
         np.save('mapL2', mapL2)
         np.save('mapR1', mapR1)
         np.save('mapR2', mapR2)
+        cv_file = cv2.FileStorage("calibration.xml", cv2.FILE_STORAGE_WRITE)
+        cv_file.write("K_l", camera_matrix_l)
+        cv_file.write("K_r", camera_matrix_r)
+        cv_file.write("distort_l", camera_matrix_l)
+        cv_file.write("distort_r", camera_matrix_r)
+        cv_file.write("R", R)
+        cv_file.write("T", T)
+        cv_file.write("E", E)
+        cv_file.write("F", F)
+        cv_file.release()
         print("Exported to path: ", folderName)
 
 #####################################################################

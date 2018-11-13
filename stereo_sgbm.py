@@ -33,7 +33,6 @@ import numpy as np
 import os
 import argparse
 import time
-import yaml
 
 #####################################################################
 # define target framerates in fps (may not be achieved)
@@ -413,7 +412,7 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
 # from the cameras are retained in the rectified images (no source image pixels are lost)." - ?
 
 if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
-    RL, RR, PL, PR, _, _, _ = cv2.stereoRectify(camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,  grayL.shape[::-1], R, T, alpha=-1);
+    RL, RR, PL, PR, Q, _, _ = cv2.stereoRectify(camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,  grayL.shape[::-1], R, T, alpha=-1);
 
 # compute the pixel mappings to the rectified versions of the images
 
@@ -574,6 +573,8 @@ while (keep_processing):
         np.save('mapR1', mapR1)
         np.save('mapR2', mapR2)
         cv_file = cv2.FileStorage("calibration.xml", cv2.FILE_STORAGE_WRITE)
+        cv_file.write("source", ' '.join(sys.argv[1:]))
+        cv_file.write("description", "camera matrices K for left and right, distortion coefficients for left and right, 3D rotation matrix R, 3D translation vector T, Essential matrix E, Fundamental matrix F, disparity to depth projection matrix Q")
         cv_file.write("K_l", camera_matrix_l)
         cv_file.write("K_r", camera_matrix_r)
         cv_file.write("distort_l", camera_matrix_l)
@@ -582,6 +583,7 @@ while (keep_processing):
         cv_file.write("T", T)
         cv_file.write("E", E)
         cv_file.write("F", F)
+        cv_file.write("Q", Q)
         cv_file.release()
         print("Exported to path: ", folderName)
 

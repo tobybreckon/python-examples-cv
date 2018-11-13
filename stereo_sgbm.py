@@ -573,7 +573,7 @@ while (keep_processing):
         np.save('mapR1', mapR1)
         np.save('mapR2', mapR2)
         cv_file = cv2.FileStorage("calibration.xml", cv2.FILE_STORAGE_WRITE)
-        cv_file.write("source", ' '.join(sys.argv[1:]))
+        cv_file.write("source", ' '.join(sys.argv[0:]))
         cv_file.write("description", "camera matrices K for left and right, distortion coefficients for left and right, 3D rotation matrix R, 3D translation vector T, Essential matrix E, Fundamental matrix F, disparity to depth projection matrix Q")
         cv_file.write("K_l", camera_matrix_l)
         cv_file.write("K_r", camera_matrix_r)

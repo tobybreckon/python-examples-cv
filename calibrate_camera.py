@@ -146,8 +146,13 @@ ret, K, D, rvecs, tvecs= cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::
 print("FINISHED - intrinsic calibration");
 print();
 print("Intrinsic Camera Calibration Matrix, K - from intrinsic calibration:");
+print("(format as follows: fx, fy - focal lengths / cx, cy - optical centers)");
+print("[fx, 0, cx]\n[0, fy, cy]\n[0,  0,  1]");
 print(K);
+print();
 print("Intrinsic Distortion Co-effients, D - from intrinsic calibration:");
+print("(k1, k2, k3 - radial; p1, p2 - tangential; - distortion coefficients)");
+print("[k1, k2, p1, p2, k3]")
 print(D);
 
 

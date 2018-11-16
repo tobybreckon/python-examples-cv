@@ -418,7 +418,7 @@ if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
 
 if (chessboard_pattern_detections > 0): # i.e. if we did not load a calibration
     mapL1, mapL2 = cv2.initUndistortRectifyMap(camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1);
-    mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayL.shape[::-1], cv2.CV_32FC1);
+    mapR1, mapR2 = cv2.initUndistortRectifyMap(camera_matrix_r, dist_coeffs_r, RR, PR, grayR.shape[::-1], cv2.CV_32FC1);
 
     print()
     print("-> displaying rectification")

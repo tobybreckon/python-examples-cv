@@ -129,6 +129,9 @@ parser = argparse.ArgumentParser(description='Perform full stereo calibration an
 parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
 parser.add_argument("--zed", help="use a Stereolabs ZED stereo camera", action="store_true")
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-cbx", "--chessboardx", type=int, help="specify number of internal chessboard squares in x-direction", default=6)
+parser.add_argument("-cby", "--chessboardy", type=int, help="specify number of internal chessboard squares in y-direction", default=9)
+parser.add_argument("-cbw", "--chessboardw", type=float, help="specify width/height of chessboard squares in mm", default=40.0)
 parser.add_argument("-cp", "--calibration_path", type=str, help="specify path to calibration files to load", default=-1)
 
 args = parser.parse_args()
@@ -236,9 +239,9 @@ termination_criteria_subpix = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITE
 
 # set up a set of real-world "object points" for the chessboard pattern
 
-patternX = 6;
-patternY = 9;
-square_size_in_mm = 40;
+patternX = args.chessboardx;
+patternY = args.chessboardy;
+square_size_in_mm = args.chessboardw;
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 

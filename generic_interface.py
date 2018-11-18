@@ -1,4 +1,4 @@
-#####################################################################
+################################################################################
 
 # Example : perform generic live display from a video file
 # specified on the command line (e.g. python FILE.py video_file) or from an
@@ -6,18 +6,18 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 - 2017 School of Engineering & Computing Science,
-#                    Durham University, UK
+# Copyright (c) 2015 - 2018 Toby Breckon, Engineering & Computing Science,
+#                           Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-#####################################################################
+################################################################################
 
 import cv2
 import argparse
 import sys
 import math
 
-#####################################################################
+################################################################################
 
 keep_processing = True;
 
@@ -29,7 +29,7 @@ parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in ful
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 
-#####################################################################
+################################################################################
 
 # define video capture object
 
@@ -73,7 +73,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # display image
 
         cv2.imshow(windowName,frame);
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN & args.fullscreen);
+        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+                                cv2.WINDOW_FULLSCREEN & args.fullscreen);
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
@@ -108,4 +109,4 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 else:
     print("No video file specified or camera connected.");
 
-#####################################################################
+################################################################################

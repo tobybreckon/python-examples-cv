@@ -111,6 +111,9 @@ kalman.processNoiseCov = np.array([[1,0,0,0],
 measurement = np.array((2,1), np.float32)
 prediction = np.zeros((2,1), np.float32)
 
+print("\nObservation in image: BLUE");
+print("Prediction from Kalman: GREEN\n");
+
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
 
@@ -220,7 +223,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # see : http://docs.opencv.org/3.1.0/db/df8/tutorial_py_meanshift.html
             ret, track_window = cv2.CamShift(img_bproject, track_window, term_crit);
 
-            # draw observation on image
+            # draw observation on image - in BLUE
             x,y,w,h = track_window;
             frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0),2);
 
@@ -238,7 +241,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             prediction = kalman.predict();
 
-            # draw predicton on image
+            # draw predicton on image - in GREEN
 
             frame = cv2.rectangle(frame, (prediction[0]-(0.5*w),prediction[1]-(0.5*h)), (prediction[0]+(0.5*w),prediction[1]+(0.5*h)), (0,255,0),2);
 

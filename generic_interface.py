@@ -25,6 +25,7 @@ keep_processing = True;
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode");
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 
@@ -72,6 +73,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # display image
 
         cv2.imshow(windowName,frame);
+        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN & args.fullscreen);
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
@@ -97,7 +99,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         if (key == ord('x')):
             keep_processing = False;
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            args.fullscreen = not(args.fullscreen);
 
     # close all windows
 

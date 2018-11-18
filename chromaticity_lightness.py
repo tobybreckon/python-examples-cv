@@ -109,7 +109,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 keep_processing = False;
                 continue;
 
-        # compute chromaticity as  c = c / SUM(RGB) for c = {R, G, B}
+        # compute chromaticity as  c = c / SUM(RGB) for c = {R, G, B} with
+        # safety for divide by zero errors
         # chromaticity {r,g,b} range is floating point 0 -> 1
 
         # N.B. if extracting chromaticity {r,g} from this; remember to
@@ -119,7 +120,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         sum_channel = np.zeros(frame.shape).astype(np.float32);
         sum_channel = (frame[:,:,0].astype(np.float32)
                         + frame[:,:,1].astype(np.float32)
-                        + frame[:,:,2].astype(np.float32));
+                        + frame[:,:,2].astype(np.float32)) + np.finfo(np.float32).resolution;
         chromaticity[:,:,0] = (frame[:,:,0] / sum_channel);
         chromaticity[:,:,1] = (frame[:,:,1] / sum_channel);
         chromaticity[:,:,2] = (frame[:,:,2] / sum_channel);

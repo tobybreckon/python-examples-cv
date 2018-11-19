@@ -6,8 +6,8 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 School of Engineering & Computing Science,
-#                    Durham University, UK
+# Copyright (c) 2015-18 Toby Breckon, Engineering & Computer Science,
+#                       Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 #####################################################################
@@ -60,9 +60,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     cv2.namedWindow(windowNameFG, cv2.WINDOW_NORMAL);
     cv2.namedWindow(windowNameFGP, cv2.WINDOW_NORMAL);
 
-    # create GMM background subtraction object (using default parameters - see manual)
+    # create GMM background subtraction object
+    # (using default parameters which are suitable for quick lecture demos
+    # - see manual for suitable choice of values to use in anger)
 
     mog = cv2.createBackgroundSubtractorMOG2(history=2000, varThreshold=16, detectShadows=True);
+
+    print("\nPress <space> to reset MoG model ...\n")
 
     while (keep_processing):
 
@@ -109,10 +113,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
-        # e.g. if user presses "x" then exit
+        # e.g. if user presses "x" then exit or reset MoG modelw when space is presses
 
         if (key == ord('x')):
             keep_processing = False;
+        elif (key == ord(' ')):
+            print("\nResetting MoG background model ...\n")
+            mog = cv2.createBackgroundSubtractorMOG2(history=2000, varThreshold=16, detectShadows=True);
 
     # close all windows
 

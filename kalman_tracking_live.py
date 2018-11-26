@@ -29,6 +29,7 @@ import numpy as np
 
 keep_processing = True;
 selection_in_progress = False; # support interactive region selection
+fullscreen = False; # run in fullscreen mode
 
 # parse command line arguments for camera ID or video file
 
@@ -262,6 +263,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # display image
 
         cv2.imshow(windowName,frame);
+        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN & fullscreen);
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
@@ -287,7 +289,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         if (key == ord('x')):
             keep_processing = False;
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            fullscreen = not(fullscreen);
 
     # close all windows
 

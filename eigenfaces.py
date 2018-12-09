@@ -41,9 +41,10 @@ keep_processing = True;
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-e", "--eigenfaces", type=int, help="specify number of eigenface (PCA) dimensions to use", default=10)
 parser.add_argument("-f", "--path_to_faces", type=str, help="path to face images", default='/tmp/images/')
 parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode");
-parser.add_argument("-e", "--eigenfaces", type=int, help="specify number of eigenface (PCA) dimensions to use", default=10)
+parser.add_argument("-p", "--portrait_percentage", type=int, help="for potrait style inputs, specify upper percentage of image in which to detect face", default=100)
 parser.add_argument("-s", "--face_size", type=int, help="specify height/width of face images to use", default=300)
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
@@ -75,7 +76,8 @@ def readImages(path, haar_face_detector):
 
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             height, width = gray.shape
-            face = haar_face_detector.detectMultiScale(gray[0:int(height * 0.8), 0:width], scaleFactor=1.1, minNeighbors=4, minSize=(60,60), flags=cv2.CASCADE_DO_CANNY_PRUNING)
+            face = haar_face_detector.detectMultiScale(gray[0:int(height * (args.portrait_percentage/100)), 0:width],
+                            scaleFactor=1.1, minNeighbors=4, minSize=(60,60), flags=cv2.CASCADE_DO_CANNY_PRUNING)
 
             if (len(face) > 0):
                 (x,y,w,h) = face[0];

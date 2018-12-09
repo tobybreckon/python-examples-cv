@@ -248,8 +248,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             cv2.imshow("best match", images[face_index]);
 
-            # TODO - write name
-
         # display image
 
         cv2.imshow(windowName,frame);

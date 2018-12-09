@@ -125,7 +125,7 @@ def performPCA(images):
         image = np.float32(images[i])/255.0
         data[i,:] = image.flatten() # N.B. data is stored as rows
 
-    # compute the eigenvectors from the stack of images created
+    # compute the eigenvectors from the stack of image vectors created
 
     mean, eigenVectors = cv2.PCACompute(data, mean=None, maxComponents=args.eigenfaces)
 

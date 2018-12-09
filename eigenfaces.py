@@ -83,6 +83,9 @@ def readImages(path, haar_face_detector):
                 (x,y,w,h) = face[0];
                 roi_gray = gray[y:y+h, x:x+w]
                 roi_gray = cv2.resize(roi_gray, (args.face_size, args.face_size))
+
+                # try to compensate for illumination variance using histogram equalization
+
                 roi_gray = cv2.equalizeHist(roi_gray)
 
                 # Add image to list
@@ -141,7 +144,7 @@ def performPCA(images):
 
 ################################################################################
 # return index of best matching face from set of all PCA projcted coefficients
-# based on miniumum Mahalanobis distance
+# based on miniumum Mahalanobis (M) distance and this minimum M distance
 
 def find_matching_face(face_coefficients_to_match, coefficients_of_all_faces, covariance):
 
@@ -161,7 +164,7 @@ def find_matching_face(face_coefficients_to_match, coefficients_of_all_faces, co
 
         current_face += 1;
 
-    return nearest_face_index;
+    return (nearest_face_index, nearest_face_distance);
 
 ################################################################################
 
@@ -233,20 +236,20 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             roi_gray = gray[y:y+h, x:x+w]
             roi_gray = cv2.resize(roi_gray, (args.face_size, args.face_size))
-            roi_gray = cv2.equalizeHist(roi_gray)
+            roi_gray = cv2.equalizeHist(roi_gray)   # try to compensate for illumination variance
             roi_gray = np.float32(roi_gray)/255.0   # normalise as 0 -> 1
 
             face_coefficients = cv2.PCAProject(roi_gray.flatten().reshape(1, args.face_size * args.face_size), mean, eigenVectors)
 
-            # measure distance to PCA coefficient for each face
+            # measure distance to PCA coefficient for each face and find best match
 
-            face_index = find_matching_face(face_coefficients, coefficients, covariance_coeffs);
+            face_index, face_distance = find_matching_face(face_coefficients, coefficients, covariance_coeffs);
 
-            # show best match / display name
+            # show best match / display name and Mahalanobis distance for best match
 
-            cv2.putText(frame, names[face_index], (x, y+h+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0));
+            cv2.putText(frame, names[face_index] + ": " + str(round(face_distance, 2)), (x, y+h+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0));
 
-            # TODO - display original and equalizeHist version side-by-side
+            # display stored equalizeHist version side-by-side
 
             cv2.imshow("best match", images[face_index]);
 

@@ -99,7 +99,7 @@ def readImages(path, haar_face_detector):
     cv2.destroyWindow("face")
 
     if len(images) == 0 :
-        print("No images found")
+        print("No facws found in image set: " + path)
         sys.exit(0)
 
     print(str(len(images)) + " files read.")

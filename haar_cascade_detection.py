@@ -21,18 +21,30 @@
 import cv2
 import argparse
 import sys
+import os
 import math
 
 #####################################################################
 
 keep_processing = True;
+faces_recorded = 0;
 
 # parse command line arguments for camera ID or video file
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-r", "--harvest",  type=str, help="path to save detected faces to", default='')
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
+
+#####################################################################
+# set up directory to save faces to if specified
+
+if (len(args.harvest) > 0):
+    try:
+        os.mkdir(args.harvest)
+    except OSError:
+        print("Harvesting to existing directory: " + args.harvest)
 
 #####################################################################
 
@@ -89,11 +101,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         for (x,y,w,h) in faces:
 
-            # draw each face bounding box and extract regions of interest (roi)
+            # extract regions of interest (roi) and draw each face bounding box and
+
+            roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w] # top 50% to detect eyes
+            roi_color = frame[y:y+h, x:x+w].copy(); # copy to save if required
 
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-            roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w]
-            roi_color = frame[y:y+math.floor(h * 0.5), x:x+w]
 
             # detect eyes using haar cascade trained on eyes
 
@@ -102,7 +115,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # for each detected eye, draw bounding box
 
             for (ex,ey,ew,eh) in eyes:
-                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+                cv2.rectangle(frame,(x + ex,y + ey),(x+ex+ew,y+ey+eh),(0,255,0),2)
+
+            # if specified, record all the faces we see to a specified directory
+
+            if (len(args.harvest) > 0):
+                filename = os.path.join(args.harvest, "face_" + str(format(faces_recorded,'04')) + ".png");
+                cv2.imwrite(filename, roi_color);
+                faces_recorded += 1;
 
         # display image
 

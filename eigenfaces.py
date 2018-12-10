@@ -45,7 +45,8 @@ parser.add_argument("-e", "--eigenfaces", type=int, help="specify number of eige
 parser.add_argument("-f", "--path_to_faces", type=str, help="path to face images", default='/tmp/images/')
 parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode");
 parser.add_argument("-p", "--portrait_percentage", type=int, help="for potrait style inputs, specify upper percentage of image in which to detect face", default=100)
-parser.add_argument("-s", "--face_size", type=int, help="specify height/width of face images to use", default=300)
+parser.add_argument("-s", "--face_size", type=int, help="specify height/width of face images to use for the input to the PCA", default=300)
+parser.add_argument("-es", "--eigenfaces_to_skip", type=int, help="skip the first N eigenface dimensions that normally contain illumination information only", default=3)
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 
@@ -89,6 +90,7 @@ def readImages(path, haar_face_detector):
                 roi_gray = cv2.equalizeHist(roi_gray)
 
                 # Add image to list
+                # (once only here, but could also add flips or other transforms to make it more robust)
 
                 images.append(roi_gray)
                 names.append(name)
@@ -137,8 +139,9 @@ def performPCA(images):
     coefficients = cv2.PCAProject(data, mean, eigenVectors)
 
     # calculate the covariance and mean of the PCA space representation of the images
+    # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
 
-    covariance_coeffs, mean_coeffs = cv2.calcCovarMatrix(coefficients, mean=None, flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype = cv2.CV_32F);
+    covariance_coeffs, mean_coeffs = cv2.calcCovarMatrix(coefficients[:,args.eigenfaces_to_skip:args.eigenfaces], mean=None, flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype = cv2.CV_32F);
 
     return (mean, eigenVectors, coefficients, mean_coeffs, covariance_coeffs)
 
@@ -156,7 +159,13 @@ def find_matching_face(face_coefficients_to_match, coefficients_of_all_faces, co
 
     for pca_face_coefficient in coefficients_of_all_faces:
 
-        m_dist = cv2.Mahalanobis(face_coefficients_to_match, pca_face_coefficient.reshape(1,args.eigenfaces), np.linalg.inv(covariance));
+        # calculate the Mahalanobis distamce between the coefficients we need to match and each from the set of faces
+        # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
+
+        m_dist = cv2.Mahalanobis(face_coefficients_to_match[:,args.eigenfaces_to_skip:args.eigenfaces], pca_face_coefficient.reshape(1,args.eigenfaces)[:,args.eigenfaces_to_skip:args.eigenfaces], np.linalg.inv(covariance));
+
+        # alternatively use the L1 or L2 norm as per original [Pentland / Turk 1991] paper - which used L1
+        # m_dist = numpy.linalg.norm(face_coefficients_to_match[:,3:args.eigenfaces]-pca_face_coefficient.reshape(1,args.eigenfaces)[:,3:args.eigenfaces])
 
         if (m_dist < nearest_face_distance):
             nearest_face_index = current_face;

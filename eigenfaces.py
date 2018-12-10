@@ -73,7 +73,7 @@ def readImages(path, haar_face_detector):
                 print("image:{} not read properly".format(imagePath))
                 continue
 
-            # assume 1 face per image, detect using haar, find in top 80% of image
+            # assume 1 face per image, detect using haar, find in top N% of image
 
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             height, width = gray.shape

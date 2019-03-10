@@ -105,9 +105,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         canny = cv2.Canny(smoothed, lower_threshold, upper_threshold, apertureSize=sobel_size);
 
-        # convert the canny edges into contours
+        # convert the canny edges into contours (check OpenCV version >= 4.x)
 
-        _, contours, hierarchy = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        if (int(cv2.__version__.split(".")[0]) >= 4):
+            contours, hierarchy = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            _, contours, hierarchy = cv2.findContours(canny,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+
+
 
         # find largest contour by area
 

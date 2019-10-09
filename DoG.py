@@ -6,8 +6,8 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2017 Dept. Engineering & Dept. Computer Science,
-#                    Durham University, UK
+# Copyright (c) 2017-2019 Dept. Engineering & Dept. Computer Science,
+#                         Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 #####################################################################
@@ -25,7 +25,8 @@ keep_processing = True;
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser.add_argument("-i", "--is_image", action='store_true', help="specify file is an image, not a video")
+parser.add_argument('video_file', metavar='file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 
 #####################################################################
@@ -76,6 +77,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         if (cap.isOpened):
             ret, frame = cap.read();
 
+        # if it is a still image, load that instead
+
+        if (args.is_image):
+            frame = cv2.imread(args.video_file, cv2.IMREAD_COLOR);
+
         # get parameters from track bars
 
         sigmaU = cv2.getTrackbarPos("sigma U", windowNameU);
@@ -88,7 +94,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # check sigma are correct
 
-        if (sigmaL >= sigmaU):
+        if (sigmaL >= sigmaU) and (sigmaU > 1):
             sigmaL = sigmaU - 1;
             print("auto-correcting sigmas such that U > L");
 

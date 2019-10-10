@@ -26,6 +26,7 @@ EVENT_LOOP_DELAY = 40;	# delay for GUI window
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-r", "--rescale", type=float, help="rescale iamge by this factor", default=1.0)
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 

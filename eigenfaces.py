@@ -41,6 +41,7 @@ keep_processing = True;
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
+parser.add_argument("-r", "--rescale", type=float, help="rescale iamge by this factor", default=1.0)
 parser.add_argument("-e", "--eigenfaces", type=int, help="specify number of eigenface (PCA) dimensions to use", default=10)
 parser.add_argument("-f", "--path_to_faces", type=str, help="path to face images", default='/tmp/images/')
 parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode");

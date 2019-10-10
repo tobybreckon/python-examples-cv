@@ -44,9 +44,9 @@ class CameraVideoStream:
 		# only start the thread if in-fact the camera read was successful
 		if (self.grabbed):
 			# start the thread to read frames from the video stream
-			t = Thread(target=self.update, name=self.name, args=())
-			t.daemon = True
-			t.start()
+			self.t = Thread(target=self.update, name=self.name, args=())
+			self.t.daemon = True
+			self.t.start()
 
 		return (self.grabbed > 0)
 
@@ -114,5 +114,10 @@ class CameraVideoStream:
 	def getBackendName():
 		 # get a video capture backend (behvavior as per OpenCV manual for VideoCapture)
 		 return self.camera.getBackendName()
+
+	def __del__(self):
+	 	 self.t.stop() # manually stop the thread
+	 	 self.grabbed = 0 # set flag to zero
+	 	 self.camera.release() # cleanly release camera hardware
 
 ################################################################################

@@ -63,6 +63,14 @@ For several of the demos that largely rely on effective demonstration using just
 
 ---
 
+### Re-usable Exemplar Components (Python Classes):
+
+For teaching and learning, this codebase contains several re-usable exemplar elements that offer more general insight:
+
+- ```camera_stream.py``` - a re-usable threaded camera class, that is call compatible with the existing OpenCV VideoCapture class, designed to always deliver the latest frame from a single camera without buffering delays (used by all examples if available).
+
+---
+
 ### References:
 
 If referencing these examples in your own work (e.g _"... based on the implementation of REF..."_), please reference the related research work from which these sample OpenCV reference implementations were derived (in terms of parameters choice etc., presented in bibtex format).

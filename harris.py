@@ -69,6 +69,18 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         if (cap.isOpened):
             ret, frame = cap.read();
 
+            # when we reach the end of the video (file) exit cleanly
+
+            if (ret == 0):
+                keep_processing = False;
+                continue;
+                
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
+
         # convert to single channel grayscale image
         # with 32-bit float representation per pixel
 

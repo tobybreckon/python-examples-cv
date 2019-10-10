@@ -89,6 +89,11 @@ if cam.open(args.camera_to_use):
         cam.grab();
         ret, frame = cam.retrieve();
 
+        # rescale if specified
+
+        if (args.rescale != 1.0):
+            frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
         # convert to grayscale
 
         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY);

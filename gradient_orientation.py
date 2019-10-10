@@ -74,6 +74,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 keep_processing = False;
                 continue;
 
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
         # compute the gradients in the x and y directions separately
         # N.B from here onward these images are 32-bit float
 

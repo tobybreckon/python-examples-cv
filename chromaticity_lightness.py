@@ -110,6 +110,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 keep_processing = False;
                 continue;
 
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
+
         # compute chromaticity as  c = c / SUM(RGB) for c = {R, G, B} with
         # safety for divide by zero errors
         # chromaticity {r,g,b} range is floating point 0 -> 1

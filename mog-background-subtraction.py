@@ -81,6 +81,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             if (ret == 0):
                 keep_processing = False;
                 continue;
+                
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
 
         # add current frame to background model and retrieve current foreground objects
 

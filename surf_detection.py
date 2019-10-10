@@ -179,10 +179,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         if (cap.isOpened):
             ret, frame = cap.read();
-            if frame is None:
+
+            # when we reach the end of the video (file) exit cleanly
+
+            if (ret == 0):
                 keep_processing = False;
-                print("no frame available");
-                quit();
+                continue;
+
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
+
 
         # start a timer (to see how long processing and display takes)
 

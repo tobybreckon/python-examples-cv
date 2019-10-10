@@ -71,6 +71,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     if (cap.isOpened):
         ret, frame = cap.read();
 
+        # rescale if specified
+
+        if (args.rescale != 1.0):
+            frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+
+
     # convert image to grayscale to be previous frame
 
     prevgray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -87,6 +93,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             if (ret == 0):
                 keep_processing = False;
                 continue;
+
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
 
         # convert image to grayscale
 

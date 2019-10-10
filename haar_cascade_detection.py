@@ -34,7 +34,7 @@ faces_recorded = 0;
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
 parser.add_argument("-r", "--rescale", type=float, help="rescale iamge by this factor", default=1.0)
-parser.add_argument("-r", "--harvest",  type=str, help="path to save detected faces to", default='')
+parser.add_argument("-ha", "--harvest",  type=str, help="path to save detected faces to", default='')
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
 
@@ -84,6 +84,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         if (cap.isOpened):
             ret, frame = cap.read();
+
+            # rescale if specified
+
+            if (args.rescale != 1.0):
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
 
         # start a timer (to see how long processing and display takes)
 

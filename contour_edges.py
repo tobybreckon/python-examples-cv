@@ -40,7 +40,17 @@ def nothing(x):
 
 # define video capture object
 
-cap = cv2.VideoCapture();
+try:
+    # to use a non-buffered camera stream (via a separate thread)
+
+    import camera_stream
+    cap = camera_stream.CameraVideoStream();
+    
+except:
+    # if not then just use OpenCV default
+
+    print("INFO: camera_stream class not found - camera input may be buffered");
+    cap = cv2.VideoCapture();
 
 # define display window name
 

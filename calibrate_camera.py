@@ -30,7 +30,7 @@ keep_processing = True;
 
 parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale iamge by this factor", default=1.0)
+parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
 args = parser.parse_args()
 
 #####################################################################

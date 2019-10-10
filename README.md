@@ -41,7 +41,8 @@ Most run with a webcam connected or from a command line supplied video file of a
 
 ```
 $ python3 ./generic_interface.py -h
-usage: generic_interface.py [-h] [-c CAMERA_TO_USE] [video_file]
+usage: generic_interface.py [-h] [-c CAMERA_TO_USE] [-r RESCALE] [-fs]
+                            [video_file]
 
 Perform ./generic_interface.py example operation on incoming camera/video
 image
@@ -53,6 +54,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -c CAMERA_TO_USE, --camera_to_use CAMERA_TO_USE
                         specify camera to use
+  -r RESCALE, --rescale RESCALE
+                        rescale image by this factor
 
 ```
 

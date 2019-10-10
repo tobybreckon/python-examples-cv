@@ -129,7 +129,6 @@ parser = argparse.ArgumentParser(description='Perform full stereo calibration an
 parser.add_argument("--ximea", help="use a pair of Ximea cameras", action="store_true")
 parser.add_argument("--zed", help="use a Stereolabs ZED stereo camera", action="store_true")
 parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale iamge by this factor", default=1.0)
 parser.add_argument("-cbx", "--chessboardx", type=int, help="specify number of internal chessboard squares in x-direction", default=6)
 parser.add_argument("-cby", "--chessboardy", type=int, help="specify number of internal chessboard squares in y-direction", default=9)
 parser.add_argument("-cbw", "--chessboardw", type=float, help="specify width/height of chessboard squares in mm", default=40.0)

@@ -27,7 +27,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
     # if it is a PNG file
 
     if '.png' in filename:
-        print(os.path.join(directory_to_cycle, filename));
+        print(os.path.join(directory_to_cycle, filename))
 
         # read it and display in a window
 

@@ -18,8 +18,8 @@ import sys
 
 #####################################################################
 
-keep_processing = True;
-EVENT_LOOP_DELAY = 40;	# delay for GUI window
+keep_processing = True
+EVENT_LOOP_DELAY = 40	# delay for GUI window
                         # 40 ms equates to 1000ms/25fps = 40ms per frame
 
 # parse command line arguments for camera ID or video file
@@ -52,17 +52,17 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
 
     import camera_stream
-    cap = camera_stream.CameraVideoStream();
+    cap = camera_stream.CameraVideoStream()
 
 except:
     # if not then just use OpenCV default
 
-    print("INFO: camera_stream class not found - camera input may be buffered");
-    cap = cv2.VideoCapture();
-    
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
+
 # define display window name
 
-windowName = "HOG pedestrain detection"; # window name
+windowName = "HOG pedestrain detection" # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -72,30 +72,30 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     # set up HoG detector
 
-    hog = cv2.HOGDescriptor();
-    hog.setSVMDetector( cv2.HOGDescriptor_getDefaultPeopleDetector() );
+    hog = cv2.HOGDescriptor()
+    hog.setSVMDetector( cv2.HOGDescriptor_getDefaultPeopleDetector() )
 
     while (keep_processing):
 
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, img = cap.read();
+            ret, img = cap.read()
 
             # when we reach the end of the video (file) exit cleanly
 
             if (ret == 0):
-                keep_processing = False;
-                continue;
+                keep_processing = False
+                continue
 
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
 
         # perform HOG based pedestrain detection
@@ -115,22 +115,22 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName,img);
+        cv2.imshow(windowName,img)
 
         # if user presses "x" then exit
 
-        key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        key = cv2.waitKey(40) & 0xFF # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
-            keep_processing = False;
+            keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 
     cv2.destroyAllWindows()
 
 else:
-    print("No video file specified or camera connected.");
+    print("No video file specified or camera connected.")

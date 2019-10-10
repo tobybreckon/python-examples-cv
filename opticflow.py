@@ -19,7 +19,7 @@ import numpy as np
 
 #####################################################################
 
-keep_processing = True;
+keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
@@ -54,17 +54,17 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
 
     import camera_stream
-    cap = camera_stream.CameraVideoStream();
+    cap = camera_stream.CameraVideoStream()
 
 except:
     # if not then just use OpenCV default
 
-    print("INFO: camera_stream class not found - camera input may be buffered");
-    cap = cv2.VideoCapture();
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
 
 # define display window name
 
-windowName = "Dense Optic Flow"; # window name
+windowName = "Dense Optic Flow" # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -74,17 +74,17 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     # if video file successfully open then read an initial frame from video
 
     if (cap.isOpened):
-        ret, frame = cap.read();
+        ret, frame = cap.read()
 
         # rescale if specified
 
         if (args.rescale != 1.0):
-            frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+            frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
 
     # convert image to grayscale to be previous frame
@@ -96,18 +96,18 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, frame = cap.read();
+            ret, frame = cap.read()
 
             # when we reach the end of the video (file) exit cleanly
 
             if (ret == 0):
-                keep_processing = False;
-                continue;
+                keep_processing = False
+                continue
 
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # convert image to grayscale
 
@@ -132,22 +132,22 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
 
-        key = cv2.waitKey(40) & 0xFF; # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        key = cv2.waitKey(40) & 0xFF # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
-            keep_processing = False;
+            keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 
     cv2.destroyAllWindows()
 
 else:
-    print("No video file specified or camera connected.");
+    print("No video file specified or camera connected.")
 
 #####################################################################

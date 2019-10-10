@@ -33,7 +33,7 @@ import math
 
 ################################################################################
 
-keep_processing = True;
+keep_processing = True
 
 ################################################################################
 
@@ -44,7 +44,7 @@ parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to u
 parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
 parser.add_argument("-e", "--eigenfaces", type=int, help="specify number of eigenface (PCA) dimensions to use", default=10)
 parser.add_argument("-f", "--path_to_faces", type=str, help="path to face images", default='/tmp/images/')
-parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode");
+parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode")
 parser.add_argument("-p", "--portrait_percentage", type=int, help="for potrait style inputs, specify upper percentage of image in which to detect face", default=100)
 parser.add_argument("-s", "--face_size", type=int, help="specify height/width of face images to use for the input to the PCA", default=300)
 parser.add_argument("-es", "--eigenfaces_to_skip", type=int, help="skip the first N eigenface dimensions that normally contain illumination information only", default=3)
@@ -82,7 +82,7 @@ def readImages(path, haar_face_detector):
                             scaleFactor=1.1, minNeighbors=4, minSize=(60,60), flags=cv2.CASCADE_DO_CANNY_PRUNING)
 
             if (len(face) > 0):
-                (x,y,w,h) = face[0];
+                (x,y,w,h) = face[0]
                 roi_gray = gray[y:y+h, x:x+w]
                 roi_gray = cv2.resize(roi_gray, (args.face_size, args.face_size))
 
@@ -109,7 +109,7 @@ def readImages(path, haar_face_detector):
         sys.exit(0)
 
     print(str(len(images)) + " files read.")
-    return (images, names);
+    return (images, names)
 
 ################################################################################
 # perform PCA on a set of images
@@ -142,7 +142,7 @@ def performPCA(images):
     # calculate the covariance and mean of the PCA space representation of the images
     # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
 
-    covariance_coeffs, mean_coeffs = cv2.calcCovarMatrix(coefficients[:,args.eigenfaces_to_skip:args.eigenfaces], mean=None, flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype = cv2.CV_32F);
+    covariance_coeffs, mean_coeffs = cv2.calcCovarMatrix(coefficients[:,args.eigenfaces_to_skip:args.eigenfaces], mean=None, flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype = cv2.CV_32F)
 
     return (mean, eigenVectors, coefficients, mean_coeffs, covariance_coeffs)
 
@@ -154,27 +154,27 @@ def find_matching_face(face_coefficients_to_match, coefficients_of_all_faces, co
 
     # set up loop variables
 
-    nearest_face_index = 0;
-    nearest_face_distance = 100; # i.e. huge
-    current_face = 0;
+    nearest_face_index = 0
+    nearest_face_distance = 100 # i.e. huge
+    current_face = 0
 
     for pca_face_coefficient in coefficients_of_all_faces:
 
         # calculate the Mahalanobis distamce between the coefficients we need to match and each from the set of faces
         # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
 
-        m_dist = cv2.Mahalanobis(face_coefficients_to_match[:,args.eigenfaces_to_skip:args.eigenfaces], pca_face_coefficient.reshape(1,args.eigenfaces)[:,args.eigenfaces_to_skip:args.eigenfaces], np.linalg.inv(covariance));
+        m_dist = cv2.Mahalanobis(face_coefficients_to_match[:,args.eigenfaces_to_skip:args.eigenfaces], pca_face_coefficient.reshape(1,args.eigenfaces)[:,args.eigenfaces_to_skip:args.eigenfaces], np.linalg.inv(covariance))
 
         # alternatively use the L1 or L2 norm as per original [Pentland / Turk 1991] paper - which used L1
         # m_dist = numpy.linalg.norm(face_coefficients_to_match[:,3:args.eigenfaces]-pca_face_coefficient.reshape(1,args.eigenfaces)[:,3:args.eigenfaces])
 
         if (m_dist < nearest_face_distance):
-            nearest_face_index = current_face;
-            nearest_face_distance = m_dist;
+            nearest_face_index = current_face
+            nearest_face_distance = m_dist
 
-        current_face += 1;
+        current_face += 1
 
-    return (nearest_face_index, nearest_face_distance);
+    return (nearest_face_index, nearest_face_distance)
 
 ################################################################################
 
@@ -184,27 +184,27 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
 
     import camera_stream
-    cap = camera_stream.CameraVideoStream();
-    
+    cap = camera_stream.CameraVideoStream()
+
 except:
     # if not then just use OpenCV default
 
-    print("INFO: camera_stream class not found - camera input may be buffered");
-    cap = cv2.VideoCapture();
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
 
 # define display window name
 
-windowName = "Face Recognition using EigenFaces"; # window name
+windowName = "Face Recognition using EigenFaces" # window name
 
 # define haar cascade objects
 
 # required cascade classifier files (and many others) available from:
 # https://github.com/opencv/opencv/tree/master/data/haarcascades
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 if (face_cascade.empty()):
-    print("Failed to load cascade from file.");
+    print("Failed to load cascade from file.")
     sys.exit(0)
 
 # load set of face images
@@ -213,7 +213,7 @@ if (face_cascade.empty()):
 
 # perform PCA on the images
 
-(mean, eigenVectors, coefficients, mean_coeffs, covariance_coeffs) = performPCA(images);
+(mean, eigenVectors, coefficients, mean_coeffs, covariance_coeffs) = performPCA(images)
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -223,23 +223,23 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, frame = cap.read();
+            ret, frame = cap.read()
 
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
-        start_t = cv2.getTickCount();
+        start_t = cv2.getTickCount()
 
         # convert to grayscale
 
@@ -268,25 +268,25 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             # measure distance to PCA coefficient for each face and find best match
 
-            face_index, face_distance = find_matching_face(face_coefficients, coefficients, covariance_coeffs);
+            face_index, face_distance = find_matching_face(face_coefficients, coefficients, covariance_coeffs)
 
             # show best match / display name and Mahalanobis distance for best match
 
-            cv2.putText(frame, names[face_index] + ": " + str(round(face_distance, 2)), (x, y+h+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0));
+            cv2.putText(frame, names[face_index] + ": " + str(round(face_distance, 2)), (x, y+h+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
             # display stored equalizeHist version side-by-side
 
-            cv2.imshow("best match", images[face_index]);
+            cv2.imshow("best match", images[face_index])
 
         # display image
 
-        cv2.imshow(windowName,frame);
+        cv2.imshow(windowName,frame)
         cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
-                                cv2.WINDOW_FULLSCREEN & args.fullscreen);
+                                cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000;
+        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -299,20 +299,20 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
 
-        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF;
+        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
-            keep_processing = False;
+            keep_processing = False
         elif (key == ord('f')):
-            args.fullscreen = not(args.fullscreen);
+            args.fullscreen = not(args.fullscreen)
 
     # close all windows
 
     cv2.destroyAllWindows()
 
 else:
-    print("No video file specified or camera connected.");
+    print("No video file specified or camera connected.")

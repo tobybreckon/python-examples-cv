@@ -23,7 +23,7 @@ import math
 
 #####################################################################
 
-keep_processing = True;
+keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
@@ -41,27 +41,27 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
 
     import camera_stream
-    cap = camera_stream.CameraVideoStream();
+    cap = camera_stream.CameraVideoStream()
 
 except:
     # if not then just use OpenCV default
 
-    print("INFO: camera_stream class not found - camera input may be buffered");
-    cap = cv2.VideoCapture();
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
 
 # define display window name
 
-windowName = "Face Detection using LBP Cascades"; # window name
+windowName = "Face Detection using LBP Cascades" # window name
 
 # define lbpcascades cascade objects
 
 # required cascade classifier files (and many others) available from:
 # https://github.com/opencv/opencv/tree/master/data/lbpcascades
 
-face_cascade = cv2.CascadeClassifier('lbpcascade_frontalface.xml');
+face_cascade = cv2.CascadeClassifier('lbpcascade_frontalface.xml')
 
 if (face_cascade.empty()):
-    print("Failed to load cascade from file.");
+    print("Failed to load cascade from file.")
 
 
 # if command line arguments are provided try to read video_name
@@ -72,29 +72,29 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, frame = cap.read();
+            ret, frame = cap.read()
 
             # when we reach the end of the video (file) exit cleanly
 
             if (ret == 0):
-                keep_processing = False;
-                continue;
+                keep_processing = False
+                continue
 
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
-        start_t = cv2.getTickCount();
+        start_t = cv2.getTickCount()
 
         # convert to grayscale
 
@@ -117,11 +117,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName,frame);
+        cv2.imshow(windowName,frame)
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000;
+        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -134,20 +134,20 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
 
-        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF;
+        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
-            keep_processing = False;
+            keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 
     cv2.destroyAllWindows()
 
 else:
-    print("No video file specified or camera connected.");
+    print("No video file specified or camera connected.")

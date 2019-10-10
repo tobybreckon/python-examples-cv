@@ -32,8 +32,8 @@ class CameraVideoStream:
 		self.suspend = False
 
 		# set these to null values initially
-		self.grabbed = 0;
-		self.frame = None;
+		self.grabbed = 0
+		self.frame = None
 
 	def open(self, src=0):
 		# initialize the video camera stream and read the first frame
@@ -48,15 +48,15 @@ class CameraVideoStream:
 			t.daemon = True
 			t.start()
 
-		return (self.grabbed > 0);
+		return (self.grabbed > 0)
 
 	def update(self):
 		# keep looping infinitely until the thread is stopped
 		while True:
 			# if the thread indicator variable is set, stop the thread
 			if self.stopped:
-				self.grabbed = 0; # set flag to ensure isOpen() returns False
-				self.camera.release(); # cleanly release camera hardware
+				self.grabbed = 0 # set flag to ensure isOpen() returns False
+				self.camera.release() # cleanly release camera hardware
 				return
 
 			# otherwise, read the next frame from the stream
@@ -67,11 +67,11 @@ class CameraVideoStream:
 
 	def grab(self):
 		# return status of most recent grab by the thread
-		return self.grabbed;
+		return self.grabbed
 
 	def retrieve(self):
 		# same as read() in the context of threaded capture
-		return self.read();
+		return self.read()
 
 	def read(self):
 		# return the frame most recently read
@@ -79,7 +79,7 @@ class CameraVideoStream:
 
 	def isOpened(self):
 		# indicate that the camera is open successfully
-		return (self.grabbed > 0);
+		return (self.grabbed > 0)
 
 	def release(self):
 		# indicate that the thread should be stopped
@@ -89,7 +89,7 @@ class CameraVideoStream:
 		# set a video capture property (behavior as per OpenCV manual for VideoCapture)
 
 		# first suspend thread
-		self.suspend = True;
+		self.suspend = True
 
 		# set value - wrapping it in grabs() so it takes effect
 		self.camera.grab()
@@ -103,9 +103,9 @@ class CameraVideoStream:
 		(self.grabbed, self.frame) = self.camera.read()
 
 		# restart thread by unsuspending it
-		self.suspend = False;
+		self.suspend = False
 
-		return ret_val;
+		return ret_val
 
 	def get(self, property_name):
 		# get a video capture property (behvavior as per OpenCV manual for VideoCapture)

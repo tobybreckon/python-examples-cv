@@ -26,8 +26,8 @@ import math
 
 #####################################################################
 
-keep_processing = True;
-faces_recorded = 0;
+keep_processing = True
+faces_recorded = 0
 
 # parse command line arguments for camera ID or video file
 
@@ -55,28 +55,28 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
 
     import camera_stream
-    cap = camera_stream.CameraVideoStream();
+    cap = camera_stream.CameraVideoStream()
 
 except:
     # if not then just use OpenCV default
 
-    print("INFO: camera_stream class not found - camera input may be buffered");
-    cap = cv2.VideoCapture();
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
 
 # define display window name
 
-windowName = "Face Detection using Haar Cascades"; # window name
+windowName = "Face Detection using Haar Cascades" # window name
 
 # define haar cascade objects
 
 # required cascade classifier files (and many others) available from:
 # https://github.com/opencv/opencv/tree/master/data/haarcascades
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
-eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml');
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 if (face_cascade.empty() or eye_cascade.empty()):
-    print("Failed to load cascade from file.");
+    print("Failed to load cascade from file.")
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -86,23 +86,23 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL);
+    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, frame = cap.read();
+            ret, frame = cap.read()
 
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale);
+                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
-        start_t = cv2.getTickCount();
+        start_t = cv2.getTickCount()
 
         # convert to grayscale
 
@@ -120,7 +120,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # extract regions of interest (roi) and draw each face bounding box and
 
             roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w] # top 50% to detect eyes
-            roi_color = frame[y:y+h, x:x+w].copy(); # copy to save if required
+            roi_color = frame[y:y+h, x:x+w].copy() # copy to save if required
 
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
 
@@ -136,17 +136,17 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # if specified, record all the faces we see to a specified directory
 
             if (len(args.harvest) > 0):
-                filename = os.path.join(args.harvest, "face_" + str(format(faces_recorded,'04')) + ".png");
-                cv2.imwrite(filename, roi_color);
-                faces_recorded += 1;
+                filename = os.path.join(args.harvest, "face_" + str(format(faces_recorded,'04')) + ".png")
+                cv2.imwrite(filename, roi_color)
+                faces_recorded += 1
 
         # display image
 
-        cv2.imshow(windowName,frame);
+        cv2.imshow(windowName,frame)
 
         # stop the timer and convert to ms. (to see how long processing and display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000;
+        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -159,20 +159,20 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
 
-        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF;
+        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
         # It can also be set to detect specific key strokes by recording which key is pressed
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
-            keep_processing = False;
+            keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 
     cv2.destroyAllWindows()
 
 else:
-    print("No video file specified or camera connected.");
+    print("No video file specified or camera connected.")

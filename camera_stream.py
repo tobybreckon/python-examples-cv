@@ -116,8 +116,8 @@ class CameraVideoStream:
 		 return self.camera.getBackendName()
 
 	def __del__(self):
-	 	 self.t.stop() # manually stop the thread
-	 	 self.grabbed = 0 # set flag to zero
-	 	 self.camera.release() # cleanly release camera hardware
+
+	 	 self.stopped = True
+	 	 self.suspend = True
 
 ################################################################################

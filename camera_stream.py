@@ -119,5 +119,11 @@ class CameraVideoStream:
 
 	 	 self.stopped = True
 	 	 self.suspend = True
+		 self.t.join()
+
+	def __exit__(self, exec_type, exc_value, traceback):
+	 	 self.stopped = True
+	 	 self.suspend = True
+	 	 self.t.join()
 
 ################################################################################

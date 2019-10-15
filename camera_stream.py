@@ -3,7 +3,7 @@
 # threaded frame capture from camera to avoid camera frame buffering delays
 # (always delivers the latest frame from the camera)
 
-# Copyright (c) 2018 Toby Breckon, Durham University, UK
+# Copyright (c) 2018-2019 Toby Breckon, Durham University, UK
 # Copyright (c) 2015-2016 Adrian Rosebrock, http://www.pyimagesearch.com
 # MIT License (MIT)
 
@@ -17,6 +17,35 @@
 
 from threading import Thread
 import cv2
+import atexit
+
+################################################################################
+
+# set up global variables and atexit() function to facilitate safe thread exit
+# without a segfault from the VideoCapture object as experienced on some platforms
+# (as __del__ and __exit__ are not called outside a 'with' construct)
+
+exitingNow = False # global flag for program exit
+threadList = []    # list of current threads (i.e. multi-camera/thread safe)
+
+###########################
+
+def closeDownThreadCleanly():
+	global exitingNow
+	global threadList
+
+    # set exit flag to cause each thread to exit
+
+	exitingNow = True
+
+    # for each thread wait for it to exit
+
+	for thread in threadList:
+		thread.join()
+
+###########################
+
+atexit.register(closeDownThreadCleanly)
 
 ################################################################################
 
@@ -36,6 +65,7 @@ class CameraVideoStream:
 		self.frame = None
 
 	def open(self, src=0):
+
 		# initialize the video camera stream and read the first frame
 		# from the stream
 		self.camera = cv2.VideoCapture(src)
@@ -43,18 +73,26 @@ class CameraVideoStream:
 
 		# only start the thread if in-fact the camera read was successful
 		if (self.grabbed):
-			# start the thread to read frames from the video stream
-			self.t = Thread(target=self.update, name=self.name, args=())
-			self.t.daemon = True
-			self.t.start()
+			# create the thread to read frames from the video stream
+			thread = Thread(target=self.update, name=self.name, args=())
+
+			#  append thread to globa array of threads
+			threadList.append(thread)
+
+			# get thread id we will use to address thread on list
+			self.threadID = len(threadList) - 1
+
+			# start thread and set it to run in background
+			threadList[self.threadID].daemon = True
+			threadList[self.threadID].start()
 
 		return (self.grabbed > 0)
 
 	def update(self):
 		# keep looping infinitely until the thread is stopped
 		while True:
-			# if the thread indicator variable is set, stop the thread
-			if self.stopped:
+			# if the thread indicator variable is set or exiting, stop the thread
+			if self.stopped or exitingNow:
 				self.grabbed = 0 # set flag to ensure isOpen() returns False
 				self.camera.release() # cleanly release camera hardware
 				return
@@ -116,14 +154,11 @@ class CameraVideoStream:
 		 return self.camera.getBackendName()
 
 	def __del__(self):
-
 	 	 self.stopped = True
 	 	 self.suspend = True
-		 self.t.join()
 
 	def __exit__(self, exec_type, exc_value, traceback):
 	 	 self.stopped = True
 	 	 self.suspend = True
-	 	 self.t.join()
 
 ################################################################################

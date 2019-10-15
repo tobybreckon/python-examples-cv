@@ -30,7 +30,7 @@ threadList = []    # list of current threads (i.e. multi-camera/thread safe)
 
 ###########################
 
-def closeDownThreadCleanly():
+def closeDownAllThreadsCleanly():
 	global exitingNow
 	global threadList
 
@@ -45,7 +45,7 @@ def closeDownThreadCleanly():
 
 ###########################
 
-atexit.register(closeDownThreadCleanly)
+atexit.register(closeDownAllThreadsCleanly)
 
 ################################################################################
 

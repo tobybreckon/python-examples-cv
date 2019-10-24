@@ -51,7 +51,7 @@ def on_trackbar(val):
     return
 
 #####################################################################
-# Draw the predicted bounding box
+# Draw the predicted bounding box on the specified image
 
 def drawPred(image, classId, conf, left, top, right, bottom, colour):
     # Draw a bounding box.
@@ -74,7 +74,7 @@ def drawPred(image, classId, conf, left, top, right, bottom, colour):
 #####################################################################
 # Remove the bounding boxes with low confidence using non-maxima suppression
 
-def postprocess(frame, results):
+def postprocess(frame, results, threshold_confidence, threshold_nms):
     frameHeight = frame.shape[0]
     frameWidth = frame.shape[1]
 
@@ -95,7 +95,7 @@ def postprocess(frame, results):
             scores = detection[5:]
             classId = np.argmax(scores)
             confidence = scores[classId]
-            if confidence > confThreshold:
+            if confidence > threshold_confidence:
                 center_x = int(detection[0] * frameWidth)
                 center_y = int(detection[1] * frameHeight)
                 width = int(detection[2] * frameWidth)
@@ -109,15 +109,20 @@ def postprocess(frame, results):
     # Perform non maximum suppression to eliminate redundant overlapping boxes with
     # lower confidences.
 
-    indices = cv2.dnn.NMSBoxes(boxes, confidences, confThreshold, nmsThreshold)
+    classIds_nms = []
+    confidences_nms = []
+    boxes_nms = []
+
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, threshold_confidence, threshold_nms)
     for i in indices:
         i = i[0]
-        box = boxes[i]
-        left = box[0]
-        top = box[1]
-        width = box[2]
-        height = box[3]
-        drawPred(frame, classIds[i], confidences[i], left, top, left + width, top + height, (255, 178, 50))
+        classIds_nms.append(classIds[i])
+        confidences_nms.append(confidences[i])
+        boxes_nms.append(boxes[i])
+
+    # return post processed lists of classIds, confidences and bounding boxes
+
+    return (classIds_nms, confidences_nms, boxes_nms)
 
 ################################################################################
 # Get the names of the output layers of the network
@@ -223,7 +228,17 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # remove the bounding boxes with low confidence
         confThreshold = cv2.getTrackbarPos(trackbarName,windowName) / 100
-        postprocess(frame, results)
+        classIDs, confidences, boxes = postprocess(frame, results, confThreshold, nmsThreshold)
+
+        # draw resulting detections on image
+
+        for object in range(0, len(boxes)):
+            box = boxes[object]
+            left = box[0]
+            top = box[1]
+            width = box[2]
+            height = box[3]
+            drawPred(frame, classIDs[object], confidences[object], left, top, left + width, top + height, (255, 178, 50))
 
         # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
         t, _ = net.getPerfProfile()
@@ -240,22 +255,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
 
-        # start the event loop - essential
-
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
-        # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # start the event loop + detect specific key strokes
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
-
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # if user presses "x" then exit  / press "f" for fullscreen display
 
         if (key == ord('x')):
             keep_processing = False

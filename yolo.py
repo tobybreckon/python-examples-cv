@@ -53,16 +53,12 @@ def on_trackbar(val):
 #####################################################################
 # Draw the predicted bounding box on the specified image
 
-def drawPred(image, classId, conf, left, top, right, bottom, colour):
+def drawPred(image, class_name, confidence, left, top, right, bottom, colour):
     # Draw a bounding box.
     cv2.rectangle(image, (left, top), (right, bottom), colour, 3)
 
-    label = '%.2f' % conf
-
-    # Get the label for the class name and its confidence
-    if classes:
-        assert(classId < len(classes))
-        label = '%s:%s' % (classes[classId], label)
+    # construct label
+    label = '%s:%.2f' % (class_name, confidence)
 
     #Display the label at the top of the bounding box
     labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
@@ -232,13 +228,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # draw resulting detections on image
 
-        for object in range(0, len(boxes)):
-            box = boxes[object]
+        for detected_object in range(0, len(boxes)):
+            box = boxes[detected_object]
             left = box[0]
             top = box[1]
             width = box[2]
             height = box[3]
-            drawPred(frame, classIDs[object], confidences[object], left, top, left + width, top + height, (255, 178, 50))
+            drawPred(frame, classes[classIDs[detected_object]], confidences[detected_object], left, top, left + width, top + height, (255, 178, 50))
 
         # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
         t, _ = net.getPerfProfile()

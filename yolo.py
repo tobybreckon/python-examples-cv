@@ -160,14 +160,14 @@ except:
 
 ################################################################################
 
-# init YOLO CNN model
+# init YOLO CNN object detection model
 
 confThreshold = 0.5  # Confidence threshold
 nmsThreshold = 0.4   # Non-maximum suppression threshold
 inpWidth = 416       # Width of network's input image
 inpHeight = 416      # Height of network's input image
 
-# Load names of classes
+# Load names of classes from file
 
 classesFile = args.class_file
 classes = None

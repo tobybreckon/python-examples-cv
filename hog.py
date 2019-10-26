@@ -51,8 +51,11 @@ def draw_detections(img, rects, thickness = 1):
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
-    import camera_stream
-    cap = camera_stream.CameraVideoStream()
+    if not(args.video_file):
+        import camera_stream
+        cap = camera_stream.CameraVideoStream()
+    else:
+        cap = cv2.VideoCapture() # not needed for video files
 
 except:
     # if not then just use OpenCV default

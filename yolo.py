@@ -42,7 +42,7 @@ parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to u
 parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
 parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode")
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
-parser.add_argument("-cl", "--class_file", type=str, help="list of classes", default='coco.name')
+parser.add_argument("-cl", "--class_file", type=str, help="list of classes", default='coco.names')
 parser.add_argument("-cf", "--config_file", type=str, help="network config", default='yolov3.cfg')
 parser.add_argument("-w", "--weights_file", type=str, help="network weights", default='yolov3.weights')
 

@@ -46,7 +46,7 @@ windowNameU = "Undistored (calibrated) Camera" # window name
 
 #####################################################################
 
-# perform intrinsic calibration (removal of image distortion in each image)
+# perform intrinsic calibration (removal of image distortion in image)
 
 do_calibration = False
 termination_criteria_subpix = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -69,7 +69,7 @@ imgpoints = [] # 2d points in image plane.
 
 #####################################################################
 
-# count number of chessboard detection (across both images)
+# count number of chessboard detections
 chessboard_pattern_detections = 0
 
 print()
@@ -84,7 +84,7 @@ if cam.open(args.camera_to_use):
 
     while (not(do_calibration)):
 
-        # grab frames from camera (to ensure best time sync.)
+        # grab frames from camera (to ensure best time sync., if using stereo - which we are not here)
 
         cam.grab()
         ret, frame = cam.retrieve()

@@ -177,9 +177,13 @@ with open(classesFile, 'rt') as f:
 # load configuration and weight files for the model and load the network using them
 
 net = cv2.dnn.readNetFromDarknet(args.config_file, args.weights_file)
-net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 output_layer_names = getOutputsNames(net)
+
+ # defaults DNN_BACKEND_INFERENCE_ENGINE if Intel Inference Engine lib available or DNN_BACKEND_OPENCV otherwise
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+
+# change to cv2.dnn.DNN_TARGET_CPU (slower) if this causes issues (should fail gracefully if OpenCL not available)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
 ################################################################################
 

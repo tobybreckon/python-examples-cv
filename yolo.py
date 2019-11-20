@@ -85,10 +85,6 @@ def postprocess(image, results, threshold_confidence, threshold_nms):
     frameHeight = image.shape[0]
     frameWidth = image.shape[1]
 
-    classIds = []
-    confidences = []
-    boxes = []
-
     # Scan through all the bounding boxes output from the network and..
     # 1. keep only the ones with high confidence scores.
     # 2. assign the box class label as the class with the highest score.

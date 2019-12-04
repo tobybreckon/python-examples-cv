@@ -85,7 +85,7 @@ class StereoCamera:
 
             self.camL = cv2.VideoCapture()
             self.camR = cv2.VideoCapture()
-            if not((self.camL.open(args.camera_to_use)) and (self.camR.open(args.camera_to_use + 1))):
+            if not((self.camL.open(args.camera_to_use)) and (self.camR.open(args.camera_to_use + 2))):
                 print("Cannot open pair of system cameras connected starting at camera #:", args.camera_to_use)
                 exit()
 

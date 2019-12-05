@@ -70,8 +70,7 @@ cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
 ################################################################################
 
-# set pose labels - based on
-COCO dataset training
+# set pose labels - based on COCO dataset training
 
 BODY_PARTS = { "Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
                "LShoulder": 5, "LElbow": 6, "LWrist": 7, "RHip": 8, "RKnee": 9,

@@ -30,6 +30,11 @@ import math
 import numpy as np
 
 ################################################################################
+# dummy on trackbar callback function
+def on_trackbar(val):
+    return
+
+################################################################################
 
 keep_processing = True
 
@@ -67,6 +72,12 @@ except:
 
 windowName = "SqueezeNet Image Classification - Live" # window name
 
+# create window by name (as resizable)
+
+cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+trackbarName = 'reporting confidence > (x 0.01)'
+cv2.createTrackbar(trackbarName, windowName , 50, 100, on_trackbar)
+
 ################################################################################
 
 # Load names of class labels
@@ -90,10 +101,6 @@ net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL) # change to .._CPU if needed
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
     or (cap.open(args.camera_to_use))):
-
-    # create window by name (as resizable)
-
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -150,8 +157,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
         cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
 
+        # get confidence threshold from track bar
+        confThreshold = cv2.getTrackbarPos(trackbarName,windowName) / 100
+
         # if we are quite confidene about classification then dispplay
-        if (confidence > 0.5):
+        if (confidence > confThreshold):
             # add predicted class.
             label = '%s: %.4f' % (classes[classId] if classes else 'Class #%d' % classId, confidence)
             cv2.putText(frame, label, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))

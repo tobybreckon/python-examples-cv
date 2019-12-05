@@ -15,6 +15,7 @@
 import cv2
 import argparse
 import sys
+import math
 
 #####################################################################
 
@@ -29,6 +30,11 @@ parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to u
 parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
 parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
 args = parser.parse_args()
+
+#####################################################################
+
+cv2.ocl.setUseOpenCL(True)
+print("INFO: OpenCL - available: ", cv2.ocl.haveOpenCL(), " using: ", cv2.ocl.useOpenCL())
 
 #####################################################################
 
@@ -87,7 +93,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, img = cap.read()
+            ret, img_t = cap.read()
+            img = cv2.UMat(img_t)
 
             # when we reach the end of the video (file) exit cleanly
 
@@ -98,8 +105,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(img, (0, 0), fx=args.rescale, fy=args.rescale)
 
+        # start a timer (to see how long processing and display takes)
+
+        start_t = cv2.getTickCount()
 
         # perform HOG based pedestrain detection
 
@@ -113,16 +123,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 else:
                     found_filtered.append(r)
 
-        draw_detections(img, found)
         draw_detections(img, found_filtered, 3)
 
         # display image
 
         cv2.imshow(windowName,img)
 
-        # if user presses "x" then exit
+        # stop the timer and convert to ms. (to see how long processing and display takes)
 
-        key = cv2.waitKey(40) & 0xFF # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+
+        key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
         # e.g. if user presses "x" then exit  / press "f" for fullscreen display
 

@@ -188,7 +188,7 @@ net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 windowName = 'YOLOv3 object detection: ' + args.weights_file
 cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 trackbarName = 'reporting confidence > (x 0.01)'
-cv2.createTrackbar(trackbarName, windowName , 0, 100, on_trackbar)
+cv2.createTrackbar(trackbarName, windowName , 70, 100, on_trackbar)
 
 ################################################################################
 

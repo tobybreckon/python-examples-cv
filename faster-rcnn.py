@@ -245,11 +245,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             height = box[3]
             drawPred(frame, classes[classIDs[detected_object]], confidences[detected_object], left, top, left + width, top + height, (150, 178, 50))
 
-        # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        # Display efficiency information - the function getPerfProfile returns the overall time for inference from the network
         t, _ = net.getPerfProfile()
-        label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
+        inference_t = (t * 1000.0 / cv2.getTickFrequency())
+        label = ('Inference time: %.2f ms' % inference_t) + (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
         cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-
+        
         # display image
         cv2.imshow(windowName,frame)
         cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,

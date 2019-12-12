@@ -87,3 +87,16 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# specific to this repo
+
+*.pb
+*.xml
+*.pbtxt
+*.txt
+*.caffemodel
+*.prototxt
+*.cfg
+*.weights
+*.names
+calibration

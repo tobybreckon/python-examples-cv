@@ -1,6 +1,6 @@
 #####################################################################
 
-# Example : perform live object detectoon using a pre-trained CNN model
+# Example : perform live object detectoon using a pre-trained SSD CNN model
 # and display from a video file specified on the command line
 # (e.g. python FILE.py video_file) or from an attached web camera
 
@@ -141,7 +141,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         inWidth = 300                      # network input width
         inHeight = 300                     # network input height
-        WHRatio = inWidth / float(inHeight)
         inScaleFactor = 0.007843           # input scale factor
 
         blob = cv2.dnn.blobFromImage(frame, inScaleFactor, (inWidth, inHeight),
@@ -185,7 +184,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 # look up the class name based on the class id and draw it on the frame also
 
                 if class_id in classNames:
-                    label = classNames[class_id] + ": " + str(confidence)
+                    label = classNames[class_id] + (": %.2f" % confidence)
                     labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
                     yLeftBottom = max(yLeftBottom, labelSize[1])
@@ -194,6 +193,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                                          (255, 255, 255), cv2.FILLED)
                     cv2.putText(frame, label, (xLeftBottom, yLeftBottom),
                                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+
+        # Display efficiency information - the function getPerfProfile returns the overall time for inference from the network
+
+        t, _ = net.getPerfProfile()
+        inference_t = (t * 1000.0 / cv2.getTickFrequency())
+        label = ('Inference time: %.2f ms' % inference_t) + (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
+        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # display image
 

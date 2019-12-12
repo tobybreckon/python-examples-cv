@@ -151,11 +151,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         classId = np.argmax(out)
         confidence = out[classId]
 
-        # add efficiency information.
-
+        # Display efficiency information - the function getPerfProfile returns the overall time for inference from the network
         t, _ = net.getPerfProfile()
-        label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
-        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
+        inference_t = (t * 1000.0 / cv2.getTickFrequency())
+        label = ('Inference time: %.2f ms' % inference_t) + (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
+        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # get confidence threshold from track bar
         confThreshold = cv2.getTrackbarPos(trackbarName,windowName) / 100

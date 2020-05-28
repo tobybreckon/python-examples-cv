@@ -1,4 +1,4 @@
-################################################################################
+##########################################################################
 
 # Example : perform live display of openpose body pose regression from a video
 # file specified on the command line (e.g. python FILE.py video_file) or from an
@@ -13,12 +13,13 @@
 # Based heavily on the example provided at:
 # https://github.com/opencv/opencv/blob/master/samples/dnn/openpose.py
 
-################################################################################
+##########################################################################
 
 # To use download COCO model pose files from: https://github.com/CMU-Perceptual-Computing-Lab/openpose/
-# using https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/models/getModels.sh
+# using
+# https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/models/getModels.sh
 
-################################################################################
+##########################################################################
 
 import cv2
 import argparse
@@ -26,20 +27,42 @@ import sys
 import math
 import numpy as np
 
-################################################################################
+##########################################################################
 
 keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode")
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    "-fs",
+    "--fullscreen",
+    action='store_true',
+    help="run in full screen mode")
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
-################################################################################
+##########################################################################
 
 # define video capture object
 
@@ -50,53 +73,71 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
     cap = cv2.VideoCapture()
 
-################################################################################
+##########################################################################
 
 # define display window name
 
-windowName = "OpenPose Body Pose Regression - Live" # window name
+windowName = "OpenPose Body Pose Regression - Live"  # window name
 
 # create window by name (as resizable)
 
 cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 
-################################################################################
+##########################################################################
 
 # set pose labels - based on COCO dataset training
 
-BODY_PARTS = { "Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
-               "LShoulder": 5, "LElbow": 6, "LWrist": 7, "RHip": 8, "RKnee": 9,
-               "RAnkle": 10, "LHip": 11, "LKnee": 12, "LAnkle": 13, "REye": 14,
-               "LEye": 15, "REar": 16, "LEar": 17, "Background": 18 }
+BODY_PARTS = {"Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
+              "LShoulder": 5, "LElbow": 6, "LWrist": 7, "RHip": 8, "RKnee": 9,
+              "RAnkle": 10, "LHip": 11, "LKnee": 12, "LAnkle": 13, "REye": 14,
+              "LEye": 15, "REar": 16, "LEar": 17, "Background": 18}
 
-POSE_PAIRS = [ ["Neck", "RShoulder"], ["Neck", "LShoulder"], ["RShoulder", "RElbow"],
-               ["RElbow", "RWrist"], ["LShoulder", "LElbow"], ["LElbow", "LWrist"],
-               ["Neck", "RHip"], ["RHip", "RKnee"], ["RKnee", "RAnkle"], ["Neck", "LHip"],
-               ["LHip", "LKnee"], ["LKnee", "LAnkle"], ["Neck", "Nose"], ["Nose", "REye"],
-               ["REye", "REar"], ["Nose", "LEye"], ["LEye", "LEar"] ]
+POSE_PAIRS = [
+    [
+        "Neck", "RShoulder"], [
+            "Neck", "LShoulder"], [
+                "RShoulder", "RElbow"], [
+                    "RElbow", "RWrist"], [
+                        "LShoulder", "LElbow"], [
+                            "LElbow", "LWrist"], [
+                                "Neck", "RHip"], [
+                                    "RHip", "RKnee"], [
+                                        "RKnee", "RAnkle"], [
+                                            "Neck", "LHip"], [
+                                                "LHip", "LKnee"], [
+                                                    "LKnee", "LAnkle"], [
+                                                        "Neck", "Nose"], [
+                                                            "Nose", "REye"], [
+                                                                "REye", "REar"], [
+                                                                    "Nose", "LEye"], [
+                                                                        "LEye", "LEar"]]
 
-################################################################################
+##########################################################################
 
 # Load CNN model
-net = cv2.dnn.readNet("pose_iter_440000.caffemodel", "pose_deploy_linevec.prototxt", 'caffe')
+net = cv2.dnn.readNet(
+    "pose_iter_440000.caffemodel",
+    "pose_deploy_linevec.prototxt",
+    'caffe')
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL) # change to .._CPU if needed
+# change to .._CPU if needed
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
-################################################################################
+##########################################################################
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     while (keep_processing):
 
@@ -118,11 +159,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
-        # create a 4D tensor "blob" from a frame - defaults from OpenCV OpenPose example
+        # create a 4D tensor "blob" from a frame - defaults from OpenCV
+        # OpenPose example
 
-        blob = cv2.dnn.blobFromImage(frame, scalefactor=0.003922, size=(368, 368), mean=[0,0,0], swapRB=False, crop=False)
+        blob = cv2.dnn.blobFromImage(
+            frame, scalefactor=0.003922, size=(
+                368, 368), mean=[
+                0, 0, 0], swapRB=False, crop=False)
 
         # Run forward inference on the model
 
@@ -161,25 +207,32 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 idTo = BODY_PARTS[partTo]
 
                 if points[idFrom] and points[idTo]:
-                    cv2.line(frame, points[idFrom], points[idTo], (0, 255, 0), 3)
-                    cv2.ellipse(frame, points[idFrom], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
-                    cv2.ellipse(frame, points[idTo], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
+                    cv2.line(
+                        frame, points[idFrom], points[idTo], (0, 255, 0), 3)
+                    cv2.ellipse(
+                        frame, points[idFrom], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
+                    cv2.ellipse(
+                        frame, points[idTo], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
 
         # add efficiency information.
 
         t, _ = net.getPerfProfile()
-        label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
-        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
+        label = 'Inference time: %.2f ms' % (
+            t * 1000.0 / cv2.getTickFrequency())
+        cv2.putText(frame, label, (0, 15),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
 
         # display image
 
-        cv2.imshow(windowName,frame)
+        cv2.imshow(windowName, frame)
         cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
-                                cv2.WINDOW_FULLSCREEN & args.fullscreen)
+                              cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -188,15 +241,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
@@ -210,4 +267,4 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 else:
     print("No video file specified or camera connected.")
 
-################################################################################
+##########################################################################

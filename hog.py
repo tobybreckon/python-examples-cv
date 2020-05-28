@@ -20,39 +20,65 @@ import math
 #####################################################################
 
 keep_processing = True
-EVENT_LOOP_DELAY = 40	# delay for GUI window
-                        # 40 ms equates to 1000ms/25fps = 40ms per frame
+EVENT_LOOP_DELAY = 40  # delay for GUI window
+# 40 ms equates to 1000ms/25fps = 40ms per frame
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
 #####################################################################
 
 cv2.ocl.setUseOpenCL(True)
-print("INFO: OpenCL - available: ", cv2.ocl.haveOpenCL(), " using: ", cv2.ocl.useOpenCL())
+print(
+    "INFO: OpenCL - available: ",
+    cv2.ocl.haveOpenCL(),
+    " using: ",
+    cv2.ocl.useOpenCL())
 
 #####################################################################
+
 
 def inside(r, q):
     rx, ry, rw, rh = r
     qx, qy, qw, qh = q
     return rx > qx and ry > qy and rx + rw < qx + qw and ry + rh < qy + qh
 
-def draw_detections(img, rects, thickness = 1):
+
+def draw_detections(img, rects, thickness=1):
     for x, y, w, h in rects:
         # the HOG detector returns slightly larger rectangles than the real objects.
         # so we slightly shrink the rectangles to get a nicer output.
-        pad_w, pad_h = int(0.15*w), int(0.05*h)
-        cv2.rectangle(img, (x+pad_w, y+pad_h), (x+w-pad_w, y+h-pad_h), (0, 255, 0), thickness)
+        pad_w, pad_h = int(0.15 * w), int(0.05 * h)
+        cv2.rectangle(img, (x + pad_w, y + pad_h),
+                      (x + w - pad_w, y + h - pad_h), (0, 255, 0), thickness)
 
 #####################################################################
 
 # define video capture object
+
 
 try:
     # to use a non-buffered camera stream (via a separate thread)
@@ -61,9 +87,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -71,13 +97,13 @@ except:
 
 # define display window name
 
-windowName = "HOG pedestrain detection" # window name
+windowName = "HOG pedestrain detection"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -86,7 +112,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     # set up HoG detector
 
     hog = cv2.HOGDescriptor()
-    hog.setSVMDetector( cv2.HOGDescriptor_getDefaultPeopleDetector() )
+    hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     while (keep_processing):
 
@@ -105,7 +131,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(img, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    img, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
@@ -113,7 +140,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # perform HOG based pedestrain detection
 
-        found, w = hog.detectMultiScale(img, winStride=(8,8), padding=(32,32), scale=1.05)
+        found, w = hog.detectMultiScale(
+            img, winStride=(
+                8, 8), padding=(
+                32, 32), scale=1.05)
         found_filtered = []
 
         for ri, r in enumerate(found):
@@ -127,22 +157,29 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName,img)
+        cv2.imshow(windowName, img)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty(
+                windowName,
+                cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 

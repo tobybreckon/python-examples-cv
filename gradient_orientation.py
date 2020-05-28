@@ -27,10 +27,28 @@ keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
 #####################################################################
@@ -44,9 +62,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -54,15 +72,15 @@ except:
 
 # define display window names
 
-windowNameGx = "Gradient - Gx" # window name
-windowNameGy = "Gradient - Gy" # window name
-windowNameAngle = "Gradient Angle" # window name
+windowNameGx = "Gradient - Gx"  # window name
+windowNameGy = "Gradient - Gy"  # window name
+windowNameAngle = "Gradient Angle"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -90,7 +108,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # compute the gradients in the x and y directions separately
         # N.B from here onward these images are 32-bit float
@@ -121,13 +140,15 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display images (as 8-bit)
 
-        cv2.imshow(windowNameGx,gx.astype(np.uint8))
-        cv2.imshow(windowNameGy,gy.astype(np.uint8))
-        cv2.imshow(windowNameAngle,angle.astype(np.uint8))
+        cv2.imshow(windowNameGx, gx.astype(np.uint8))
+        cv2.imshow(windowNameGy, gy.astype(np.uint8))
+        cv2.imshow(windowNameAngle, angle.astype(np.uint8))
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -136,20 +157,27 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowNameAngle, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty(
+                windowNameAngle,
+                cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 

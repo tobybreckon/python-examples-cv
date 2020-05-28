@@ -27,10 +27,28 @@ keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
 #####################################################################
@@ -44,9 +62,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -54,7 +72,7 @@ except:
 
 # define display window name
 
-windowName = "Face Detection using LBP Cascades" # window name
+windowName = "Face Detection using LBP Cascades"  # window name
 
 # define lbpcascades cascade objects
 
@@ -71,7 +89,7 @@ if (face_cascade.empty()):
 # otherwise default to capture from attached H/W camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -93,7 +111,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
@@ -105,26 +124,29 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # detect faces using LBP cascade trained on faces
 
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=3, minSize=(30,30))
+        faces = face_cascade.detectMultiScale(
+            gray, scaleFactor=1.3, minNeighbors=3, minSize=(30, 30))
 
         # for each detected face, try to detect eyes inside the top
         # half of the face region face region
 
-        for (x,y,w,h) in faces:
+        for (x, y, w, h) in faces:
 
             # draw each face bounding box and extract regions of interest (roi)
 
-            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-            roi_gray = gray[y:y+math.floor(h * 0.5), x:x+w]
-            roi_color = frame[y:y+math.floor(h * 0.5), x:x+w]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            roi_gray = gray[y:y + math.floor(h * 0.5), x:x + w]
+            roi_color = frame[y:y + math.floor(h * 0.5), x:x + w]
 
         # display image
 
-        cv2.imshow(windowName,frame)
+        cv2.imshow(windowName, frame)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -133,20 +155,27 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty(
+                windowName,
+                cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 

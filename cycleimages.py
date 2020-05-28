@@ -16,7 +16,7 @@
 import cv2
 import os
 
-directory_to_cycle = "path-to-directory-to-cycle" # edit this
+directory_to_cycle = "path-to-directory-to-cycle"  # edit this
 
 #####################################################################
 
@@ -31,9 +31,13 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         # read it and display in a window
 
-        img = cv2.imread(os.path.join(directory_to_cycle, filename), cv2.IMREAD_COLOR)
-        cv2.imshow('the image',img)
-        key = cv2.waitKey(200) # wait 200ms
+        img = cv2.imread(
+            os.path.join(
+                directory_to_cycle,
+                filename),
+            cv2.IMREAD_COLOR)
+        cv2.imshow('the image', img)
+        key = cv2.waitKey(200)  # wait 200ms
         if (key == ord('x')):
             break
 

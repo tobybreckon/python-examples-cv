@@ -36,15 +36,34 @@ keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
 cnn_model_to_load = "MobileNetSSD_deploy"
 
 #####################################################################
+
 
 def trackbar_callback(pos):
     global confidence_threshold
@@ -54,6 +73,7 @@ def trackbar_callback(pos):
 
 # define video capture object
 
+
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
@@ -61,9 +81,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -71,13 +91,13 @@ except:
 
 # define display window name
 
-windowName = "Live Object Detection - CNN: " + cnn_model_to_load # window name
+windowName = "Live Object Detection - CNN: " + cnn_model_to_load  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -86,21 +106,25 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     # add track bar to window for confidence threshold
 
     confidence_threshold = 0.7
-    cv2.createTrackbar('Confidence threshold, %', windowName, int(confidence_threshold * 100), 99, trackbar_callback)
+    cv2.createTrackbar('Confidence threshold, %', windowName, int(
+        confidence_threshold * 100), 99, trackbar_callback)
 
     # init CNN model - here from Caffe, although OpenCV can import from
     # mosyt deep learning templates
 
-    net = cv2.dnn.readNetFromCaffe(cnn_model_to_load + ".prototxt", cnn_model_to_load + ".caffemodel")
+    net = cv2.dnn.readNetFromCaffe(
+        cnn_model_to_load + ".prototxt",
+        cnn_model_to_load + ".caffemodel")
 
-# provide mappings from class numbers to string labels - these are the PASCAL VOC classees
+# provide mappings from class numbers to string labels - these are the
+# PASCAL VOC classees
 
-    classNames = {  0: 'background',
-                    1: 'aeroplane', 2: 'bicycle', 3: 'bird', 4: 'boat',
-                    5: 'bottle', 6: 'bus', 7: 'car', 8: 'cat', 9: 'chair',
-                    10: 'cow', 11: 'diningtable', 12: 'dog', 13: 'horse',
-                    14: 'motorbike', 15: 'person', 16: 'pottedplant',
-                    17: 'sheep', 18: 'sofa', 19: 'train', 20: 'tvmonitor' }
+    classNames = {0: 'background',
+                  1: 'aeroplane', 2: 'bicycle', 3: 'bird', 4: 'boat',
+                  5: 'bottle', 6: 'bus', 7: 'car', 8: 'cat', 9: 'chair',
+                  10: 'cow', 11: 'diningtable', 12: 'dog', 13: 'horse',
+                  14: 'motorbike', 15: 'person', 16: 'pottedplant',
+                  17: 'sheep', 18: 'sofa', 19: 'train', 20: 'tvmonitor'}
 
     while (keep_processing):
 
@@ -122,7 +146,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # get size of input
 
@@ -143,8 +168,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         inHeight = 300                     # network input height
         inScaleFactor = 0.007843           # input scale factor
 
-        blob = cv2.dnn.blobFromImage(frame, inScaleFactor, (inWidth, inHeight),
-                (meanChannelVal, meanChannelVal, meanChannelVal), swapRBchannels, crop)
+        blob = cv2.dnn.blobFromImage(
+            frame,
+            inScaleFactor,
+            (inWidth,
+             inHeight),
+            (meanChannelVal,
+             meanChannelVal,
+             meanChannelVal),
+            swapRBchannels,
+            crop)
 
         # set this transformed image -> tensor blob as the network input
 
@@ -173,41 +206,49 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                 xLeftBottom = int(detections[0, 0, i, 3] * cols)
                 yLeftBottom = int(detections[0, 0, i, 4] * rows)
-                xRightTop   = int(detections[0, 0, i, 5] * cols)
-                yRightTop   = int(detections[0, 0, i, 6] * rows)
+                xRightTop = int(detections[0, 0, i, 5] * cols)
+                yRightTop = int(detections[0, 0, i, 6] * rows)
 
                 # draw the bounding box on the frame
 
-                cv2.rectangle(frame, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
-                              (0, 255, 0))
+                cv2.rectangle(frame, (xLeftBottom, yLeftBottom),
+                              (xRightTop, yRightTop), (0, 255, 0))
 
-                # look up the class name based on the class id and draw it on the frame also
+                # look up the class name based on the class id and draw it on
+                # the frame also
 
                 if class_id in classNames:
                     label = classNames[class_id] + (": %.2f" % confidence)
-                    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    labelSize, baseLine = cv2.getTextSize(
+                        label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
                     yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv2.rectangle(frame, (xLeftBottom, yLeftBottom - labelSize[1]),
-                                         (xLeftBottom + labelSize[0], yLeftBottom + baseLine),
-                                         (255, 255, 255), cv2.FILLED)
+                    cv2.rectangle(frame, (xLeftBottom, yLeftBottom -
+                                          labelSize[1]), (xLeftBottom +
+                                                          labelSize[0], yLeftBottom +
+                                                          baseLine), (255, 255, 255), cv2.FILLED)
                     cv2.putText(frame, label, (xLeftBottom, yLeftBottom),
-                                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
-        # Display efficiency information - the function getPerfProfile returns the overall time for inference from the network
+        # Display efficiency information - the function getPerfProfile returns
+        # the overall time for inference from the network
 
         t, _ = net.getPerfProfile()
         inference_t = (t * 1000.0 / cv2.getTickFrequency())
-        label = ('Inference time: %.2f ms' % inference_t) + (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
-        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+        label = ('Inference time: %.2f ms' % inference_t) + \
+            (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
+        cv2.putText(frame, label, (0, 15),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # display image
 
-        cv2.imshow(windowName,frame)
+        cv2.imshow(windowName, frame)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -216,20 +257,26 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
         # e.g. if user presses "x" then exit / press "f" for fullscreen
 
         if (key == ord('x')):
             keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty(
+                windowName,
+                cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 

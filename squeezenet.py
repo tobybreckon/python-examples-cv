@@ -1,4 +1,4 @@
-################################################################################
+##########################################################################
 
 # Example : perform live display of squeezenet CNN classification from a video
 # file specified on the command line (e.g. python FILE.py video_file) or from an
@@ -13,15 +13,16 @@
 # Based heavily on the example provided at:
 # https://github.com/opencv/opencv/blob/master/samples/dnn/classification.py
 
-################################################################################
+##########################################################################
 
 # To use download the following files:
 
 # https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/classification_classes_ILSVRC2012.txt -> classification_classes_ILSVRC2012.txt
 # https://github.com/forresti/SqueezeNet/raw/master/SqueezeNet_v1.1/squeezenet_v1.1.caffemodel -> squeezenet_v1.1.caffemodel
-# https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/squeezenet_v1.1.prototxt -> squeezenet_v1.1.prototxt
+# https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/squeezenet_v1.1.prototxt
+# -> squeezenet_v1.1.prototxt
 
-################################################################################
+##########################################################################
 
 import cv2
 import argparse
@@ -29,25 +30,50 @@ import sys
 import math
 import numpy as np
 
-################################################################################
+##########################################################################
 # dummy on trackbar callback function
+
+
 def on_trackbar(val):
     return
 
-################################################################################
+##########################################################################
+
 
 keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode")
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    "-fs",
+    "--fullscreen",
+    action='store_true',
+    help="run in full screen mode")
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
-################################################################################
+##########################################################################
 
 # define video capture object
 
@@ -58,27 +84,27 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
     cap = cv2.VideoCapture()
 
-################################################################################
+##########################################################################
 
 # define display window name
 
-windowName = "SqueezeNet Image Classification - Live" # window name
+windowName = "SqueezeNet Image Classification - Live"  # window name
 
 # create window by name (as resizable)
 
 cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
 trackbarName = 'reporting confidence > (x 0.01)'
-cv2.createTrackbar(trackbarName, windowName , 50, 100, on_trackbar)
+cv2.createTrackbar(trackbarName, windowName, 50, 100, on_trackbar)
 
-################################################################################
+##########################################################################
 
 # Load names of class labels
 
@@ -86,21 +112,25 @@ classes = None
 with open("classification_classes_ILSVRC2012.txt", 'rt') as f:
     classes = f.read().rstrip('\n').split('\n')
 
-################################################################################
+##########################################################################
 
 # Load CNN model
 
-net = cv2.dnn.readNet("squeezenet_v1.1.caffemodel", "squeezenet_v1.1.prototxt", 'caffe')
+net = cv2.dnn.readNet(
+    "squeezenet_v1.1.caffemodel",
+    "squeezenet_v1.1.prototxt",
+    'caffe')
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL) # change to .._CPU if needed
+# change to .._CPU if needed
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
-################################################################################
+##########################################################################
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     while (keep_processing):
 
@@ -122,9 +152,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
-        ########################################################################
+        #######################################################################
         # squeezenet:
         #   model: "squeezenet_v1.1.caffemodel"
         #   config: "squeezenet_v1.1.prototxt"
@@ -134,11 +165,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         #   height: 227
         #   rgb: false
         #   classes: "classification_classes_ILSVRC2012.txt
-        ########################################################################
+        #######################################################################
 
         # create a 4D tensor "blob" from a frame.
 
-        blob = cv2.dnn.blobFromImage(frame, scalefactor=1.0, size=(227, 227), mean=[0,0,0], swapRB=False, crop=False)
+        blob = cv2.dnn.blobFromImage(
+            frame, scalefactor=1.0, size=(
+                227, 227), mean=[
+                0, 0, 0], swapRB=False, crop=False)
 
         # Run forward inference on the model
 
@@ -151,30 +185,37 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         classId = np.argmax(out)
         confidence = out[classId]
 
-        # Display efficiency information - the function getPerfProfile returns the overall time for inference from the network
+        # Display efficiency information - the function getPerfProfile returns
+        # the overall time for inference from the network
         t, _ = net.getPerfProfile()
         inference_t = (t * 1000.0 / cv2.getTickFrequency())
-        label = ('Inference time: %.2f ms' % inference_t) + (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
-        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+        label = ('Inference time: %.2f ms' % inference_t) + \
+            (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
+        cv2.putText(frame, label, (0, 15),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # get confidence threshold from track bar
-        confThreshold = cv2.getTrackbarPos(trackbarName,windowName) / 100
+        confThreshold = cv2.getTrackbarPos(trackbarName, windowName) / 100
 
         # if we are quite confidene about classification then dispplay
         if (confidence > confThreshold):
             # add predicted class.
-            label = '%s: %.4f' % (classes[classId] if classes else 'Class #%d' % classId, confidence)
-            cv2.putText(frame, label, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+            label = '%s: %.4f' % (
+                classes[classId] if classes else 'Class #%d' % classId, confidence)
+            cv2.putText(frame, label, (0, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # display image
 
-        cv2.imshow(windowName,frame)
+        cv2.imshow(windowName, frame)
         cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
-                                cv2.WINDOW_FULLSCREEN & args.fullscreen)
+                              cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -183,15 +224,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
@@ -205,4 +250,4 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 else:
     print("No video file specified or camera connected.")
 
-################################################################################
+##########################################################################

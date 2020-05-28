@@ -1,4 +1,4 @@
-################################################################################
+##########################################################################
 
 # Example : perform live chromaticity/lightness display from a video file
 # specified on the command line (e.g. python FILE.py video_file) or from an
@@ -10,7 +10,7 @@
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-################################################################################
+##########################################################################
 
 import cv2
 import argparse
@@ -18,23 +18,46 @@ import sys
 import math
 import numpy as np
 
-################################################################################
+##########################################################################
 
 keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument("-fs", "--fullscreen", action='store_true', help="run in full screen mode")
-parser.add_argument('video_file', metavar='video_file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument(
+    "-fs",
+    "--fullscreen",
+    action='store_true',
+    help="run in full screen mode")
+parser.add_argument(
+    'video_file',
+    metavar='video_file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
-################################################################################
+##########################################################################
 
 # concatenate two RGB/grayscale images horizontally (left to right) handling
 # differing channel numbers or image heights in the input
+
 
 def h_concatenate(img1, img2):
 
@@ -62,7 +85,7 @@ def h_concatenate(img1, img2):
     elif ((channels2 > channels1) and (channels2 == 3)):
         out1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
         out2 = img2
-    else: # both must be equal
+    else:  # both must be equal
         out1 = img1
         out2 = img2
 
@@ -73,9 +96,10 @@ def h_concatenate(img1, img2):
 
     return np.hstack((out1, out2))
 
-################################################################################
+##########################################################################
 
 # define video capture object
+
 
 try:
     # to use a non-buffered camera stream (via a separate thread)
@@ -84,9 +108,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -100,7 +124,7 @@ windowName = "Live - [Original RGB | Chromaticity {r,g,b} | Lightness (l)]"
 # otherwise default to capture from attached camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -126,8 +150,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
-
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # compute chromaticity as  c = c / SUM(RGB) for c = {R, G, B} with
         # safety for divide by zero errors
@@ -138,12 +162,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         chromaticity = np.zeros(frame.shape).astype(np.float32)
         sum_channel = np.zeros(frame.shape).astype(np.float32)
-        sum_channel = (frame[:,:,0].astype(np.float32)
-                        + frame[:,:,1].astype(np.float32)
-                        + frame[:,:,2].astype(np.float32)) + np.finfo(np.float32).resolution
-        chromaticity[:,:,0] = (frame[:,:,0] / sum_channel)
-        chromaticity[:,:,1] = (frame[:,:,1] / sum_channel)
-        chromaticity[:,:,2] = (frame[:,:,2] / sum_channel)
+        sum_channel = (frame[:,
+                             :,
+                             0].astype(np.float32) + frame[:,
+                                                           :,
+                                                           1].astype(np.float32) + frame[:,
+                                                                                         :,
+                                                                                         2].astype(np.float32)) + np.finfo(np.float32).resolution
+        chromaticity[:, :, 0] = (frame[:, :, 0] / sum_channel)
+        chromaticity[:, :, 1] = (frame[:, :, 1] / sum_channel)
+        chromaticity[:, :, 2] = (frame[:, :, 2] / sum_channel)
 
         # compute lightness as an integer = RGB / 3 (range is 0 -> 255)
 
@@ -152,13 +180,24 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # display image as a concatenated triple of [ RGB | Chromaticity | Lightness ]
         # adjusting back to 8-bit and scaling appropriately for display
 
-        cv2.imshow(windowName, h_concatenate(h_concatenate(frame, (chromaticity * 255).astype(np.uint8)), lightness.astype(np.uint8)))
+        cv2.imshow(
+            windowName,
+            h_concatenate(
+                h_concatenate(
+                    frame,
+                    (chromaticity *
+                     255).astype(
+                        np.uint8)),
+                lightness.astype(
+                    np.uint8)))
         cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
-                                cv2.WINDOW_FULLSCREEN & args.fullscreen)
+                              cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
-        # stop the timer and convert to ms. (to see how long processing and display takes)
+        # stop the timer and convert to ms. (to see how long processing and
+        # display takes)
 
-        stop_t = ((cv2.getTickCount() - start_t)/cv2.getTickFrequency()) * 1000
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essential
 
@@ -167,15 +206,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time already used in the loop
+        # here we use a wait time in ms. that takes account of processing time
+        # already used in the loop
 
-        # wait 40ms or less depending on processing time taken (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms or less depending on processing time taken (i.e. 1000ms /
+        # 25 fps = 40 ms)
 
         key = cv2.waitKey(max(2, 40 - int(math.ceil(stop_t)))) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
@@ -189,4 +232,4 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 else:
     print("No video file specified or camera connected.")
 
-################################################################################
+##########################################################################

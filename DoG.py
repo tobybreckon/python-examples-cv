@@ -23,17 +23,37 @@ keep_processing = True
 
 # parse command line arguments for camera ID or video file
 
-parser = argparse.ArgumentParser(description='Perform ' + sys.argv[0] + ' example operation on incoming camera/video image')
-parser.add_argument("-c", "--camera_to_use", type=int, help="specify camera to use", default=0)
-parser.add_argument("-r", "--rescale", type=float, help="rescale image by this factor", default=1.0)
-parser.add_argument("-i", "--is_image", action='store_true', help="specify file is an image, not a video")
-parser.add_argument('video_file', metavar='file', type=str, nargs='?', help='specify optional video file')
+parser = argparse.ArgumentParser(
+    description='Perform ' +
+    sys.argv[0] +
+    ' example operation on incoming camera/video image')
+parser.add_argument(
+    "-c",
+    "--camera_to_use",
+    type=int,
+    help="specify camera to use",
+    default=0)
+parser.add_argument(
+    "-r",
+    "--rescale",
+    type=float,
+    help="rescale image by this factor",
+    default=1.0)
+parser.add_argument("-i", "--is_image", action='store_true',
+                    help="specify file is an image, not a video")
+parser.add_argument(
+    'video_file',
+    metavar='file',
+    type=str,
+    nargs='?',
+    help='specify optional video file')
 args = parser.parse_args()
 
 #####################################################################
 
 # this function is called as a call-back everytime the trackbar is moved
 # (here we just do nothing)
+
 
 def nothing(x):
     pass
@@ -42,6 +62,7 @@ def nothing(x):
 
 # define video capture object
 
+
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
@@ -49,9 +70,9 @@ try:
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
-        cap = cv2.VideoCapture() # not needed for video files
+        cap = cv2.VideoCapture()  # not needed for video files
 
-except:
+except BaseException:
     # if not then just use OpenCV default
 
     print("INFO: camera_stream class not found - camera input may be buffered")
@@ -59,16 +80,16 @@ except:
 
 # define display window name
 
-windowName = "Live Camera Input" # window name
-windowNameU = "Gaussian  Upper" # window name
-windowNameL = "Gaussian  Lower" # window name
-windowNameDoG = "DoG" # window name
+windowName = "Live Camera Input"  # window name
+windowNameU = "Gaussian  Upper"  # window name
+windowNameL = "Gaussian  Lower"  # window name
+windowNameDoG = "DoG"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
 
 if (((args.video_file) and (cap.open(str(args.video_file))))
-    or (cap.open(args.camera_to_use))):
+        or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
 
@@ -79,9 +100,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # add some track bar controllers for settings
 
-    sigmaU = 2 # greater than 7 seems to crash
+    sigmaU = 2  # greater than 7 seems to crash
     cv2.createTrackbar("sigma U", windowNameU, sigmaU, 15, nothing)
-    sigmaL = 1 # greater than 7 seems to crash
+    sigmaL = 1  # greater than 7 seems to crash
     cv2.createTrackbar("sigma L", windowNameL, sigmaL, 15, nothing)
 
     while (keep_processing):
@@ -100,7 +121,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # rescale if specified
 
             if (args.rescale != 1.0):
-                frame = cv2.resize(frame, (0, 0), fx=args.rescale, fy=args.rescale)
+                frame = cv2.resize(
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # if it is a still image, load that instead
 
@@ -128,11 +150,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # performing smoothing on the image using a smoothing mark (see manual entry for GaussianBlur())
-        # specify 0x0 mask size then size is auto-computed from the sigma values
+        # specify 0x0 mask size then size is auto-computed from the sigma
+        # values
 
-        smoothedU = cv2.GaussianBlur(gray_frame,(0,0),sigmaU)
-        smoothedL = cv2.GaussianBlur(gray_frame,(0,0),sigmaL)
-
+        smoothedU = cv2.GaussianBlur(gray_frame, (0, 0), sigmaU)
+        smoothedL = cv2.GaussianBlur(gray_frame, (0, 0), sigmaL)
 
         # perform abs_diff() to get DoG
 
@@ -146,10 +168,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName,frame)
-        cv2.imshow(windowNameU,smoothedU)
-        cv2.imshow(windowNameL,smoothedL)
-        cv2.imshow(windowNameDoG,DoG)
+        cv2.imshow(windowName, frame)
+        cv2.imshow(windowNameU, smoothedU)
+        cv2.imshow(windowNameL, smoothedL)
+        cv2.imshow(windowNameDoG, DoG)
 
         # start the event loop - essential
 
@@ -159,18 +181,24 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # If 0 is passed, it waits indefinitely for a key stroke.
         # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
 
-        key = cv2.waitKey(40) & 0xFF # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
+        key = cv2.waitKey(40) & 0xFF
 
-        # It can also be set to detect specific key strokes by recording which key is pressed
+        # It can also be set to detect specific key strokes by recording which
+        # key is pressed
 
         # e.g. if user presses "x" then exit
 
-        # e.g. if user presses "x" then exit  / press "f" for fullscreen display
+        # e.g. if user presses "x" then exit  / press "f" for fullscreen
+        # display
 
         if (key == ord('x')):
             keep_processing = False
         elif (key == ord('f')):
-            cv2.setWindowProperty(windowNameDoG, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty(
+                windowNameDoG,
+                cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
 
     # close all windows
 

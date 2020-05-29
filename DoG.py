@@ -80,10 +80,10 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
-windowNameU = "Gaussian  Upper"  # window name
-windowNameL = "Gaussian  Lower"  # window name
-windowNameDoG = "DoG"  # window name
+window_name = "Live Camera Input"  # window name
+window_nameU = "Gaussian  Upper"  # window name
+window_nameL = "Gaussian  Lower"  # window name
+window_nameDoG = "DoG"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -93,17 +93,17 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameL, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameU, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameDoG, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameL, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameU, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameDoG, cv2.WINDOW_NORMAL)
 
     # add some track bar controllers for settings
 
     sigmaU = 2  # greater than 7 seems to crash
-    cv2.createTrackbar("sigma U", windowNameU, sigmaU, 15, nothing)
+    cv2.createTrackbar("sigma U", window_nameU, sigmaU, 15, nothing)
     sigmaL = 1  # greater than 7 seems to crash
-    cv2.createTrackbar("sigma L", windowNameL, sigmaL, 15, nothing)
+    cv2.createTrackbar("sigma L", window_nameL, sigmaL, 15, nothing)
 
     while (keep_processing):
 
@@ -131,8 +131,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        sigmaU = cv2.getTrackbarPos("sigma U", windowNameU)
-        sigmaL = cv2.getTrackbarPos("sigma L", windowNameL)
+        sigmaU = cv2.getTrackbarPos("sigma U", window_nameU)
+        sigmaL = cv2.getTrackbarPos("sigma L", window_nameL)
 
         # check sigma's are greater than 1
 
@@ -168,10 +168,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.imshow(windowNameU, smoothedU)
-        cv2.imshow(windowNameL, smoothedL)
-        cv2.imshow(windowNameDoG, DoG)
+        cv2.imshow(window_name, frame)
+        cv2.imshow(window_nameU, smoothedU)
+        cv2.imshow(window_nameL, smoothedL)
+        cv2.imshow(window_nameDoG, DoG)
 
         # start the event loop - essential
 
@@ -196,7 +196,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowNameDoG,
+                window_nameDoG,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

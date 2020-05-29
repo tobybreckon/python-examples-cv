@@ -74,10 +74,10 @@ if ((major == '3') and (minor == '1')):
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
-windowNameBG = "Background Model"  # window name
-windowNameFG = "Foreground Objects"  # window name
-windowNameFGP = "Foreground Probabiity"  # window name
+window_name = "Live Camera Input"  # window name
+window_nameBG = "Background Model"  # window name
+window_nameFG = "Foreground Objects"  # window name
+window_nameFGP = "Foreground Probabiity"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -87,10 +87,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameBG, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameFG, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameFGP, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameBG, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameFG, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameFGP, cv2.WINDOW_NORMAL)
 
     # create GMM background subtraction object
     # (using default parameters which are suitable for quick lecture demos
@@ -138,10 +138,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display images - input, background and original
 
-        cv2.imshow(windowName, frame)
-        cv2.imshow(windowNameFG, fgdilated)
-        cv2.imshow(windowNameFGP, fgmask)
-        cv2.imshow(windowNameBG, bgmodel)
+        cv2.imshow(window_name, frame)
+        cv2.imshow(window_nameFG, fgdilated)
+        cv2.imshow(window_nameFGP, fgmask)
+        cv2.imshow(window_nameBG, bgmodel)
 
         # start the event loop - essential
 

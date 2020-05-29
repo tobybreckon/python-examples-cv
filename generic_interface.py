@@ -73,7 +73,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
+window_name = "Live Camera Input"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
@@ -83,7 +83,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -114,8 +114,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.imshow(window_name, frame)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

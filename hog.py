@@ -97,7 +97,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "HOG pedestrain detection"  # window name
+window_name = "HOG pedestrain detection"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -107,7 +107,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     # set up HoG detector
 
@@ -157,7 +157,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, img)
+        cv2.imshow(window_name, img)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -177,7 +177,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName,
+                window_name,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

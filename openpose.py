@@ -85,11 +85,11 @@ except BaseException:
 
 # define display window name
 
-windowName = "OpenPose Body Pose Regression - Live"  # window name
+window_name = "OpenPose Body Pose Regression - Live"  # window name
 
 # create window by name (as resizable)
 
-cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
 ##########################################################################
 
@@ -224,8 +224,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.imshow(window_name, frame)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

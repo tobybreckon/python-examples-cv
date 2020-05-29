@@ -143,9 +143,9 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
-windowName2 = "Feature Matches"  # window name
-windowNameSelection = "Selected Features"
+window_name = "Live Camera Input"  # window name
+window_name2 = "Feature Matches"  # window name
+window_nameSelection = "Selected Features"
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -155,13 +155,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (note flags for resizable or not)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowName2, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameSelection, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name2, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameSelection, cv2.WINDOW_NORMAL)
 
     # set a mouse callback
 
-    cv2.setMouseCallback(windowName, on_mouse, 0)
+    cv2.setMouseCallback(window_name, on_mouse, 0)
     cropped = False
 
     # create feature point objects
@@ -266,7 +266,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                 # display features on cropped region
 
-                cv2.imshow(windowNameSelection, cropped_region_with_features)
+                cv2.imshow(window_nameSelection, cropped_region_with_features)
 
             # reset list of boxes so we do this part only once
 
@@ -411,7 +411,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 good_matches,
                 None,
                 **draw_params)
-            cv2.imshow(windowName2, display_matches)
+            cv2.imshow(window_name2, display_matches)
 
         # if running in detection only then draw detections
 
@@ -424,7 +424,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display live image
 
-        cv2.imshow(windowName, frame)
+        cv2.imshow(window_name, frame)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)

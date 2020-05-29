@@ -54,8 +54,8 @@ cam = cv2.VideoCapture()
 
 # define display window names
 
-windowName = "Camera Input"  # window name
-windowNameU = "Undistored (calibrated) Camera"  # window name
+window_name = "Camera Input"  # window name
+window_nameU = "Undistored (calibrated) Camera"  # window name
 
 #####################################################################
 
@@ -147,13 +147,13 @@ if cam.open(args.camera_to_use):
             cv2.putText(drawboard, text, (10, 25),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
 
-            cv2.imshow(windowName, drawboard)
+            cv2.imshow(window_name, drawboard)
         else:
             text = 'detected: ' + str(chessboard_pattern_detections)
             cv2.putText(frame, text, (10, 25),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
 
-            cv2.imshow(windowName, frame)
+            cv2.imshow(window_name, frame)
 
         # start the event loop
 
@@ -209,8 +209,8 @@ while (keep_processing):
 
     # display both images
 
-    cv2.imshow(windowName, frame)
-    cv2.imshow(windowNameU, undistorted)
+    cv2.imshow(window_name, frame)
+    cv2.imshow(window_nameU, undistorted)
 
     # start the event loop - essential
 

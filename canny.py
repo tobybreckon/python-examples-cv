@@ -77,8 +77,8 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
-windowName2 = "Canny Edges"  # window name
+window_name = "Live Camera Input"  # window name
+window_name2 = "Canny Edges"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -88,24 +88,24 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowName2, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name2, cv2.WINDOW_NORMAL)
 
     # add some track bar controllers for settings
 
     lower_threshold = 25
-    cv2.createTrackbar("lower", windowName2, lower_threshold, 255, nothing)
+    cv2.createTrackbar("lower", window_name2, lower_threshold, 255, nothing)
     upper_threshold = 120
-    cv2.createTrackbar("upper", windowName2, upper_threshold, 255, nothing)
+    cv2.createTrackbar("upper", window_name2, upper_threshold, 255, nothing)
     smoothing_neighbourhood = 3
     cv2.createTrackbar(
         "smoothing",
-        windowName2,
+        window_name2,
         smoothing_neighbourhood,
         15,
         nothing)
     sobel_size = 3  # greater than 7 seems to crash
-    cv2.createTrackbar("sobel size", windowName2, sobel_size, 7, nothing)
+    cv2.createTrackbar("sobel size", window_name2, sobel_size, 7, nothing)
 
     while (keep_processing):
 
@@ -128,10 +128,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        lower_threshold = cv2.getTrackbarPos("lower", windowName2)
-        upper_threshold = cv2.getTrackbarPos("upper", windowName2)
-        smoothing_neighbourhood = cv2.getTrackbarPos("smoothing", windowName2)
-        sobel_size = cv2.getTrackbarPos("sobel size", windowName2)
+        lower_threshold = cv2.getTrackbarPos("lower", window_name2)
+        upper_threshold = cv2.getTrackbarPos("upper", window_name2)
+        smoothing_neighbourhood = cv2.getTrackbarPos("smoothing", window_name2)
+        sobel_size = cv2.getTrackbarPos("sobel size", window_name2)
 
         # check neighbourhood is greater than 3 and odd
 
@@ -163,16 +163,17 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.imshow(windowName2, canny)
+        cv2.imshow(window_name, frame)
+        cv2.imshow(window_name2, canny)
 
         # start the event loop - essential
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
+        # cv2.waitKey() is a keyboard binding function (argument is the time in
+        # milliseconds). It waits for specified milliseconds for any keyboard
+        # event. If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
+        # (bitwise and with 0xFF to extract least significant byte of multi-byte
+        # response)
 
         # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
         key = cv2.waitKey(40) & 0xFF
@@ -187,7 +188,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName2,
+                window_name2,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

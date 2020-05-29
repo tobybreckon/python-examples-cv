@@ -91,7 +91,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Object Detection - CNN: " + cnn_model_to_load  # window name
+window_name = "Live Object Detection - CNN: " + cnn_model_to_load  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
@@ -101,12 +101,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     # add track bar to window for confidence threshold
 
     confidence_threshold = 0.7
-    cv2.createTrackbar('Confidence threshold, %', windowName, int(
+    cv2.createTrackbar('Confidence threshold, %', window_name, int(
         confidence_threshold * 100), 99, trackbar_callback)
 
     # init CNN model - here from Caffe, although OpenCV can import from
@@ -242,7 +242,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
+        cv2.imshow(window_name, frame)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -274,7 +274,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName,
+                window_name,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

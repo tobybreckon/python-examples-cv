@@ -118,7 +118,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live - [Original RGB | Chromaticity {r,g,b} | Lightness (l)]"
+window_name = "Live - [Original RGB | Chromaticity {r,g,b} | Lightness (l)]"
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
@@ -128,7 +128,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -181,7 +181,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # adjusting back to 8-bit and scaling appropriately for display
 
         cv2.imshow(
-            windowName,
+            window_name,
             h_concatenate(
                 h_concatenate(
                     frame,
@@ -190,7 +190,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                         np.uint8)),
                 lightness.astype(
                     np.uint8)))
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

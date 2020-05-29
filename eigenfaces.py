@@ -260,7 +260,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Face Recognition using EigenFaces"  # window name
+window_name = "Face Recognition using EigenFaces"  # window name
 
 # define haar cascade objects
 
@@ -290,7 +290,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -359,8 +359,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.imshow(window_name, frame)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

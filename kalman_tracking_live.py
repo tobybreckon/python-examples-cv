@@ -135,9 +135,9 @@ except BaseException:
 
 # define display window name
 
-windowName = "Kalman Object Tracking"  # window name
-windowName2 = "Hue histogram back projection"  # window name
-windowNameSelection = "initial selected region"
+window_name = "Kalman Object Tracking"  # window name
+window_name2 = "Hue histogram back projection"  # window name
+window_nameSelection = "initial selected region"
 
 # init kalman filter object
 
@@ -169,24 +169,24 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (note flags for resizable or not)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowName2, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameSelection, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name2, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameSelection, cv2.WINDOW_NORMAL)
 
     # set sliders for HSV selection thresholds
 
     s_lower = 60
-    cv2.createTrackbar("s lower", windowName2, s_lower, 255, nothing)
+    cv2.createTrackbar("s lower", window_name2, s_lower, 255, nothing)
     s_upper = 255
-    cv2.createTrackbar("s upper", windowName2, s_upper, 255, nothing)
+    cv2.createTrackbar("s upper", window_name2, s_upper, 255, nothing)
     v_lower = 32
-    cv2.createTrackbar("v lower", windowName2, v_lower, 255, nothing)
+    cv2.createTrackbar("v lower", window_name2, v_lower, 255, nothing)
     v_upper = 255
-    cv2.createTrackbar("v upper", windowName2, v_upper, 255, nothing)
+    cv2.createTrackbar("v upper", window_name2, v_upper, 255, nothing)
 
     # set a mouse callback
 
-    cv2.setMouseCallback(windowName, on_mouse, 0)
+    cv2.setMouseCallback(window_name, on_mouse, 0)
     cropped = False
 
     # Setup the termination criteria for search, either 10 iteration or
@@ -212,10 +212,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        s_lower = cv2.getTrackbarPos("s lower", windowName2)
-        s_upper = cv2.getTrackbarPos("s upper", windowName2)
-        v_lower = cv2.getTrackbarPos("v lower", windowName2)
-        v_upper = cv2.getTrackbarPos("v upper", windowName2)
+        s_lower = cv2.getTrackbarPos("s lower", window_name2)
+        s_upper = cv2.getTrackbarPos("s upper", window_name2)
+        v_lower = cv2.getTrackbarPos("v lower", window_name2)
+        v_upper = cv2.getTrackbarPos("v upper", window_name2)
 
         # select region using the mouse and display it
 
@@ -262,7 +262,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     boxes[1][1] -
                     boxes[0][1])
 
-                cv2.imshow(windowNameSelection, crop)
+                cv2.imshow(window_nameSelection, crop)
 
             # reset list of boxes
 
@@ -291,7 +291,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 [img_hsv], [
                     0, 1], crop_hist, [
                     0, 180, 0, 255], 1)
-            cv2.imshow(windowName2, img_bproject)
+            cv2.imshow(window_name2, img_bproject)
 
             # apply camshift to predict new location (observation)
             # basic HSV histogram comparision with adaptive window size
@@ -346,13 +346,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     (0., float(s_lower), float(v_lower))), np.array(
                     (180., float(s_upper), float(v_upper))))
 
-            cv2.imshow(windowName2, mask)
+            cv2.imshow(window_name2, mask)
 
         # display image
 
-        cv2.imshow(windowName, frame)
+        cv2.imshow(window_name, frame)
         cv2.setWindowProperty(
-            windowName,
+            window_name,
             cv2.WND_PROP_FULLSCREEN,
             cv2.WINDOW_FULLSCREEN & fullscreen)
 

@@ -72,9 +72,9 @@ except BaseException:
 
 # define display window names
 
-windowNameGx = "Gradient - Gx"  # window name
-windowNameGy = "Gradient - Gy"  # window name
-windowNameAngle = "Gradient Angle"  # window name
+window_nameGx = "Gradient - Gx"  # window name
+window_nameGy = "Gradient - Gy"  # window name
+window_nameAngle = "Gradient Angle"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
@@ -84,9 +84,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowNameGx, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameGy, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowNameAngle, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameGx, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameGy, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_nameAngle, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -140,9 +140,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display images (as 8-bit)
 
-        cv2.imshow(windowNameGx, gx.astype(np.uint8))
-        cv2.imshow(windowNameGy, gy.astype(np.uint8))
-        cv2.imshow(windowNameAngle, angle.astype(np.uint8))
+        cv2.imshow(window_nameGx, gx.astype(np.uint8))
+        cv2.imshow(window_nameGy, gy.astype(np.uint8))
+        cv2.imshow(window_nameAngle, angle.astype(np.uint8))
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -175,7 +175,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowNameAngle,
+                window_nameAngle,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

@@ -254,10 +254,10 @@ net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
 # define display window name + trackbar
 
-windowName = 'YOLOv3 object detection: ' + args.weights_file
-cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+window_name = 'YOLOv3 object detection: ' + args.weights_file
+cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 trackbarName = 'reporting confidence > (x 0.01)'
-cv2.createTrackbar(trackbarName, windowName, 70, 100, on_trackbar)
+cv2.createTrackbar(trackbarName, window_name, 70, 100, on_trackbar)
 
 ##########################################################################
 
@@ -268,7 +268,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         or (cap.open(args.camera_to_use))):
 
     # create window by name (as resizable)
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -301,7 +301,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         results = net.forward(output_layer_names)
 
         # remove the bounding boxes with low confidence
-        confThreshold = cv2.getTrackbarPos(trackbarName, windowName) / 100
+        confThreshold = cv2.getTrackbarPos(trackbarName, window_name) / 100
         classIDs, confidences, boxes = postprocess(
             frame, results, confThreshold, nmsThreshold)
 
@@ -333,8 +333,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # display image
-        cv2.imshow(windowName, frame)
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.imshow(window_name, frame)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

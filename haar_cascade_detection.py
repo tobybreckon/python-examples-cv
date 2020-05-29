@@ -91,7 +91,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Face Detection using Haar Cascades"  # window name
+window_name = "Face Detection using Haar Cascades"  # window name
 
 # define haar cascade objects
 
@@ -112,7 +112,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     while (keep_processing):
 
@@ -177,7 +177,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
+        cv2.imshow(window_name, frame)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -210,7 +210,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName,
+                window_name,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

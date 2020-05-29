@@ -203,22 +203,22 @@ stereo_camera = StereoCamera(args)
 
 # define display window names
 
-windowNameL = "LEFT Camera Input"  # window name
-windowNameR = "RIGHT Camera Input"  # window name
+window_nameL = "LEFT Camera Input"  # window name
+window_nameR = "RIGHT Camera Input"  # window name
 
 # create window by name (as resizable)
 
-cv2.namedWindow(windowNameL, cv2.WINDOW_NORMAL)
-cv2.namedWindow(windowNameR, cv2.WINDOW_NORMAL)
+cv2.namedWindow(window_nameL, cv2.WINDOW_NORMAL)
+cv2.namedWindow(window_nameR, cv2.WINDOW_NORMAL)
 
 # set sizes and set windows
 
 frameL, frameR = stereo_camera.get_frames()
 
 height, width, channels = frameL.shape
-cv2.resizeWindow(windowNameL, width, height)
+cv2.resizeWindow(window_nameL, width, height)
 height, width, channels = frameR.shape
-cv2.resizeWindow(windowNameR, width, height)
+cv2.resizeWindow(window_nameR, width, height)
 
 # controls
 
@@ -238,8 +238,8 @@ while (keep_processing):
 
     # display image
 
-    cv2.imshow(windowNameL, frameL)
-    cv2.imshow(windowNameR, frameR)
+    cv2.imshow(window_nameL, frameL)
+    cv2.imshow(window_nameR, frameR)
 
     # start the event loop - essential
 
@@ -367,15 +367,15 @@ while (not(do_calibration)):
         cv2.putText(drawboardL, text, (10, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
 
-        cv2.imshow(windowNameL, drawboardL)
-        cv2.imshow(windowNameR, drawboardR)
+        cv2.imshow(window_nameL, drawboardL)
+        cv2.imshow(window_nameR, drawboardR)
     else:
         text = 'detected: ' + str(chessboard_pattern_detections)
         cv2.putText(frameL, text, (10, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
 
-        cv2.imshow(windowNameL, frameL)
-        cv2.imshow(windowNameR, frameR)
+        cv2.imshow(window_nameL, frameL)
+        cv2.imshow(window_nameR, frameR)
 
     # start the event loop
 
@@ -419,8 +419,8 @@ while (keep_processing):
 
     # display image
 
-    cv2.imshow(windowNameL, undistortedL)
-    cv2.imshow(windowNameR, undistortedR)
+    cv2.imshow(window_nameL, undistortedL)
+    cv2.imshow(window_nameR, undistortedR)
 
     # start the event loop - essential
 
@@ -545,8 +545,8 @@ while (keep_processing):
 
     # display image
 
-    cv2.imshow(windowNameL, undistorted_rectifiedL)
-    cv2.imshow(windowNameR, undistorted_rectifiedR)
+    cv2.imshow(window_nameL, undistorted_rectifiedL)
+    cv2.imshow(window_nameR, undistorted_rectifiedR)
 
     # start the event loop - essential
 
@@ -603,10 +603,10 @@ apply_colourmap = False
 
 # set up disparity window to be correct size
 
-windowNameD = "SGBM Stereo Disparity - Output"  # window name
-cv2.namedWindow(windowNameD, cv2.WINDOW_NORMAL)
+window_nameD = "SGBM Stereo Disparity - Output"  # window name
+cv2.namedWindow(window_nameD, cv2.WINDOW_NORMAL)
 height, width, channels = frameL.shape
-cv2.resizeWindow(windowNameD, width, height)
+cv2.resizeWindow(window_nameD, width, height)
 
 while (keep_processing):
 
@@ -645,8 +645,8 @@ while (keep_processing):
 
     # display image
 
-    cv2.imshow(windowNameL, undistorted_rectifiedL)
-    cv2.imshow(windowNameR, undistorted_rectifiedR)
+    cv2.imshow(window_nameL, undistorted_rectifiedL)
+    cv2.imshow(window_nameR, undistorted_rectifiedR)
 
     # display disparity - which ** for display purposes only ** we re-scale to
     # 0 ->255
@@ -655,9 +655,9 @@ while (keep_processing):
 
         disparity_colour_mapped = cv2.applyColorMap(
             (disparity_scaled * (256. / max_disparity)).astype(np.uint8), cv2.COLORMAP_HOT)
-        cv2.imshow(windowNameD, disparity_colour_mapped)
+        cv2.imshow(window_nameD, disparity_colour_mapped)
     else:
-        cv2.imshow(windowNameD, (disparity_scaled *
+        cv2.imshow(window_nameD, (disparity_scaled *
                                  (256. / max_disparity)).astype(np.uint8))
 
     # start the event loop - essential
@@ -678,7 +678,7 @@ while (keep_processing):
         exit()
     elif (key == ord('f')):
         cv2.setWindowProperty(
-            windowNameD,
+            window_nameD,
             cv2.WND_PROP_FULLSCREEN,
             cv2.WINDOW_FULLSCREEN)
     elif (key == ord('e')):

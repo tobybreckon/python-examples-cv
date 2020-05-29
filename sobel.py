@@ -77,8 +77,8 @@ except BaseException:
 
 # define display window name
 
-windowName = "Live Camera Input"  # window name
-windowName2 = "Sobel Gradient Edge Response"  # window name
+window_name = "Live Camera Input"  # window name
+window_name2 = "Sobel Gradient Edge Response"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -88,15 +88,15 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(windowName2, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name2, cv2.WINDOW_NORMAL)
 
     # add some track bar controllers for settings
 
     neighbourhood = 3
     cv2.createTrackbar(
         "neighbourhood, N",
-        windowName2,
+        window_name2,
         neighbourhood,
         15,
         nothing)
@@ -122,7 +122,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        neighbourhood = cv2.getTrackbarPos("neighbourhood, N", windowName2)
+        neighbourhood = cv2.getTrackbarPos("neighbourhood, N", window_name2)
 
         # check neighbourhood is greater than 3 and odd
 
@@ -137,8 +137,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display images
 
-        cv2.imshow(windowName, frame)
-        cv2.imshow(windowName2, sobel)
+        cv2.imshow(window_name, frame)
+        cv2.imshow(window_name2, sobel)
 
         # start the event loop - essential
 
@@ -161,7 +161,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName2,
+                window_name2,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

@@ -88,7 +88,7 @@ except BaseException:
 
 # define display window name
 
-windowName = "Dense Optic Flow"  # window name
+window_name = "Dense Optic Flow"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
@@ -98,7 +98,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create window by name (as resizable)
 
-    cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     # if video file successfully open then read an initial frame from video
 
@@ -147,7 +147,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image with optic flow overlay
 
-        cv2.imshow(windowName, draw_flow(gray, flow))
+        cv2.imshow(window_name, draw_flow(gray, flow))
 
         # start the event loop - essential
 
@@ -170,7 +170,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             cv2.setWindowProperty(
-                windowName,
+                window_name,
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
 

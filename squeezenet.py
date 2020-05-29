@@ -96,13 +96,13 @@ except BaseException:
 
 # define display window name
 
-windowName = "SqueezeNet Image Classification - Live"  # window name
+window_name = "SqueezeNet Image Classification - Live"  # window name
 
 # create window by name (as resizable)
 
-cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
+cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 trackbarName = 'reporting confidence > (x 0.01)'
-cv2.createTrackbar(trackbarName, windowName, 50, 100, on_trackbar)
+cv2.createTrackbar(trackbarName, window_name, 50, 100, on_trackbar)
 
 ##########################################################################
 
@@ -195,7 +195,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         # get confidence threshold from track bar
-        confThreshold = cv2.getTrackbarPos(trackbarName, windowName) / 100
+        confThreshold = cv2.getTrackbarPos(trackbarName, window_name) / 100
 
         # if we are quite confidene about classification then dispplay
         if (confidence > confThreshold):
@@ -207,8 +207,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display image
 
-        cv2.imshow(windowName, frame)
-        cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN,
+        cv2.imshow(window_name, frame)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and

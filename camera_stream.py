@@ -7,7 +7,8 @@
 # Copyright (c) 2015-2016 Adrian Rosebrock, http://www.pyimagesearch.com
 # MIT License (MIT)
 
-# based on code from this tutorial, with changes to make object method call compatible
+# based on code from this tutorial, with changes to make object method call
+# compatible
 # with cv2.VideoCapture(src) as far as possible and improved thread management:
 # https://www.pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/
 
@@ -22,7 +23,8 @@ import atexit
 ##########################################################################
 
 # set up global variables and atexit() function to facilitate safe thread exit
-# without a segfault from the VideoCapture object as experienced on some platforms
+# without a segfault from the VideoCapture object as experienced on some
+# platforms
 # (as __del__ and __exit__ are not called outside a 'with' construct)
 
 exitingNow = False  # global flag for program exit
@@ -155,7 +157,7 @@ class CameraVideoStream:
         # VideoCapture)
         return self.camera.get(property_name)
 
-    def getBackendName():
+    def getBackendName(self):
         # get a video capture backend (behvavior as per OpenCV manual for
         # VideoCapture)
         return self.camera.getBackendName()

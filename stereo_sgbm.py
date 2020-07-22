@@ -499,8 +499,35 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
                               criteria=termination_criteria_extrinsics,
                               flags=0)
 
-    print("START - extrinsic calibration ...")
+    print("FINISHED - extrinsic calibration")
 
+    print()
+    print("Intrinsic Camera Calibration:")
+    print("K (left camera)")
+    print(camera_matrix_l)
+    print("distortion coeffs (left camera)")
+    print(dist_coeffs_l)
+    print()
+    print("K (right camera)")
+    print(camera_matrix_r)
+    print("distortion coeffs (right camera)")
+    print(dist_coeffs_r)
+    
+    print()
+    print("Extrinsic Camera Calibration:")
+    print("Rotation Matrix, R (left -> right camera)")
+    print(R)
+    print()
+    print("Translation Vector, T (left -> right camera)")
+    print(T)
+    print()
+    print("Essential Matrix, E (left -> right camera)")
+    print(E)
+    print()
+    print("Fundamental Matrix, F (left -> right camera)")
+    print(F)
+
+    print()
     print("STEREO: RMS left to  right re-projection error: ", rms_stereo)
 
 #####################################################################

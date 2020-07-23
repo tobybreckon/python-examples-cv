@@ -3,7 +3,7 @@
 # threaded frame capture from camera to avoid camera frame buffering delays
 # (always delivers the latest frame from the camera)
 
-# Copyright (c) 2018-2019 Toby Breckon, Durham University, UK
+# Copyright (c) 2018-2020 Toby Breckon, Durham University, UK
 # Copyright (c) 2015-2016 Adrian Rosebrock, http://www.pyimagesearch.com
 # MIT License (MIT)
 
@@ -69,11 +69,11 @@ class CameraVideoStream:
         self.grabbed = 0
         self.frame = None
 
-    def open(self, src=0):
+    def open(self, src=0, backend=cv2.CAP_ANY):
 
         # initialize the video camera stream and read the first frame
         # from the stream
-        self.camera = cv2.VideoCapture(src)
+        self.camera = cv2.VideoCapture(src, backend)
         (self.grabbed, self.frame) = self.camera.read()
 
         # only start the thread if in-fact the camera read was successful

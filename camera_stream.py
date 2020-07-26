@@ -18,6 +18,7 @@
 
 from threading import Thread
 import cv2
+import sys
 import atexit
 
 ##########################################################################
@@ -69,7 +70,24 @@ class CameraVideoStream:
         self.grabbed = 0
         self.frame = None
 
-    def open(self, src=0, backend=cv2.CAP_ANY):
+        # set some sensible backends for real-time video capture from
+        # directly connected hardware on a per-OS basis,
+        # that can we overidden via the open() method
+
+        if sys.platform.startswith('linux'):        # all Linux
+            self.backend_default = cv2.CAP_V4L
+        elif sys.platform.startswith('win'):        # MS Windows
+            self.backend_default = cv2.CAP_DSHOW
+        elif sys.platform.startswith('darwin'):     # macOS
+            self.backend_default = cv2.CAP_QT
+        else:
+            self.backend_default = cv2.CAP_ANY      # auto-detect via OpenCV
+
+    def open(self, src=0, backend=None):
+
+        # determine backend to specified by user
+        if (backend == None):
+            backend = self.backend_default
 
         # initialize the video camera stream and read the first frame
         # from the stream

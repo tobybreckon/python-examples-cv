@@ -180,6 +180,16 @@ class CameraVideoStream:
         # VideoCapture)
         return self.camera.getBackendName()
 
+    def getExceptionMode(self):
+        # get a video capture exception mode (behvavior as per OpenCV manual for
+        # VideoCapture)
+        return self.camera.getExceptionMode()
+
+    def setExceptionMode(self, enable):
+        # get a video capture exception mode (behvavior as per OpenCV manual for
+        # VideoCapture)
+        return self.camera.setExceptionMode(enable)
+
     def __del__(self):
         self.stopped = True
         self.suspend = True

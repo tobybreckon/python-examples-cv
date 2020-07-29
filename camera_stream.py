@@ -99,7 +99,7 @@ class CameraVideoStream:
             # create the thread to read frames from the video stream
             thread = Thread(target=self.update, name=self.name, args=())
 
-            #  append thread to globa array of threads
+            #  append thread to global array of threads
             threadList.append(thread)
 
             # get thread id we will use to address thread on list
@@ -171,22 +171,22 @@ class CameraVideoStream:
         return ret_val
 
     def get(self, property_name):
-        # get a video capture property (behvavior as per OpenCV manual for
+        # get a video capture property (behavior as per OpenCV manual for
         # VideoCapture)
         return self.camera.get(property_name)
 
     def getBackendName(self):
-        # get a video capture backend (behvavior as per OpenCV manual for
+        # get a video capture backend (behavior as per OpenCV manual for
         # VideoCapture)
         return self.camera.getBackendName()
 
     def getExceptionMode(self):
-        # get a video capture exception mode (behvavior as per OpenCV manual for
+        # get a video capture exception mode (behavior as per OpenCV manual for
         # VideoCapture)
         return self.camera.getExceptionMode()
 
     def setExceptionMode(self, enable):
-        # get a video capture exception mode (behvavior as per OpenCV manual for
+        # get a video capture exception mode (behavior as per OpenCV manual for
         # VideoCapture)
         return self.camera.setExceptionMode(enable)
 

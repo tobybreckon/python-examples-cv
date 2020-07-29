@@ -8,8 +8,8 @@
 # MIT License (MIT)
 
 # based on code from this tutorial, with changes to make object method call
-# compatible
-# with cv2.VideoCapture(src) as far as possible and improved thread management:
+# compatible with cv2.VideoCapture(src) as far as possible and improved
+# thread management:
 # https://www.pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/
 
 ##########################################################################
@@ -56,7 +56,7 @@ atexit.register(closeDownAllThreadsCleanly)
 
 
 class CameraVideoStream:
-    def __init__(self, name="CameraVideoStream"):
+    def __init__(self, src=None, backend=None, name="CameraVideoStream"):
 
         # initialize the thread name
         self.name = name
@@ -73,7 +73,6 @@ class CameraVideoStream:
         # set some sensible backends for real-time video capture from
         # directly connected hardware on a per-OS basis,
         # that can we overidden via the open() method
-
         if sys.platform.startswith('linux'):        # all Linux
             self.backend_default = cv2.CAP_V4L
         elif sys.platform.startswith('win'):        # MS Windows
@@ -83,11 +82,19 @@ class CameraVideoStream:
         else:
             self.backend_default = cv2.CAP_ANY      # auto-detect via OpenCV
 
+        # if a source was specified at init, proceed to open device
+        if not(src == None):
+            self.open(src, backend)
+
     def open(self, src=0, backend=None):
 
         # determine backend to specified by user
         if (backend == None):
             backend = self.backend_default
+
+        # check if aleady opened via init method
+        if (self.grabbed > 0):
+            return True
 
         # initialize the video camera stream and read the first frame
         # from the stream

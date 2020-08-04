@@ -10,13 +10,15 @@
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-# based on provided examples at: https://github.com/opencv/opencv/tree/master/samples/dnn
+# based on provided examples at:
+# https://github.com/opencv/opencv/tree/master/samples/dnn
 # see here for how to load Caffe/TensorFlow/... models etc.
 
 # implements a version of:
 
-# MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
-# Andrew G. Howard, Menglong Zhu, Bo Chen, Dmitry Kalenichenko, Weijun Wang, Tobias Weyand, Marco Andreetto, Hartwig Adam
+# MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Apps.
+# Andrew G. Howard, Menglong Zhu, Bo Chen, Dmitry Kalenichenko, Weijun Wang,
+# Tobias Weyand, Marco Andreetto, Hartwig Adam
 # research paper: https://arxiv.org/abs/1704.04861
 
 # requires Caffe network model files (.prototxt / .caffemodel) downloaded from:
@@ -28,7 +30,6 @@ import cv2
 import argparse
 import sys
 import math
-import numpy as np
 
 #####################################################################
 
@@ -91,7 +92,7 @@ except BaseException:
 
 # define display window name
 
-window_name = "Live Object Detection - CNN: " + cnn_model_to_load  # window name
+window_name = "Live Object Detection - CNN: " + cnn_model_to_load
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached camera
@@ -223,10 +224,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                         label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
                     yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv2.rectangle(frame, (xLeftBottom, yLeftBottom -
-                                          labelSize[1]), (xLeftBottom +
-                                                          labelSize[0], yLeftBottom +
-                                                          baseLine), (255, 255, 255), cv2.FILLED)
+                    cv2.rectangle(
+                                    frame, (
+                                                xLeftBottom, yLeftBottom -
+                                                labelSize[1]
+                                            ), (
+                                                xLeftBottom + labelSize[0],
+                                                yLeftBottom + baseLine
+                                            ), (255, 255, 255),
+                                    cv2.FILLED
+                    )
                     cv2.putText(frame, label, (xLeftBottom, yLeftBottom),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
@@ -252,13 +259,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # start the event loop - essential
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
+        # cv2.waitKey() is a keyboard binding function (argument is the time in
+        # ms). It waits for specified milliseconds for any keyboard event.
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
+        # (bitwise and with 0xFF to extract least significant byte of
+        # multi-byte response)
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)

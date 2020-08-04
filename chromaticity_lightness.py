@@ -55,8 +55,8 @@ args = parser.parse_args()
 
 ##########################################################################
 
-# concatenate two RGB/grayscale images horizontally (left to right) handling
-# differing channel numbers or image heights in the input
+# concatenate two RGB/grayscale images horizontally (left to right)
+# handling differing channel numbers or image heights in the input
 
 
 def h_concatenate(img1, img2):
@@ -64,7 +64,7 @@ def h_concatenate(img1, img2):
     # get size and channels for both images
 
     height1 = img1.shape[0]
-    width1 = img1.shape[1]
+
     if (len(img1.shape) == 2):
         channels1 = 1
     else:
@@ -162,13 +162,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         chromaticity = np.zeros(frame.shape).astype(np.float32)
         sum_channel = np.zeros(frame.shape).astype(np.float32)
-        sum_channel = (frame[:,
-                             :,
-                             0].astype(np.float32) + frame[:,
-                                                           :,
-                                                           1].astype(np.float32) + frame[:,
-                                                                                         :,
-                                                                                         2].astype(np.float32)) + np.finfo(np.float32).resolution
+        sum_channel = (frame[:, :, 0].astype(np.float32)
+                       + frame[:, :, 1].astype(np.float32)
+                       + frame[:, :, 2].astype(np.float32)
+                       + np.finfo(np.float32).resolution)
         chromaticity[:, :, 0] = (frame[:, :, 0] / sum_channel)
         chromaticity[:, :, 1] = (frame[:, :, 1] / sum_channel)
         chromaticity[:, :, 2] = (frame[:, :, 2] / sum_channel)
@@ -177,8 +174,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         lightness = np.floor(sum_channel / 3)
 
-        # display image as a concatenated triple of [ RGB | Chromaticity | Lightness ]
-        # adjusting back to 8-bit and scaling appropriately for display
+        # display image as a concatenated triple of [ RGB | Chromaticity |
+        # Lightness ] adjusting back to 8-bit and scaling appropriately
 
         cv2.imshow(
             window_name,
@@ -201,13 +198,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # start the event loop - essential
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
+        # cv2.waitKey() is a keyboard binding function (argument is the time in
+        # ms). It waits for specified milliseconds for any keyboard event.
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
+        # (bitwise and with 0xFF to extract least significant byte of
+        # multi-byte response)
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)

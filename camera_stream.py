@@ -83,13 +83,13 @@ class CameraVideoStream:
             self.backend_default = cv2.CAP_ANY      # auto-detect via OpenCV
 
         # if a source was specified at init, proceed to open device
-        if not(src == None):
+        if not(src is None):
             self.open(src, backend)
 
     def open(self, src=0, backend=None):
 
         # determine backend to specified by user
-        if (backend == None):
+        if (backend is None):
             backend = self.backend_default
 
         # check if aleady opened via init method

@@ -120,7 +120,8 @@ if cam.open(args.camera_to_use):
         # (change flags to perhaps improve detection ?)
 
         ret, corners = cv2.findChessboardCorners(
-            gray, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
+            gray, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH |
+            cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
 
         # If found, add object points, image points (after refining them)
 

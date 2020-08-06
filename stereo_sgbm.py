@@ -64,7 +64,18 @@ class StereoCamera:
 
             # ZED is a single camera interface with L/R returned as 1 image
 
-            self.camZED = cv2.VideoCapture()
+            try:
+                # to use a non-buffered camera stream (via a separate thread)
+
+                import camera_stream
+                self.camZED = camera_stream.CameraVideoStream()
+
+            except BaseException:
+                # if not then just use OpenCV default
+
+                print("INFO: camera_stream class not found - camera input may be buffered")
+                self.camZED = cv2.VideoCapture()
+
             if not(self.camZED.open(args.camera_to_use)):
                 print(
                     "Cannot open connected ZED stereo camera as camera #: ",

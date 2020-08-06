@@ -5,7 +5,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015-18 Engineering & Computer Science, Durham University, UK
+# Copyright (c) 2015-2020 Engineering & Computer Sci., Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # Acknowledgements:
@@ -17,13 +17,6 @@
 # OpenCV 3.0 example - stereo_match.py
 
 # Andy Pound, Durham University, 2016 - calibration save/load approach
-
-#####################################################################
-
-# TODO:
-
-# add sliders for some stereo parameters
-
 
 #####################################################################
 
@@ -137,7 +130,7 @@ class StereoCamera:
 
             _, frameL = self.camL.retrieve()
             _, frameR = self.camR.retrieve()
-#
+
         return frameL, frameR
 
 #####################################################################

@@ -164,13 +164,13 @@ parser.add_argument(
     "-cbx",
     "--chessboardx",
     type=int,
-    help="specify number of internal chessboard squares in x-direction",
+    help="specify number of internal chessboard squares (corners) in x-direction",
     default=6)
 parser.add_argument(
     "-cby",
     "--chessboardy",
     type=int,
-    help="specify number of internal chessboard squares in y-direction",
+    help="specify number of internal chessboard squares (corners) in y-direction",
     default=9)
 parser.add_argument(
     "-cbw",
@@ -300,6 +300,16 @@ termination_criteria_subpix = (
 patternX = args.chessboardx
 patternY = args.chessboardy
 square_size_in_mm = args.chessboardw
+
+if (patternX == patternY):
+    print("*****************************************************************")
+    print()
+    print("Please use a chessboard pattern that is not equal dimension")
+    print("in X and Y (otherwise a rotational ambiguity exists!).")
+    print()
+    print("*****************************************************************")
+    print()
+    exit()
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 

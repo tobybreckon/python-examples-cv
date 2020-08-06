@@ -78,8 +78,8 @@ class StereoCamera:
                     args.camera_to_use)
                 exit()
 
-            # report resolution currently in use for ZED (as various options exist)
-            # can use .get()/.set() to read/change also
+            # report resolution currently in use for ZED (as various
+            # options exist) can use .get()/.set() to read/change also
 
             _, frame = self.camZED.read()
             height, width, channels = frame.shape
@@ -102,11 +102,12 @@ class StereoCamera:
                         args.camera_to_use +
                     2))):
                 print(
-                    "Cannot open pair of system cameras connected starting at camera #:",
+                    "Cannot open pair of system cameras connected \
+                    starting at camera #:",
                     args.camera_to_use)
                 exit()
 
-        cameras_opened = True
+        self.cameras_opened = True
 
     def swap_cameras(self):
         if not(self.zed):
@@ -243,11 +244,12 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-    # It waits for specified milliseconds for any keyboard event.
-    # If you press any key in that time, the program continues.
+    # cv2.waitKey() is a keyboard binding function (argument is the time in
+    # milliseconds). It waits for specified milliseconds for any keyboard
+    # event. If you press any key in that time, the program continues.
     # If 0 is passed, it waits indefinitely for a key stroke.
-    # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
+    # (bitwise and with 0xFF to extract least significant byte of
+    # multi-byte response)
 
     key = cv2.waitKey(40) & 0xFF  # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
@@ -333,9 +335,11 @@ while (not(do_calibration)):
     # (change flags to perhaps improve detection ?)
 
     retR, cornersL = cv2.findChessboardCorners(
-        grayL, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
+        grayL, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH
+        | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
     retL, cornersR = cv2.findChessboardCorners(
-        grayR, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
+        grayR, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH
+        | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
 
     # If found, add object points, image points (after refining them)
 
@@ -388,7 +392,7 @@ while (not(do_calibration)):
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibrat.
 
     print("START - intrinsic calibration ...")
 
@@ -434,7 +438,7 @@ while (keep_processing):
 
 # show mean re-projection error of the object points onto the image(s)
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calib.
 
     tot_errorL = 0
     for i in range(len(objpoints)):
@@ -465,9 +469,9 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
 # STAGE 3: perform extrinsic calibration (recovery of relative camera
 # positions)
 
-# this takes the existing calibration parameters used to undistort the individual images as
-# well as calculated the relative camera positions - represented via the
-# fundamental matrix, F
+# this takes the existing calibration parameters used to undistort the
+# individual images as well as calculated the relative camera positions
+# - represented via the fundamental matrix, F
 
 # alter termination criteria to (perhaps) improve solution - ?
 
@@ -512,7 +516,7 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
     print(camera_matrix_r)
     print("distortion coeffs (right camera)")
     print(dist_coeffs_r)
-    
+
     print()
     print("Extrinsic Camera Calibration:")
     print("Rotation Matrix, R (left -> right camera)")
@@ -535,14 +539,15 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
 # STAGE 4: rectification of images (make scan lines align left <-> right
 
 # N.B.  "alpha=0 means that the rectified images are zoomed and shifted so that
-# only valid pixels are visible (no black areas after rectification). alpha=1 means
-# that the rectified image is decimated and shifted so that all the pixels from the original images
-# from the cameras are retained in the rectified images (no source image
-# pixels are lost)." - ?
+# only valid pixels are visible (no black areas after rectification).
+# alpha=1 means that the rectified image is decimated and shifted so that
+# all the pixels from the original images from the cameras are retained
+# in the rectified images (no source image pixels are lost)." - ?
 
 if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
     RL, RR, PL, PR, Q, _, _ = cv2.stereoRectify(
-        camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r, grayL.shape[::-1], R, T, alpha=-1)
+        camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,
+        grayL.shape[::-1], R, T, alpha=-1)
 
 # compute the pixel mappings to the rectified versions of the images
 
@@ -647,14 +652,16 @@ while (keep_processing):
     grayL = cv2.cvtColor(frameL, cv2.COLOR_BGR2GRAY)
     grayR = cv2.cvtColor(frameR, cv2.COLOR_BGR2GRAY)
 
-    # undistort and rectify based on the mappings (could improve interpolation and image border settings here)
+    # undistort and rectify based on the mappings (could improve interpolation
+    # and image border settings here)
     # N.B. mapping works independant of number of image channels
 
     undistorted_rectifiedL = cv2.remap(grayL, mapL1, mapL2, cv2.INTER_LINEAR)
     undistorted_rectifiedR = cv2.remap(grayR, mapR1, mapR2, cv2.INTER_LINEAR)
 
     # compute disparity image from undistorted and rectified versions
-    # (which for reasons best known to the OpenCV developers is returned scaled by 16)
+    # (which for reasons best known to the OpenCV developers is returned
+    # scaled by 16)
 
     disparity = stereoProcessor.compute(
         undistorted_rectifiedL, undistorted_rectifiedR)
@@ -663,7 +670,7 @@ while (keep_processing):
     # scale the disparity to 8-bit for viewing
     # divide by 16 and convert to 8-bit image (then range of values should
     # be 0 -> max_disparity) but in fact is (-1 -> max_disparity - 1)
-    # so we fix this also using a initial threshold between 0 and max_disparity
+    # so we fix this also using a initial threshold between 0 -> max_disparity
     # as disparity=-1 means no disparity available
 
     _, disparity = cv2.threshold(
@@ -681,11 +688,12 @@ while (keep_processing):
     if (apply_colourmap):
 
         disparity_colour_mapped = cv2.applyColorMap(
-            (disparity_scaled * (256. / max_disparity)).astype(np.uint8), cv2.COLORMAP_HOT)
+            (disparity_scaled * (256. / max_disparity)).astype(np.uint8),
+            cv2.COLORMAP_HOT)
         cv2.imshow(window_nameD, disparity_colour_mapped)
     else:
         cv2.imshow(window_nameD, (disparity_scaled *
-                                 (256. / max_disparity)).astype(np.uint8))
+                                  (256. / max_disparity)).astype(np.uint8))
 
     # start the event loop - essential
 
@@ -715,8 +723,9 @@ while (keep_processing):
         except OSError:
             print("Exporting to existing calibration archive directory.")
         os.chdir('calibration')
-        folderName = time.strftime('%d-%m-%y-%H-%M-rms-') + ('%.2f' %
-                                                             rms_stereo) + '-zed-' + str(int(args.zed)) + '-ximea-' + str(int(args.ximea))
+        folderName = time.strftime('%d-%m-%y-%H-%M-rms-') + \
+            ('%.2f' % rms_stereo) + '-zed-' + str(int(args.zed)) \
+            + '-ximea-' + str(int(args.ximea))
         os.mkdir(folderName)
         os.chdir(folderName)
         np.save('mapL1', mapL1)
@@ -727,7 +736,10 @@ while (keep_processing):
         cv_file.write("source", ' '.join(sys.argv[0:]))
         cv_file.write(
             "description",
-            "camera matrices K for left and right, distortion coefficients for left and right, 3D rotation matrix R, 3D translation vector T, Essential matrix E, Fundamental matrix F, disparity to depth projection matrix Q")
+            "camera matrices K for left and right, distortion coefficients " +
+            "for left and right, 3D rotation matrix R, 3D translation vector " +
+            "T, Essential matrix E, Fundamental matrix F, disparity to depth " +
+            "projection matrix Q")
         cv_file.write("K_l", camera_matrix_l)
         cv_file.write("K_r", camera_matrix_r)
         cv_file.write("distort_l", dist_coeffs_l)

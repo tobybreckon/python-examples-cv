@@ -422,7 +422,7 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibrat.
     keep_processing = True
 
     print()
-    print("-> dislaying undistortion")
+    print("-> displaying undistortion")
     print("press space to continue to next stage ...")
     print()
 

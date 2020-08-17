@@ -188,6 +188,18 @@ parser.add_argument(
     type=str,
     help="specify path to calibration files to load",
     default=-1)
+parser.add_argument(
+    "-i",
+    "--iterations",
+    type=int,
+    help="specify number of iterations for each stage of optimisation",
+    default=100)
+parser.add_argument(
+    "-e",
+    "--minimum_error",
+    type=float,
+    help="specify lower error threshold upon which to stop optimisation stages",
+    default=0.001)
 
 args = parser.parse_args()
 
@@ -248,19 +260,9 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    # cv2.waitKey() is a keyboard binding function (argument is the time in
-    # milliseconds). It waits for specified milliseconds for any keyboard
-    # event. If you press any key in that time, the program continues.
-    # If 0 is passed, it waits indefinitely for a key stroke.
-    # (bitwise and with 0xFF to extract least significant byte of
-    # multi-byte response)
-
     key = cv2.waitKey(40) & 0xFF  # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
 
-    # It can also be set to detect specific key strokes by recording which key
-    # is pressed
-
-    # e.g. if user presses "x" then exit
+    # loop control - space to continue; x to exit; s - swap cams; l - load
 
     if (key == ord(' ')):
         keep_processing = False
@@ -296,8 +298,8 @@ while (keep_processing):
 termination_criteria_subpix = (
     cv2.TERM_CRITERIA_EPS +
     cv2.TERM_CRITERIA_MAX_ITER,
-    30,
-    0.001)
+    args.iterations,
+    args.minimum_error)
 
 # set up a set of real-world "object points" for the chessboard pattern
 
@@ -321,13 +323,27 @@ objp = np.zeros((patternX * patternY, 3), np.float32)
 objp[:, :2] = np.mgrid[0:patternX, 0:patternY].T.reshape(-1, 2)
 objp = objp * square_size_in_mm
 
-# create arrays to store object points and image points from all the images.
-objpoints = []  # 3d point in real world space
-imgpointsR = []  # 2d points in image plane.
-imgpointsL = []  # 2d points in image plane.
+# create arrays to store object points and image points from all the images
+
+# ... both for paired chessboard detections (L AND R detected)
+
+objpoints_pairs = []         # 3d point in real world space
+imgpoints_right_paired = []  # 2d points in image plane.
+imgpoints_left_paired = []   # 2d points in image plane.
+
+# ... and for left and right independantly (L OR R detected, OR = logical OR)
+
+objpoints_left_only = []   # 3d point in real world space
+imgpoints_left_only = []   # 2d points in image plane.
+
+objpoints_right_only = []   # 3d point in real world space
+imgpoints_right_only = []   # 2d points in image plane.
 
 # count number of chessboard detection (across both images)
-chessboard_pattern_detections = 0
+
+chessboard_pattern_detections_paired = 0
+chessboard_pattern_detections_left = 0
+chessboard_pattern_detections_right = 0
 
 print()
 print("--> hold up chessboard")
@@ -345,59 +361,91 @@ while (not(do_calibration)):
     grayL = cv2.cvtColor(frameL, cv2.COLOR_BGR2GRAY)
     grayR = cv2.cvtColor(frameR, cv2.COLOR_BGR2GRAY)
 
-    # Find the chess board corners in the image
-    # (change flags to perhaps improve detection ?)
+    # Find the chess board corners in the images
+    # (change flags to perhaps improve detection - see OpenCV manual)
 
-    retR, cornersL = cv2.findChessboardCorners(
-        grayL, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH
-        | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
-    retL, cornersR = cv2.findChessboardCorners(
+    retR, cornersR = cv2.findChessboardCorners(
         grayR, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH
         | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
+    retL, cornersL = cv2.findChessboardCorners(
+        grayL, (patternX, patternY), None, cv2.CALIB_CB_ADAPTIVE_THRESH
+        | cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_NORMALIZE_IMAGE)
 
-    # If found, add object points, image points (after refining them)
+    # when found, add object points, image points (after refining them)
 
-    if ((retR) and (retL)):
+    # N.B. to allow for maximal coverage of the FoV of the left and right images
+    # for instrinsic calculations without an image region being underconstrained
+    # record and process detections for three conditions in three differing list
+    # structures
 
-        chessboard_pattern_detections += 1
+    # -- > detected in left (only or also in right)
 
-        # add object points to global list
+    if (retL):
 
-        objpoints.append(objp)
+        chessboard_pattern_detections_left += 1
 
-        # refine corner locations to sub-pixel accuracy and then
+        # add object points to left list
+
+        objpoints_left_only.append(objp)
+
+        # refine corner locations to sub-pixel accuracy and then add to list
 
         corners_sp_L = cv2.cornerSubPix(
             grayL, cornersL, (11, 11), (-1, -1), termination_criteria_subpix)
-        imgpointsL.append(corners_sp_L)
+        imgpoints_left_only.append(corners_sp_L)
+
+    # -- > detected in right (only or also in left)
+
+    if (retR):
+
+        chessboard_pattern_detections_right += 1
+
+        # add object points to left list
+
+        objpoints_right_only.append(objp)
+
+        # refine corner locations to sub-pixel accuracy and then add to list
+
         corners_sp_R = cv2.cornerSubPix(
             grayR, cornersR, (11, 11), (-1, -1), termination_criteria_subpix)
-        imgpointsR.append(corners_sp_R)
+        imgpoints_right_only.append(corners_sp_R)
 
-        # Draw and display the corners
+    # -- > detected in left and right
 
-        drawboardL = cv2.drawChessboardCorners(
-            frameL, (patternX, patternY), corners_sp_L, retL)
-        drawboardR = cv2.drawChessboardCorners(
-            frameR, (patternX, patternY), corners_sp_R, retR)
+    if ((retR) and (retL)):
 
-        text = 'detected: ' + str(chessboard_pattern_detections)
-        cv2.putText(drawboardL, text, (10, 25),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
+        chessboard_pattern_detections_paired += 1
 
-        cv2.imshow(window_nameL, drawboardL)
-        cv2.imshow(window_nameR, drawboardR)
-    else:
-        text = 'detected: ' + str(chessboard_pattern_detections)
-        cv2.putText(frameL, text, (10, 25),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
+        # add object points to global list
 
-        cv2.imshow(window_nameL, frameL)
-        cv2.imshow(window_nameR, frameR)
+        objpoints_pairs.append(objp)
+
+        # add previously refined corner locations to list
+
+        imgpoints_left_paired.append(corners_sp_L)
+        imgpoints_right_paired.append(corners_sp_R)
+
+    # display detections / chessboards
+
+    text = 'detected L: ' + str(chessboard_pattern_detections_left) + \
+           ' detected R: ' + str(chessboard_pattern_detections_right)
+    cv2.putText(frameL, text, (10, 25),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
+    text = 'detected (L AND R): ' + str(chessboard_pattern_detections_paired)
+    cv2.putText(frameL, text, (10, 60),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, 8)
+
+    # draw the corners / chessboards
+
+    drawboardL = cv2.drawChessboardCorners(
+                            frameL, (patternX, patternY), cornersL, retL)
+    drawboardR = cv2.drawChessboardCorners(
+                            frameR, (patternX, patternY), cornersR, retR)
+    cv2.imshow(window_nameL, drawboardL)
+    cv2.imshow(window_nameR, drawboardR)
 
     # start the event loop
 
-    # wait 500ms between frames - i.e. 2 fps
     key = cv2.waitKey(int(1000 / calibration_capture_framerate)) & 0xFF
     if (key == ord(' ')):
         do_calibration = True
@@ -406,16 +454,26 @@ while (not(do_calibration)):
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibrat.
+termination_criteria_intrinsic = (
+    cv2.TERM_CRITERIA_EPS +
+    cv2.TERM_CRITERIA_MAX_ITER,
+    args.iterations,
+    args.minimum_error)
+
+if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibrat.
 
     print("START - intrinsic calibration ...")
 
-    ret, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(
-        objpoints, imgpointsL, grayL.shape[::-1], None, None)
-    ret, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(
-        objpoints, imgpointsR, grayR.shape[::-1], None, None)
-
+    rms_int_L, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(
+        objpoints_left_only, imgpoints_left_only, grayL.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
+    rms_int_R, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(
+        objpoints_right_only, imgpoints_right_only, grayR.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
     print("FINISHED - intrinsic calibration")
+
+    print()
+    print("LEFT: RMS left intrinsic calibation re-projection error: ", rms_int_L)
+    print("RIGHT: RMS right intrinsic calibation re-projection error: ", rms_int_R)
+    print()
 
     # perform undistortion of the images
 
@@ -442,8 +500,9 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
     key = cv2.waitKey(int(1000 / disparity_processing_framerate)) & 0xFF
+
+    # loop control - space to continue; x to exit
 
     if (key == ord(' ')):
         keep_processing = False
@@ -452,31 +511,31 @@ while (keep_processing):
 
 # show mean re-projection error of the object points onto the image(s)
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calib.
+if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calib.
 
     tot_errorL = 0
-    for i in range(len(objpoints)):
-        imgpointsL2, _ = cv2.projectPoints(
-            objpoints[i], rvecsL[i], tvecsL[i], mtxL, distL)
+    for i in range(len(objpoints_left_only)):
+        imgpoints_left_only2, _ = cv2.projectPoints(
+            objpoints_left_only[i], rvecsL[i], tvecsL[i], mtxL, distL)
         errorL = cv2.norm(
-            imgpointsL[i],
-            imgpointsL2,
-            cv2.NORM_L2) / len(imgpointsL2)
+            imgpoints_left_only[i],
+            imgpoints_left_only2,
+            cv2.NORM_L2) / len(imgpoints_left_only2)
         tot_errorL += errorL
 
-    print("LEFT: Re-projection error: ", tot_errorL / len(objpoints))
+    print("LEFT: mean re-projection error (absolute, px): ", tot_errorL / len(objpoints_left_only))
 
     tot_errorR = 0
-    for i in range(len(objpoints)):
-        imgpointsR2, _ = cv2.projectPoints(
-            objpoints[i], rvecsR[i], tvecsR[i], mtxR, distR)
+    for i in range(len(objpoints_right_only)):
+        imgpoints_right_only2, _ = cv2.projectPoints(
+            objpoints_right_only[i], rvecsR[i], tvecsR[i], mtxR, distR)
         errorR = cv2.norm(
-            imgpointsR[i],
-            imgpointsR2,
-            cv2.NORM_L2) / len(imgpointsR2)
+            imgpoints_right_only[i],
+            imgpoints_right_only2,
+            cv2.NORM_L2) / len(imgpoints_right_only2)
         tot_errorR += errorR
 
-    print("RIGHT: Re-projection error: ", tot_errorR / len(objpoints))
+    print("RIGHT: mean re-projection error (absolute, px): ", tot_errorR / len(objpoints_right_only))
 
 #####################################################################
 
@@ -492,10 +551,10 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calib.
 termination_criteria_extrinsics = (
     cv2.TERM_CRITERIA_EPS +
     cv2.TERM_CRITERIA_MAX_ITER,
-    100,
-    0.001)
+    args.iterations,
+    args.minimum_error)
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
     print()
     print("START - extrinsic calibration ...")
     (rms_stereo,
@@ -506,9 +565,9 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
      R,
      T,
      E,
-     F) = cv2.stereoCalibrate(objpoints,
-                              imgpointsL,
-                              imgpointsR,
+     F) = cv2.stereoCalibrate(objpoints_pairs,
+                              imgpoints_left_paired,
+                              imgpoints_right_paired,
                               mtxL,
                               distL,
                               mtxR,
@@ -558,14 +617,14 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
 # all the pixels from the original images from the cameras are retained
 # in the rectified images (no source image pixels are lost)." - ?
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
     RL, RR, PL, PR, Q, _, _ = cv2.stereoRectify(
         camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,
         grayL.shape[::-1], R, T, alpha=-1)
 
 # compute the pixel mappings to the rectified versions of the images
 
-if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
     mapL1, mapL2 = cv2.initUndistortRectifyMap(
         camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1)
     mapR1, mapR2 = cv2.initUndistortRectifyMap(
@@ -596,13 +655,9 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
     key = cv2.waitKey(int(1000 / disparity_processing_framerate)) & 0xFF
 
-    # It can also be set to detect specific key strokes by recording which key
-    # is pressed
-
-    # e.g. if user presses "x" then exit
+    # loop control - space to continue; x to exit
 
     if (key == ord(' ')):
         keep_processing = False
@@ -617,18 +672,7 @@ while (keep_processing):
 # opencv manual)
 
 # parameters can be adjusted, current ones from [Hamilton / Breckon et al.
-# 2013]
-
-# FROM manual: stereoProcessor = cv2.StereoSGBM(numDisparities=128,
-# SADWindowSize=21)
-
-# From help(cv2): StereoBM_create(...)
-#        StereoBM_create([, numDisparities[, blockSize]]) -> retval
-#
-#    StereoSGBM_create(...)
-#        StereoSGBM_create(minDisparity, numDisparities, blockSize[, P1[, P2[,
-# disp12MaxDiff[, preFilterCap[, uniquenessRatio[, speckleWindowSize[,
-# speckleRange[, mode]]]]]]]]) -> retval
+# 2013] - numDisparities=128, SADWindowSize=21)
 
 print()
 print("-> display disparity image")
@@ -711,13 +755,9 @@ while (keep_processing):
 
     # start the event loop - essential
 
-    # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
     key = cv2.waitKey(int(1000 / disparity_processing_framerate)) & 0xFF
 
-    # It can also be set to detect specific key strokes by recording which key
-    # is pressed
-
-    # e.g. if user presses "x" then exit
+    # loop control - x to exit
 
     if (key == ord(' ')):
         keep_processing = False

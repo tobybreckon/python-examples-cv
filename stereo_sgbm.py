@@ -188,6 +188,18 @@ parser.add_argument(
     type=str,
     help="specify path to calibration files to load",
     default=-1)
+parser.add_argument(
+    "-i",
+    "--iterations",
+    type=int,
+    help="specify number of iterations for each stage of optimisation",
+    default=100)
+parser.add_argument(
+    "-e",
+    "--minimum_error",
+    type=float,
+    help="specify lower error threshold upon which to stop optimisation stages",
+    default=0.001)
 
 args = parser.parse_args()
 
@@ -296,8 +308,8 @@ while (keep_processing):
 termination_criteria_subpix = (
     cv2.TERM_CRITERIA_EPS +
     cv2.TERM_CRITERIA_MAX_ITER,
-    30,
-    0.001)
+    args.iterations,
+    args.minimum_error)
 
 # set up a set of real-world "object points" for the chessboard pattern
 
@@ -406,14 +418,20 @@ while (not(do_calibration)):
 
 # perform calibration on both cameras - uses [Zhang, 2000]
 
+termination_criteria_intrinsic = (
+    cv2.TERM_CRITERIA_EPS +
+    cv2.TERM_CRITERIA_MAX_ITER,
+    args.iterations,
+    args.minimum_error)
+
 if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibrat.
 
     print("START - intrinsic calibration ...")
 
     ret, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(
-        objpoints, imgpointsL, grayL.shape[::-1], None, None)
+        objpoints, imgpointsL, grayL.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
     ret, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(
-        objpoints, imgpointsR, grayR.shape[::-1], None, None)
+        objpoints, imgpointsR, grayR.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
 
     print("FINISHED - intrinsic calibration")
 
@@ -492,8 +510,8 @@ if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calib.
 termination_criteria_extrinsics = (
     cv2.TERM_CRITERIA_EPS +
     cv2.TERM_CRITERIA_MAX_ITER,
-    100,
-    0.001)
+    args.iterations,
+    args.minimum_error)
 
 if (chessboard_pattern_detections > 0):  # i.e. if we did not load a calibration
     print()

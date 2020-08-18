@@ -44,13 +44,53 @@ parser.add_argument(
     type=float,
     help="rescale image by this factor",
     default=1.0)
+parser.add_argument(
+    "-cbx",
+    "--chessboardx",
+    type=int,
+    help="specify number of internal chessboard squares (corners) in x-direction",
+    default=6)
+parser.add_argument(
+    "-cby",
+    "--chessboardy",
+    type=int,
+    help="specify number of internal chessboard squares (corners) in y-direction",
+    default=9)
+parser.add_argument(
+    "-cbw",
+    "--chessboardw",
+    type=float,
+    help="specify width/height of chessboard squares in mm",
+    default=40.0)
+parser.add_argument(
+    "-i",
+    "--iterations",
+    type=int,
+    help="specify number of iterations for each stage of optimisation",
+    default=100)
+parser.add_argument(
+    "-e",
+    "--minimum_error",
+    type=float,
+    help="specify lower error threshold upon which to stop optimisation stages",
+    default=0.001)
 args = parser.parse_args()
 
 #####################################################################
 
 #  define video capture object
 
-cam = cv2.VideoCapture()
+try:
+    # to use a non-buffered camera stream (via a separate thread)
+
+    import camera_stream
+    cap = camera_stream.CameraVideoStream()
+
+except BaseException:
+    # if not then just use OpenCV default
+
+    print("INFO: camera_stream class not found - camera input may be buffered")
+    cap = cv2.VideoCapture()
 
 # define display window names
 
@@ -65,14 +105,14 @@ do_calibration = False
 termination_criteria_subpix = (
     cv2.TERM_CRITERIA_EPS +
     cv2.TERM_CRITERIA_MAX_ITER,
-    30,
-    0.001)
+    args.iterations,
+    args.minimum_error)
 
 # set up a set of real-world "object points" for the chessboard pattern
 
-patternX = 6
-patternY = 9
-square_size_in_mm = 40
+patternX = args.chessboardx
+patternY = args.chessboardy
+square_size_in_mm = args.chessboardw
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 
@@ -90,22 +130,20 @@ imgpoints = []  # 2d points in image plane.
 chessboard_pattern_detections = 0
 
 print()
-print("--> hold up chessboard (grabbing images at 1 fps)")
+print("--> hold up chessboard (grabbing images at 10 fps)")
 print("press c : to continue to calibration")
 
 #####################################################################
 
 # open connected camera
 
-if cam.open(args.camera_to_use):
+if cap.open(args.camera_to_use):
 
     while (not(do_calibration)):
 
-        # grab frames from camera (to ensure best time sync., if using stereo -
-        # which we are not here)
+        # grab frames from camera
 
-        cam.grab()
-        ret, frame = cam.retrieve()
+        ret, frame = cap.read()
 
         # rescale if specified
 
@@ -158,7 +196,7 @@ if cam.open(args.camera_to_use):
 
         # start the event loop
 
-        key = cv2.waitKey(1000) & 0xFF  # wait 1s. between frames
+        key = cv2.waitKey(100) & 0xFF  # wait 1s. between frames
         if (key == ord('c')):
             do_calibration = True
 
@@ -199,10 +237,9 @@ print("press x : to exit")
 
 while (keep_processing):
 
-    # grab frames from camera (to ensure best time sync.)
+    # grab frames from camera
 
-    cam.grab()
-    ret, frame = cam.retrieve()
+    ret, frame = cap.read()
 
     # undistort image using camera matrix K and distortion coefficients D
 

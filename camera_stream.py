@@ -14,6 +14,23 @@
 
 ##########################################################################
 
+# suggested usage - as per example in canny.py found at:
+# https://github.com/tobybreckon/python-examples-cv/blob/master/canny.py
+
+# try:
+#    import camera_stream
+#    cap = camera_stream.CameraVideoStream()
+#    print("INFO: using CameraVideoStream() threaded capture")
+# except BaseException:
+#    print("INFO: CameraVideoStream() module not found")
+#    cap = cv2.VideoCapture()
+
+# in the above example this makes use of the CameraVideoStream if it is
+# available (i.e. camera_stream.py is in the module search path) and
+# falls back to using cv2.VideoCapture otherwise
+
+##########################################################################
+
 # import the necessary packages
 
 from threading import Thread

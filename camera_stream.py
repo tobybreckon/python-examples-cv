@@ -40,6 +40,16 @@ import atexit
 
 ##########################################################################
 
+# handle older versions of OpenCV (that had a different constuctor
+# prototype for cv2.VideoCapture() it appears) semi-gracefully
+
+(majorCV, minorCV, _) = cv2.__version__.split(".")
+if ((majorCV <= '3') and (minorCV <= '4')):
+    raise NameError('OpenCV version < 3.4,'
+                    + ' not compatible with CameraVideoStream()')
+
+##########################################################################
+
 # set up global variables and atexit() function to facilitate safe thread exit
 # without a segfault from the VideoCapture object as experienced on some
 # platforms

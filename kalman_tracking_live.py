@@ -1,10 +1,10 @@
 #####################################################################
 
 # Example : kalman filtering based cam shift object track processing
-# from a video file specified on the command line (e.g. python FILE.py video_file)
-# or from an attached web camera
+# from a video file specified on the command line (e.g. python FILE.py
+# video_file) or from an attached web camera
 
-# N.B. use mouse to select region
+# N.B. u se mouse to select region
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -232,15 +232,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                 hsv_crop = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
 
-                # select all Hue (0-> 180) and Sat. values but eliminate values with very low
-                # saturation or value (due to lack of useful colour
-                # information)
+                # select all Hue (0-> 180) and Sat. values but eliminate values
+                # with very low saturation or value (due to lack of useful
+                # colour information)
 
                 mask = cv2.inRange(
                     hsv_crop, np.array(
                         (0., float(s_lower), float(v_lower))), np.array(
                         (180., float(s_upper), float(v_upper))))
-                # mask = cv2.inRange(hsv_crop, np.array((0., 60.,32.)), np.array((180.,255.,255.)))
 
                 # construct a histogram of hue and saturation values and
                 # normalize it
@@ -322,10 +321,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # draw predicton on image - in GREEN
 
             frame = cv2.rectangle(frame,
-                                  (prediction[0] - (0.5 * w),
-                                   prediction[1] - (0.5 * h)),
-                                  (prediction[0] + (0.5 * w),
-                                      prediction[1] + (0.5 * h)),
+                                  (int(prediction[0] - (0.5 * w)),
+                                   int(prediction[1] - (0.5 * h))),
+                                  (int(prediction[0] + (0.5 * w)),
+                                   int(prediction[1] + (0.5 * h))),
                                   (0,
                                       255,
                                       0),
@@ -338,8 +337,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             img_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-            # select all Hue values (0-> 180) but eliminate values with very low
-            # saturation or value (due to lack of useful colour information)
+            # select all Hue values (0-> 180) but eliminate values with very
+            # low saturation or value (due to lack of useful colour info.)
 
             mask = cv2.inRange(
                 img_hsv, np.array(
@@ -364,13 +363,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # start the event loop - essential
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
+        # cv2.waitKey() is a keyboard binding function (argument is the time in
+        # milliseconds). It waits for specified milliseconds for any keyboard
+        # event. If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
+        # (bitwise and with 0xFF to extract least significant byte of
+        # multi-byte response)
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)

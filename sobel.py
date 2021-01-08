@@ -62,10 +62,11 @@ def nothing(x):
 
 try:
     # to use a non-buffered camera stream (via a separate thread)
+    # enabling subsequent hardware acceleration where available
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream()
+        cap = camera_stream.CameraVideoStream(use_tapi=True)
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 

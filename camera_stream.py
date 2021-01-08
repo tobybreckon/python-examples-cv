@@ -3,13 +3,13 @@
 # threaded frame capture from camera to avoid camera frame buffering delays
 # (always delivers the latest frame from the camera)
 
-# Copyright (c) 2018-2020 Toby Breckon, Durham University, UK
+# Copyright (c) 2018-2021 Toby Breckon, Durham University, UK
 # Copyright (c) 2015-2016 Adrian Rosebrock, http://www.pyimagesearch.com
 # MIT License (MIT)
 
 # based on code from this tutorial, with changes to make object method call
-# compatible with cv2.VideoCapture(src) as far as possible and improved
-# thread management:
+# compatible with cv2.VideoCapture(src) as far as possible, optional OpenCV
+# Transparent API support (disabled by default) and improved thread management:
 # https://www.pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/
 
 ##########################################################################
@@ -83,7 +83,8 @@ atexit.register(closeDownAllThreadsCleanly)
 
 
 class CameraVideoStream:
-    def __init__(self, src=None, backend=None, name="CameraVideoStream"):
+    def __init__(self, src=None, backend=None,
+                 name="CameraVideoStream", use_tapi=False):
 
         # initialize the thread name
         self.name = name
@@ -96,6 +97,7 @@ class CameraVideoStream:
         # set these to null values initially
         self.grabbed = 0
         self.frame = None
+        self.tapi = use_tapi
 
         # set some sensible backends for real-time video capture from
         # directly connected hardware on a per-OS basis,
@@ -171,6 +173,10 @@ class CameraVideoStream:
 
     def read(self):
         # return the frame most recently read
+        if (self.tapi):
+            # return OpenCV Transparent API UMat frame for H/W acceleration
+            return (self.grabbed, cv2.UMat(self.frame))
+        # return standard numpy frame
         return (self.grabbed, self.frame)
 
     def isOpened(self):

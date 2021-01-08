@@ -97,6 +97,9 @@ class CameraVideoStream:
         # set these to null values initially
         self.grabbed = 0
         self.frame = None
+
+        # set OpenCV Transparent API usage
+
         self.tapi = use_tapi
 
         # set some sensible backends for real-time video capture from

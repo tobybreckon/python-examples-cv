@@ -1,7 +1,7 @@
 # Python Computer Vision OpenCV Teaching Examples
 
 OpenCV Python computer vision examples used for teaching within the undergraduate Computer Science programme
-at [Durham University](http://www.durham.ac.uk) (UK) by [Prof. Toby Breckon](http://community.dur.ac.uk/toby.breckon/).
+at [Durham University](http://www.durham.ac.uk) (UK) by [Prof. Toby Breckon](https://breckon.org/toby/).
 
 All tested with [OpenCV](http://www.opencv.org) 3.x / 4.x and Python 3.x.
 
@@ -86,7 +86,7 @@ For the SGBM stereo vision and camera calibration examples, reference:
   number = 	 {13},
   pages = 	 {1-19},
   publisher = {Springer},
-  url = 	 {http://community.dur.ac.uk/toby.breckon/publications/papers/mroz12stereo.pdf},
+  url = 	 {https://breckon.org/toby/publications/papers/mroz12stereo.pdf},
   doi = 	 {10.1186/1687-5281-2012-13}
 }
 ```
@@ -103,7 +103,7 @@ For the Mixture of Gaussian (MOG) background subtraction and Kalman filtering ex
   number =    {01},
   publisher = {SPIE},
   pages =     {1-16},
-  url = 	 {http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski14photogrammetric.pdf},
+  url = 	 {https://breckon.org/toby/publications/papers/kundegorski14photogrammetric.pdf},
   doi = 	 {10.1117/12.2065673}
 }
 ```

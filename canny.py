@@ -59,7 +59,6 @@ def nothing(x):
 
 # define video capture object
 
-
 try:
     # to use a non-buffered camera stream (via a separate thread)
 

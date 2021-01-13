@@ -20,8 +20,6 @@ import math
 #####################################################################
 
 keep_processing = True
-EVENT_LOOP_DELAY = 40  # delay for GUI window
-# 40 ms equates to 1000ms/25fps = 40ms per frame
 
 # parse command line arguments for camera ID or video file
 

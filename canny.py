@@ -55,6 +55,7 @@ args = parser.parse_args()
 def nothing(x):
     pass
 
+
 #####################################################################
 
 # define video capture object

@@ -80,7 +80,7 @@ except BaseException:
 # define display window name
 
 window_name = "Live Camera Input"  # window name
-window_name2 = "Canny Edges"  # window name
+window_name2 = "Hough Lines"  # window name
 
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera

@@ -49,6 +49,8 @@ args = parser.parse_args()
 
 #####################################################################
 
+# if we have OpenCL H/W acceleration availale, use it - we'll need it
+
 cv2.ocl.setUseOpenCL(True)
 print(
     "INFO: OpenCL - available: ",
@@ -67,8 +69,9 @@ def inside(r, q):
 
 def draw_detections(img, rects, thickness=1):
     for x, y, w, h in rects:
-        # the HOG detector returns slightly larger rectangles than the real objects.
-        # so we slightly shrink the rectangles to get a nicer output.
+        # the HOG detector returns slightly larger rectangles than the
+        # real objects so we slightly shrink the rectangles to
+        # get a nicer output.
         pad_w, pad_h = int(0.15 * w), int(0.05 * h)
         cv2.rectangle(img, (x + pad_w, y + pad_h),
                       (x + w - pad_w, y + h - pad_h), (0, 255, 0), thickness)
@@ -83,7 +86,7 @@ try:
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream()
+        cap = camera_stream.CameraVideoStream(use_tapi=True)
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 

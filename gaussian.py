@@ -87,6 +87,10 @@ except BaseException:
 window_name = "Live Camera Input"  # window name
 window_name2 = "Gaussian Smoothing"  # window name
 
+# setup OpenCL if specified on command line only
+
+cv2.ocl.setUseOpenCL(args.opencl)
+
 # if command line arguments are provided try to read video_name
 # otherwise default to capture from attached H/W camera
 
@@ -102,10 +106,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     smoothing_neighbourhood = 3
     cv2.createTrackbar(
-        "smoothing",
+        "kernel size",
         window_name2,
         smoothing_neighbourhood,
-        100,
+        250,
         nothing)
 
     while (keep_processing):
@@ -133,7 +137,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        smoothing_neighbourhood = cv2.getTrackbarPos("smoothing", window_name2)
+        smoothing_neighbourhood = cv2.getTrackbarPos("kernel size", window_name2)
 
         # check neighbourhood is greater than 3 and odd
 

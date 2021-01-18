@@ -16,6 +16,7 @@ import cv2
 import argparse
 import sys
 import math
+import numpy as np
 
 #####################################################################
 
@@ -78,6 +79,34 @@ def draw_detections(img, rects, thickness=1):
 
 #####################################################################
 
+# power law transform
+# image - colour image
+# gamma - "gradient" co-efficient of gamma function
+
+
+def powerlaw_transform(image, gamma):
+
+    # compute power-law transform
+    # remembering not defined for pixel = 0 (!)
+
+    # handle any overflow in a quick and dirty way using 0-255 clipping
+
+    image = np.clip(np.power(image, gamma), 0, 255).astype('uint8')
+
+    return image
+
+
+#####################################################################
+
+# this function is called as a call-back everytime the trackbar is moved
+# (here we just do nothing)
+
+def nothing(x):
+    pass
+
+
+#####################################################################
+
 # define video capture object
 
 
@@ -86,7 +115,7 @@ try:
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream(use_tapi=True)
+        cap = camera_stream.CameraVideoStream()  # T-API done later
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 
@@ -115,13 +144,18 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     hog = cv2.HOGDescriptor()
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
+    # add some track bar controllers for settings
+
+    gamma = 100  # default gamma - no change
+
+    cv2.createTrackbar("gamma, (* 0.01)", window_name, gamma, 150, nothing)
+
     while (keep_processing):
 
         # if video file successfully open then read frame from video
 
         if (cap.isOpened):
-            ret, img_t = cap.read()
-            img = cv2.UMat(img_t)
+            ret, frame = cap.read()
 
             # when we reach the end of the video (file) exit cleanly
 
@@ -133,16 +167,25 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             if (args.rescale != 1.0):
                 frame = cv2.resize(
-                    img, (0, 0), fx=args.rescale, fy=args.rescale)
+                    frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # start a timer (to see how long processing and display takes)
 
         start_t = cv2.getTickCount()
 
+        # get parameters from track bars
+
+        gamma = cv2.getTrackbarPos("gamma, (* 0.01)", window_name) * 0.01
+
+        # use power-law function to perform gamma correction
+        # and convert np array to T-API universal array for H/W acceleration
+
+        frame = cv2.UMat(powerlaw_transform(frame, gamma))
+
         # perform HOG based pedestrain detection
 
         found, w = hog.detectMultiScale(
-            img, winStride=(
+            frame, winStride=(
                 8, 8), padding=(
                 32, 32), scale=1.05)
         found_filtered = []
@@ -154,11 +197,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 else:
                     found_filtered.append(r)
 
-        draw_detections(img, found_filtered, 3)
+        draw_detections(frame, found_filtered, 3)
 
         # display image
 
-        cv2.imshow(window_name, img)
+        cv2.imshow(window_name, frame)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)

@@ -146,9 +146,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # add some track bar controllers for settings
 
-    gamma = 100  # default gamma - no change
-
+    gamma = 100  # default gamma = 100 * 0.01 = 1 -> no change
     cv2.createTrackbar("gamma, (* 0.01)", window_name, gamma, 150, nothing)
+
+    svm_threshold = 0  # by default the SVM's own threshold at the hyperplane
+    cv2.createTrackbar("SVM threshold, (distance from hyper-plane, * 0.1)",
+                       window_name, svm_threshold, 10, nothing)
 
     while (keep_processing):
 
@@ -176,6 +179,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # get parameters from track bars
 
         gamma = cv2.getTrackbarPos("gamma, (* 0.01)", window_name) * 0.01
+        svm_threshold = cv2.getTrackbarPos(
+                    "SVM threshold, (distance from hyper-plane, * 0.1)",
+                    window_name) * 0.1
 
         # use power-law function to perform gamma correction
         # and convert np array to T-API universal array for H/W acceleration
@@ -187,7 +193,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         found, w = hog.detectMultiScale(
             frame, winStride=(
                 8, 8), padding=(
-                32, 32), scale=1.05)
+                32, 32), scale=1.05, hitThreshold=svm_threshold)
         found_filtered = []
 
         for ri, r in enumerate(found):

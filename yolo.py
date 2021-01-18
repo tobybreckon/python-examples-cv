@@ -244,11 +244,11 @@ output_layer_names = getOutputsNames(net)
 
 # defaults DNN_BACKEND_INFERENCE_ENGINE if Intel Inference Engine lib
 # available or DNN_BACKEND_OPENCV otherwise
-net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
 
-# change to cv2.dnn.DNN_TARGET_CPU (slower) if this causes issues (should
-# fail gracefully if OpenCL not available)
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+# change to cv2.dnn.DNN_TARGET_CPU or cv2.dnn.DNN_TARGET_OPENCL (slower)
+# if this causes issues (should fail gracefully if CUDA/OpenCL not available)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
 ##########################################################################
 
@@ -323,12 +323,15 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                       178,
                       50))
 
-        # Display efficiency information - the function getPerfProfile returns
-        # the overall time for inference from the network
-        t, _ = net.getPerfProfile()
-        inference_t = (t * 1000.0 / cv2.getTickFrequency())
-        label = ('Inference time: %.2f ms' % inference_t) + \
-            (' (Framerate: %.2f fps' % (1000 / inference_t)) + ')'
+        # stop the timer and convert to ms. (to see how long processing takes
+
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
+
+        # Display efficiency information
+
+        label = ('Inference time: %.2f ms' % stop_t) + \
+            (' (Framerate: %.2f fps' % (1000 / stop_t)) + ')'
         cv2.putText(frame, label, (0, 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
@@ -336,11 +339,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         cv2.imshow(window_name, frame)
         cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
-
-        # stop the timer and convert to ms. (to see how long processing and
-        # display takes)
-        stop_t = ((cv2.getTickCount() - start_t) /
-                  cv2.getTickFrequency()) * 1000
 
         # start the event loop + detect specific key strokes
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /

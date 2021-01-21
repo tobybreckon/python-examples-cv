@@ -110,16 +110,17 @@ def on_mouse(event, x, y, flags, params):
         selection_in_progress = False
         boxes.append(ebox)
 
+
 #####################################################################
-
-
 # controls
+
 print("** click and drag to select region")
 print("")
 print("x - exit")
 print("d - display detected feature points on live image")
 print("e - fit ellipse to matched points")
 print("s - switch to SURF features (default: SIFT or ORB)")
+print("o - switch to ORB features (default: SIFT or SURF)")
 print("h - compute homography H (bounding box shown)")
 print("t - transform cropped image region into live image via H")
 
@@ -173,8 +174,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # Create a SIFT feature object with a Hessian Threshold set to 400
         # if this fails see
-        # (http://www.pyimagesearch.com/2015/07/16/where-did-sift-and-surf-go-in-opencv-3/)
-
+        # http://www.pyimagesearch.com/2015/07/16/where-did-sift-and-surf-go-in-opencv-3/
 
         feature_object = cv2.SIFT_create(400)
         FLANN_INDEX_KDTREE = 1
@@ -189,8 +189,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # https://en.wikipedia.org/wiki/Oriented_FAST_and_rotated_BRIEF]
 
         feature_object = cv2.ORB_create(800)
-        # if using ORB points use FLANN object that can handle binary descriptors
-        # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
+        # if using ORB points use FLANN object that can handle binary desc's
+        # from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
         # N.B. "commented values are recommended as per the docs,
         # but it didn't provide required results in some cases"
 
@@ -202,12 +202,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # create a Fast Linear Approx. Nearest Neightbours (Kd-tree) object for
     # fast feature matching
-    # ^ ^ ^ ^ yes - in an ideal world, but in the world where this issue
-    # still remains open in OpenCV 3.1 (https://github.com/opencv/opencv/issues/5667)
-    # just use the slower Brute Force matcher and go to bed
+    # [ assume this issued from OpenCV 3.1 - issues/5667
+    # is fixed in 4.x else just use the slower Brute Force matcher ]
     # summary: python OpenCV bindings issue, ok to use in C++ or OpenCV > 3.1
 
-    if ((int(major) >= 3) and (int(minor) >= 1)):
+    if (int(major) >= 4):
         search_params = dict(checks=50)   # or pass empty dictionary
         matcher = cv2.FlannBasedMatcher(index_params, search_params)
     else:
@@ -260,8 +259,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                 # detect features and compute associated descriptor vectors
 
-                keypoints_cropped_region, descriptors_cropped_region = feature_object.detectAndCompute(
-                    crop, None)
+                (keypoints_cropped_region,
+                    descriptors_cropped_region) = (
+                        feature_object.detectAndCompute(crop, None))
 
                 # display keypoints on the image
 
@@ -296,24 +296,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keypoints, descriptors = feature_object.detectAndCompute(
                 gray_frame, None)
 
-            # print(len(descriptors))
-            # print(len(descriptors_cropped_region))
-
-            # get best matches (and second best matches) between current and cropped region features
-            # using a k Nearst Neighboour (kNN) radial matcher with k=2
+            # get best matches (and second best matches) between current and
+            # cropped region features using a k Nearst Neighboour (kNN)
+            # radial matcher with k=2
 
             matches = []
             if (len(descriptors) > 0):
-                # flann.clear()
                 matches = matcher.knnMatch(
-                    descriptors_cropped_region, trainDescriptors=descriptors, k=2)
+                    descriptors_cropped_region,
+                    trainDescriptors=descriptors, k=2)
 
-            # Need to isolate only good matches, so create a mask
-
-            # matchesMask = [[0,0] for i in range(len(matches))]
-
-            # perform a first match to second match ratio test as original SIFT paper (known as Lowe's ration)
-            # using the matching distances of the first and second matches
+            # perform a first match to second match ratio test as original
+            # SIFT paper (known as Lowe's ration) using the matching distances
+            # of the first and second matches
 
             good_matches = []
             try:
@@ -323,11 +318,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             except ValueError:
                 print("caught error - no matches from current frame")
 
-           # fit an ellipse to the detection
+            # fit an ellipse to the detection
 
             if (show_ellipse_fit):
                 destination_pts = np.float32(
-                    [keypoints[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+                    [keypoints[m.trainIdx].pt
+                        for m in good_matches]).reshape(-1, 1, 2)
 
                 # least squares ellipse fitting requires at least 5 points
 
@@ -348,9 +344,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     # points)
 
                     source_pts = np.float32(
-                        [keypoints_cropped_region[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+                        [keypoints_cropped_region[m.queryIdx].pt
+                            for m in good_matches]).reshape(-1, 1, 2)
                     destination_pts = np.float32(
-                        [keypoints[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+                        [keypoints[m.trainIdx].pt
+                            for m in good_matches]).reshape(-1, 1, 2)
 
                     # compute the homography (matrix transform) from one set to
                     # the other using RANSAC
@@ -368,11 +366,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                         transformOverlay = np.zeros((w, h, 1), np.uint8)
                         transformOverlay = cv2.warpPerspective(
-                            crop, H, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+                            crop, H, (w, h), flags=cv2.INTER_LINEAR,
+                            borderMode=cv2.BORDER_CONSTANT, borderValue=0)
 
-                        # add both together to get output where re-inserted cropped
-                        # region is brighter than the surronding area so we can see
-                        # visualize the warped image insertion
+                        # add both together to get output where re-inserted
+                        # cropped region is brighter than the surronding area
+                        # so we can visualize the warped image insertion
 
                         frame = cv2.addWeighted(
                             frame, 0.5, transformOverlay, 0.5, 0)
@@ -384,7 +383,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                         h, w, c = crop.shape
                         boundingbox_points = np.float32(
-                            [[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
+                            [[0, 0], [0, h - 1], [
+                                w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
 
                         # transform the bounding co-ordinates by homography H
 
@@ -392,9 +392,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
                         # draw the corresponding
 
-                        frame = cv2.polylines(
-                            frame, [
-                                np.int32(dst)], True, (0, 0, 255), 3, cv2.LINE_AA)
+                        frame = cv2.polylines(frame, [np.int32(dst)], True,
+                                              (0, 0, 255), 3, cv2.LINE_AA)
 
                 else:
                     print(
@@ -418,6 +417,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             cv2.imshow(window_name2, display_matches)
 
         # if running in detection only then draw detections
+        # with orientation + scale
 
         if (show_detection_only):
             keypoints, descriptors = feature_object.detectAndCompute(
@@ -485,13 +485,34 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         elif (key == ord('s')):
 
             if (extraOpenCVModulesPresent()):
+                print("now using - SURF features")
                 feature_object = cv2.xfeatures2d.SURF_create(400)
                 keypoints_cropped_region = []
                 keypoints = []
                 matches = []
                 cropped = False
             else:
-                print("sorry - SURF xfeatures2d module not available")
+                print("sorry - SURF xfeatures2d module not available\n")
+
+        # use ORB points
+
+        elif (key == ord('o')):
+
+            print("now using - ORB features")
+            feature_object = cv2.ORB_create(800)
+            keypoints_cropped_region = []
+            keypoints = []
+            matches = []
+            cropped = False
+
+            # for ORB we also need to reset the matcher
+
+            FLANN_INDEX_LSH = 6
+            index_params = dict(algorithm=FLANN_INDEX_LSH,
+                                table_number=6,  # 12
+                                key_size=12,     # 20
+                                multi_probe_level=1)  # 2
+            matcher = cv2.FlannBasedMatcher(index_params, search_params)
 
     # close all windows
 

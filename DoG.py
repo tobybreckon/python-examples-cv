@@ -68,7 +68,7 @@ try:
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream()  # T-API breaks code
+        cap = camera_stream.CameraVideoStream(use_tapi=True)
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 
@@ -160,11 +160,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         DoG = cv2.absdiff(smoothedU, smoothedL)
 
-        # auto-scale to full 0 -> 255 range based on max DoG response
-        # noting that as both inputs to absdiff() are 0->255,
-        # result will be within range 0->255
+        # auto-scale to full 0 -> 255 range for display
 
-        DoG = DoG * (np.max(DoG) / 255)
+        cv2.normalize(DoG, DoG, 0, 255, cv2.NORM_MINMAX)
 
         # display image
 

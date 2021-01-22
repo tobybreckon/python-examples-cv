@@ -66,7 +66,7 @@ try:
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream()
+        cap = camera_stream.CameraVideoStream()  # T-API breaks code
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 

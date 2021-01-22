@@ -8,7 +8,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2016/17 Toby Breckon
+# Copyright (c) 2016-2021 Toby Breckon
 #                       Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
@@ -133,7 +133,7 @@ try:
 
     if not(args.video_file):
         import camera_stream
-        cap = camera_stream.CameraVideoStream()
+        cap = camera_stream.CameraVideoStream()  # T-API breaks code
     else:
         cap = cv2.VideoCapture()  # not needed for video files
 except BaseException:

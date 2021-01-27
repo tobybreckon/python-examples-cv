@@ -66,6 +66,7 @@ class StereoCamera:
 
             try:
                 # to use a non-buffered camera stream (via a separate thread)
+                # no T-API use, unless additional code changes later
 
                 import camera_stream
                 self.camZED = camera_stream.CameraVideoStream()
@@ -73,7 +74,8 @@ class StereoCamera:
             except BaseException:
                 # if not then just use OpenCV default
 
-                print("INFO: camera_stream class not found - camera input may be buffered")
+                print("INFO: camera_stream class not found - \
+                        camera input may be buffered")
                 self.camZED = cv2.VideoCapture()
 
             if not(self.camZED.open(args.camera_to_use)):
@@ -168,13 +170,15 @@ parser.add_argument(
     "-cbx",
     "--chessboardx",
     type=int,
-    help="specify number of internal chessboard squares (corners) in x-direction",
+    help="specify number of internal chessboard squares (corners) \
+            in x-direction",
     default=6)
 parser.add_argument(
     "-cby",
     "--chessboardy",
     type=int,
-    help="specify number of internal chessboard squares (corners) in y-direction",
+    help="specify number of internal chessboard squares (corners) \
+        in y-direction",
     default=9)
 parser.add_argument(
     "-cbw",
@@ -198,7 +202,8 @@ parser.add_argument(
     "-e",
     "--minimum_error",
     type=float,
-    help="specify lower error threshold upon which to stop optimisation stages",
+    help="specify lower error threshold upon which to stop \
+            optimisation stages",
     default=0.001)
 
 args = parser.parse_args()
@@ -373,9 +378,9 @@ while (not(do_calibration)):
 
     # when found, add object points, image points (after refining them)
 
-    # N.B. to allow for maximal coverage of the FoV of the left and right images
-    # for instrinsic calculations without an image region being underconstrained
-    # record and process detections for three conditions in three differing list
+    # N.B. to allow for maximal coverage of the FoV of the L and R images
+    # for instrinsic calc. without an image region being underconstrained
+    # record and process detections for 3 conditions in 3 differing list
     # structures
 
     # -- > detected in left (only or also in right)
@@ -460,19 +465,23 @@ termination_criteria_intrinsic = (
     args.iterations,
     args.minimum_error)
 
-if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibrat.
+if (chessboard_pattern_detections_paired > 0):  # i.e. if did not load calib.
 
     print("START - intrinsic calibration ...")
 
     rms_int_L, mtxL, distL, rvecsL, tvecsL = cv2.calibrateCamera(
-        objpoints_left_only, imgpoints_left_only, grayL.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
+        objpoints_left_only, imgpoints_left_only, grayL.shape[::-1],
+        None, None, criteria=termination_criteria_intrinsic)
     rms_int_R, mtxR, distR, rvecsR, tvecsR = cv2.calibrateCamera(
-        objpoints_right_only, imgpoints_right_only, grayR.shape[::-1], None, None, criteria=termination_criteria_intrinsic)
+        objpoints_right_only, imgpoints_right_only, grayR.shape[::-1],
+        None, None, criteria=termination_criteria_intrinsic)
     print("FINISHED - intrinsic calibration")
 
     print()
-    print("LEFT: RMS left intrinsic calibation re-projection error: ", rms_int_L)
-    print("RIGHT: RMS right intrinsic calibation re-projection error: ", rms_int_R)
+    print("LEFT: RMS left intrinsic calibation re-projection error: ",
+          rms_int_L)
+    print("RIGHT: RMS right intrinsic calibation re-projection error: ",
+          rms_int_R)
     print()
 
     # perform undistortion of the images
@@ -511,7 +520,7 @@ while (keep_processing):
 
 # show mean re-projection error of the object points onto the image(s)
 
-if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calib.
+if (chessboard_pattern_detections_paired > 0):  # i.e. if did not load a calib.
 
     tot_errorL = 0
     for i in range(len(objpoints_left_only)):
@@ -523,7 +532,8 @@ if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a cali
             cv2.NORM_L2) / len(imgpoints_left_only2)
         tot_errorL += errorL
 
-    print("LEFT: mean re-projection error (absolute, px): ", tot_errorL / len(objpoints_left_only))
+    print("LEFT: mean re-projection error (absolute, px): ",
+          tot_errorL / len(objpoints_left_only))
 
     tot_errorR = 0
     for i in range(len(objpoints_right_only)):
@@ -535,7 +545,8 @@ if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a cali
             cv2.NORM_L2) / len(imgpoints_right_only2)
         tot_errorR += errorR
 
-    print("RIGHT: mean re-projection error (absolute, px): ", tot_errorR / len(objpoints_right_only))
+    print("RIGHT: mean re-projection error (absolute, px): ",
+          tot_errorR / len(objpoints_right_only))
 
 #####################################################################
 
@@ -554,7 +565,7 @@ termination_criteria_extrinsics = (
     args.iterations,
     args.minimum_error)
 
-if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if did not load a calib.
     print()
     print("START - extrinsic calibration ...")
     (rms_stereo,
@@ -581,12 +592,14 @@ if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a cali
     print()
     print("Intrinsic Camera Calibration:")
     print()
-    print("Intrinsic Camera Calibration Matrix, K - from intrinsic calibration:")
-    print("(format as follows: fx, fy - focal lengths / cx, cy - optical centers)")
+    print("Intrinsic Camera Calibration Matrix, K - from \
+            intrinsic calibration:")
+    print("(format as follows: fx, fy - focal lengths / cx, \
+            cy - optical centers)")
     print("[fx, 0, cx]\n[0, fy, cy]\n[0,  0,  1]")
     print()
     print("Intrinsic Distortion Co-effients, D - from intrinsic calibration:")
-    print("(k1, k2, k3 - radial p1, p2 - tangential - distortion coefficients)")
+    print("(k1, k2, k3 - radial p1, p2 - tangential distortion coefficients)")
     print("[k1, k2, p1, p2, k3]")
     print()
     print("K (left camera)")
@@ -626,18 +639,20 @@ if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a cali
 # all the pixels from the original images from the cameras are retained
 # in the rectified images (no source image pixels are lost)." - ?
 
-if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if did not load calib.
     RL, RR, PL, PR, Q, _, _ = cv2.stereoRectify(
         camera_matrix_l, dist_coeffs_l, camera_matrix_r, dist_coeffs_r,
         grayL.shape[::-1], R, T, alpha=-1)
 
 # compute the pixel mappings to the rectified versions of the images
 
-if (chessboard_pattern_detections_paired > 0):  # i.e. if we did not load a calibration
+if (chessboard_pattern_detections_paired > 0):  # i.e. if did not load calib.
     mapL1, mapL2 = cv2.initUndistortRectifyMap(
-        camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1], cv2.CV_32FC1)
+        camera_matrix_l, dist_coeffs_l, RL, PL, grayL.shape[::-1],
+        cv2.CV_32FC1)
     mapR1, mapR2 = cv2.initUndistortRectifyMap(
-        camera_matrix_r, dist_coeffs_r, RR, PR, grayR.shape[::-1], cv2.CV_32FC1)
+        camera_matrix_r, dist_coeffs_r, RR, PR, grayR.shape[::-1],
+        cv2.CV_32FC1)
 
     print()
     print("-> displaying rectification")
@@ -800,9 +815,9 @@ while (keep_processing):
         cv_file.write(
             "description",
             "camera matrices K for left and right, distortion coefficients " +
-            "for left and right, 3D rotation matrix R, 3D translation vector " +
-            "T, Essential matrix E, Fundamental matrix F, disparity to depth " +
-            "projection matrix Q")
+            "for left and right, 3D rotation matrix R, 3D translation " +
+            "vector T, Essential matrix E, Fundamental matrix F, disparity " +
+            "to depth projection matrix Q")
         cv_file.write("K_l", camera_matrix_l)
         cv_file.write("K_r", camera_matrix_r)
         cv_file.write("distort_l", dist_coeffs_l)

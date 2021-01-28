@@ -9,9 +9,9 @@
 # Copyright (c) 2019 Toby Breckon, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-# Implements the Faster R-CNN object detection architecture decribed in full in:
-# Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks
-# Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun -
+# Implements the Faster R-CNN object detection architecture decribed in:
+# Faster R-CNN: Towards Real-Time Object Detection with Region Proposal
+# Networks - Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun -
 # https://arxiv.org/abs/1506.01497
 
 # This code: significant portions based in part on the example available at:
@@ -32,7 +32,6 @@ import cv2
 import argparse
 import sys
 import math
-import numpy as np
 
 ##########################################################################
 
@@ -176,8 +175,8 @@ def postprocess(image, results, threshold_confidence, threshold_nms):
                 confidences.append(float(confidence))
                 boxes.append([left, top, width, height])
 
-    # Perform non maximum suppression to eliminate redundant overlapping boxes with
-    # lower confidences
+    # Perform non maximum suppression to eliminate redundant overlapping boxes
+    # with lower confidences
     classIds_nms = []
     confidences_nms = []
     boxes_nms = []

@@ -1,8 +1,8 @@
 #####################################################################
 
-# Example : perform GMM based foreground/background subtraction from a video file
-# specified on the command line (e.g. python FILE.py video_file) or from an
-# attached web camera
+# Example : perform GMM based foreground/background subtraction from a video
+# file specified on the command line (e.g. python FILE.py video_file) or from
+# an attached web camera
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -145,11 +145,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # start the event loop - essential
 
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
+        # cv2.waitKey() is a keyboard binding function (argument is the time in
+        # ms.) It waits for specified milliseconds for any keyboard event.
         # If you press any key in that time, the program continues.
         # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
+        # (bitwise and with 0xFF to extract least significant byte of
+        # multi-byte response) here we use a wait time in ms. that takes
+        # account of processing time already used in the loop
 
         # wait 40ms (i.e. 1000ms / 25 fps = 40 ms)
         key = cv2.waitKey(40) & 0xFF

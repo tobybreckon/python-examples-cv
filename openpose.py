@@ -1,8 +1,8 @@
 ##########################################################################
 
 # Example : perform live display of openpose body pose regression from a video
-# file specified on the command line (e.g. python FILE.py video_file) or from an
-# attached web camera
+# file specified on the command line (e.g. python FILE.py video_file) or from
+# an attached web camera
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -15,7 +15,8 @@
 
 ##########################################################################
 
-# To use download COCO model pose files from: https://github.com/CMU-Perceptual-Computing-Lab/openpose/
+# To use download COCO model pose files from:
+# https://github.com/CMU-Perceptual-Computing-Lab/openpose/
 # using
 # https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/models/getModels.sh
 
@@ -25,7 +26,6 @@ import cv2
 import argparse
 import sys
 import math
-import numpy as np
 
 ##########################################################################
 
@@ -101,24 +101,16 @@ BODY_PARTS = {"Nose": 0, "Neck": 1, "RShoulder": 2, "RElbow": 3, "RWrist": 4,
               "LEye": 15, "REar": 16, "LEar": 17, "Background": 18}
 
 POSE_PAIRS = [
-    [
-        "Neck", "RShoulder"], [
-            "Neck", "LShoulder"], [
-                "RShoulder", "RElbow"], [
-                    "RElbow", "RWrist"], [
-                        "LShoulder", "LElbow"], [
-                            "LElbow", "LWrist"], [
-                                "Neck", "RHip"], [
-                                    "RHip", "RKnee"], [
-                                        "RKnee", "RAnkle"], [
-                                            "Neck", "LHip"], [
-                                                "LHip", "LKnee"], [
-                                                    "LKnee", "LAnkle"], [
-                                                        "Neck", "Nose"], [
-                                                            "Nose", "REye"], [
-                                                                "REye", "REar"], [
-                                                                    "Nose", "LEye"], [
-                                                                        "LEye", "LEar"]]
+                ["Neck", "RShoulder"], ["Neck", "LShoulder"],
+                ["RShoulder", "RElbow"], ["RElbow", "RWrist"],
+                ["LShoulder", "LElbow"], ["LElbow", "LWrist"],
+                ["Neck", "RHip"], ["RHip", "RKnee"],
+                ["RKnee", "RAnkle"], ["Neck", "LHip"],
+                ["LHip", "LKnee"], ["LKnee", "LAnkle"],
+                ["Neck", "Nose"], ["Nose", "REye"],
+                ["REye", "REar"], ["Nose", "LEye"],
+                ["LEye", "LEar"]
+            ]
 
 ##########################################################################
 
@@ -187,8 +179,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 # Slice heatmap of corresponding body's part.
                 heatMap = out[0, i, :, :]
 
-                # Originally, we try to find all the local maximums. To simplify a sample
-                # we just find a global one. However only a single pose at the same time
+                # Originally, we try to find all the local maximums.
+                # To simplify a sample we just find a global one.
+                # However only a single pose at the same time
                 # could be detected this way.
                 _, conf, _, point = cv2.minMaxLoc(heatMap)
                 x = (frameWidth * point[0]) / out.shape[3]
@@ -210,9 +203,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     cv2.line(
                         frame, points[idFrom], points[idTo], (0, 255, 0), 3)
                     cv2.ellipse(
-                        frame, points[idFrom], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
+                        frame, points[idFrom], (3, 3), 0, 0, 360,
+                        (0, 0, 255), cv2.FILLED)
                     cv2.ellipse(
-                        frame, points[idTo], (3, 3), 0, 0, 360, (0, 0, 255), cv2.FILLED)
+                        frame, points[idTo], (3, 3), 0, 0, 360,
+                        (0, 0, 255), cv2.FILLED)
 
         # add efficiency information.
 
@@ -234,16 +229,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         stop_t = ((cv2.getTickCount() - start_t) /
                   cv2.getTickFrequency()) * 1000
 
-        # start the event loop - essential
-
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
-        # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
-
+        # start the event loop - essentials
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)
 

@@ -1,8 +1,8 @@
 ##########################################################################
 
 # Example : perform live display of squeezenet CNN classification from a video
-# file specified on the command line (e.g. python FILE.py video_file) or from an
-# attached web camera
+# file specified on the command line (e.g. python FILE.py video_file) or from
+# an attached web camera
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -17,8 +17,10 @@
 
 # To use download the following files:
 
-# https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/classification_classes_ILSVRC2012.txt -> classification_classes_ILSVRC2012.txt
-# https://github.com/forresti/SqueezeNet/raw/master/SqueezeNet_v1.1/squeezenet_v1.1.caffemodel -> squeezenet_v1.1.caffemodel
+# https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/classification_classes_ILSVRC2012.txt
+# -> classification_classes_ILSVRC2012.txt
+# https://github.com/forresti/SqueezeNet/raw/master/SqueezeNet_v1.1/squeezenet_v1.1.caffemodel
+# -> squeezenet_v1.1.caffemodel
 # https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/squeezenet_v1.1.prototxt
 # -> squeezenet_v1.1.prototxt
 
@@ -204,7 +206,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         if (confidence > confThreshold):
             # add predicted class.
             label = '%s: %.4f' % (
-                classes[classId] if classes else 'Class #%d' % classId, confidence)
+                classes[classId]
+                if classes else 'Class #%d' % classId, confidence)
             cv2.putText(frame, label, (0, 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
@@ -215,14 +218,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # start the event loop - essential
-
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
-        # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
 
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)

@@ -1,7 +1,7 @@
 ##########################################################################
 
-# Example : perform EigenFace based face recognition using haar cascade detection
-# for initial face localization within the image
+# Example : perform EigenFace based face recognition using haar cascade
+# detection for initial face localization within the image
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
@@ -76,7 +76,8 @@ parser.add_argument(
     "-p",
     "--portrait_percentage",
     type=int,
-    help="for potrait style inputs, specify upper percentage of image in which to detect face",
+    help="for potrait style inputs, specify upper percentage \
+            of image in which to detect face",
     default=100)
 parser.add_argument(
     "-s",
@@ -88,7 +89,8 @@ parser.add_argument(
     "-es",
     "--eigenfaces_to_skip",
     type=int,
-    help="skip the first N eigenface dimensions that normally contain illumination information only",
+    help="skip the first N eigenface dimensions that \
+            normally contain illumination information only",
     default=3)
 parser.add_argument(
     'video_file',
@@ -128,8 +130,11 @@ def readImages(path, haar_face_detector):
 
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             height, width = gray.shape
-            face = haar_face_detector.detectMultiScale(gray[0:int(height * (args.portrait_percentage / 100)), 0:width],
-                                                       scaleFactor=1.1, minNeighbors=4, minSize=(60, 60), flags=cv2.CASCADE_DO_CANNY_PRUNING)
+            face = haar_face_detector.detectMultiScale(
+                gray[0:int(height * (args.portrait_percentage / 100)),
+                     0:width],
+                scaleFactor=1.1, minNeighbors=4, minSize=(60, 60),
+                flags=cv2.CASCADE_DO_CANNY_PRUNING)
 
             if (len(face) > 0):
                 (x, y, w, h) = face[0]
@@ -143,7 +148,8 @@ def readImages(path, haar_face_detector):
                 roi_gray = cv2.equalizeHist(roi_gray)
 
                 # Add image to list
-                # (once only here, but could also add flips or other transforms to make it more robust)
+                # (once only here, but could also add flips or other
+                # transforms to make it more robust)
 
                 images.append(roi_gray)
                 names.append(name)
@@ -169,7 +175,7 @@ def readImages(path, haar_face_detector):
 
 def performPCA(images):
 
-    #  Allocate space for all images in one data matrix. The size of the data matrix is
+    #  Allocate space for all images in one data matrix. The size of the data
     # ( w  * h  * c, numImages ) where, w = width of an image in the dataset.
     # h = height of an image in the dataset. c is for the number of color
     # channels.
@@ -195,11 +201,13 @@ def performPCA(images):
 
     coefficients = cv2.PCAProject(data, mean, eigenVectors)
 
-    # calculate the covariance and mean of the PCA space representation of the images
-    # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
+    # calculate the covariance and mean of the PCA space representation of the
+    # images (skipping the first N eigenfaces that often contain just
+    # illumination variance, default N=3 )
 
     covariance_coeffs, mean_coeffs = cv2.calcCovarMatrix(
-        coefficients[:, args.eigenfaces_to_skip:args.eigenfaces], mean=None, flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype=cv2.CV_32F)
+        coefficients[:, args.eigenfaces_to_skip:args.eigenfaces], mean=None,
+        flags=cv2.COVAR_NORMAL | cv2.COVAR_ROWS, ctype=cv2.CV_32F)
 
     return (mean, eigenVectors, coefficients, mean_coeffs, covariance_coeffs)
 
@@ -221,14 +229,25 @@ def find_matching_face(
 
     for pca_face_coefficient in coefficients_of_all_faces:
 
-        # calculate the Mahalanobis distamce between the coefficients we need to match and each from the set of faces
-        # (skipping the first N eigenfaces that often contain just illumination variance, default N=3 )
+        # calculate the Mahalanobis distamce between the coefficients we need
+        # to match and each from the set of faces (skipping the first N
+        # eigenfaces that often contain just illumination variance, def. N=3)
 
-        m_dist = cv2.Mahalanobis(face_coefficients_to_match[:, args.eigenfaces_to_skip:args.eigenfaces], pca_face_coefficient.reshape(
-            1, args.eigenfaces)[:, args.eigenfaces_to_skip:args.eigenfaces], np.linalg.inv(covariance))
+        m_dist = cv2.Mahalanobis(
+            face_coefficients_to_match[:,
+                                       args.eigenfaces_to_skip:
+                                       args.eigenfaces],
+            pca_face_coefficient.reshape(1, args.eigenfaces)[:,
+                                                             args.eigenfaces_to_skip:
+                                                             args.eigenfaces],
+            np.linalg.inv(covariance))
 
-        # alternatively use the L1 or L2 norm as per original [Pentland / Turk 1991] paper - which used L1
-        # m_dist = numpy.linalg.norm(face_coefficients_to_match[:,3:args.eigenfaces]-pca_face_coefficient.reshape(1,args.eigenfaces)[:,3:args.eigenfaces])
+        # alternatively use the L1 or L2 norm as per original
+        #  [Pentland / Turk 1991] paper - which used L1
+        # m_dist = numpy.linalg.norm(
+        #   face_coefficients_to_match[:,3:args.eigenfaces] -
+        #    pca_face_coefficient.reshape(1,args.eigenfaces)
+        #    [:,3:args.eigenfaces])
 
         if (m_dist < nearest_face_distance):
             nearest_face_index = current_face
@@ -349,9 +368,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
             cv2.putText(frame, names[face_index] +
                         ": " +
-                        str(round(face_distance, 2)), (x, y +
-                                                       h +
-                                                       10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+                        str(round(face_distance, 2)), (x, y + h + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
             # display stored equalizeHist version side-by-side
 
@@ -369,16 +387,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         stop_t = ((cv2.getTickCount() - start_t) /
                   cv2.getTickFrequency()) * 1000
 
-        # start the event loop - essential
-
-        # cv2.waitKey() is a keyboard binding function (argument is the time in milliseconds).
-        # It waits for specified milliseconds for any keyboard event.
-        # If you press any key in that time, the program continues.
-        # If 0 is passed, it waits indefinitely for a key stroke.
-        # (bitwise and with 0xFF to extract least significant byte of multi-byte response)
-        # here we use a wait time in ms. that takes account of processing time
-        # already used in the loop
-
+        # start the event loop + detect specific key strokes
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /
         # 25 fps = 40 ms)
 

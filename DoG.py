@@ -15,7 +15,6 @@
 import cv2
 import argparse
 import sys
-import numpy as np
 
 #####################################################################
 
@@ -149,7 +148,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # performing smoothing on the image using a smoothing mark (see manual entry for GaussianBlur())
+        # performing smoothing on the image using a smoothing mask
         # specify 0x0 mask size then size is auto-computed from the sigma
         # values
 

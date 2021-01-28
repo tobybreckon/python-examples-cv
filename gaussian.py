@@ -137,7 +137,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        smoothing_neighbourhood = cv2.getTrackbarPos("kernel size", window_name2)
+        smoothing_neighbourhood = cv2.getTrackbarPos("kernel size",
+                                                     window_name2)
 
         # check neighbourhood is greater than 3 and odd
 

@@ -237,9 +237,11 @@ def find_matching_face(
             face_coefficients_to_match[:,
                                        args.eigenfaces_to_skip:
                                        args.eigenfaces],
-            pca_face_coefficient.reshape(1, args.eigenfaces)[:,
-                                                             args.eigenfaces_to_skip:
-                                                             args.eigenfaces],
+            pca_face_coefficient.reshape(1,
+                                         args.eigenfaces)[:,
+                                                          args.
+                                                          eigenfaces_to_skip:
+                                                          args.eigenfaces],
             np.linalg.inv(covariance))
 
         # alternatively use the L1 or L2 norm as per original

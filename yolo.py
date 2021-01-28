@@ -9,11 +9,12 @@
 # Copyright (c) 2019 Toby Breckon, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
-# Implements the You Only Look Once (YOLO) object detection architecture decribed in full in:
-# Redmon, J., & Farhadi, A. (2018). Yolov3: An incremental improvement. arXiv preprint arXiv:1804.02767.
-# https://pjreddie.com/media/files/papers/YOLOv3.pdf
+# Implements the You Only Look Once (YOLO) object detection architecture in:
+# Redmon, J., & Farhadi, A. (2018). Yolov3: An incremental improvement.
+# arXiv:1804.02767. - https://pjreddie.com/media/files/papers/YOLOv3.pdf
 
-# This code: significant portions based in part on the tutorial and example available at:
+# This code: significant portions based in part on the tutorial and
+# example available at:
 # https://www.learnopencv.com/deep-learning-based-object-detection-using-yolov3-with-opencv-python-c/
 # https://github.com/spmallick/learnopencv/blob/master/ObjectDetection-YOLO/object_detection_yolo.py
 # under LICENSE:
@@ -168,8 +169,8 @@ def postprocess(image, results, threshold_confidence, threshold_nms):
                 confidences.append(float(confidence))
                 boxes.append([left, top, width, height])
 
-    # Perform non maximum suppression to eliminate redundant overlapping boxes with
-    # lower confidences
+    # Perform non maximum suppression to eliminate redundant overlapping boxes
+    # with lower confidences
     classIds_nms = []
     confidences_nms = []
     boxes_nms = []

@@ -3,6 +3,8 @@
 OpenCV Python computer vision examples used for teaching within the undergraduate Computer Science programme
 at [Durham University](http://www.durham.ac.uk) (UK) by [Prof. Toby Breckon](https://breckon.org/toby/).
 
+![Python - PEP8](https://github.com/tobybreckon/python-examples-cv/workflows/Python%20-%20PEP8/badge.svg)
+
 All tested with [OpenCV](http://www.opencv.org) 3.x / 4.x and Python 3.x.
 
 ```

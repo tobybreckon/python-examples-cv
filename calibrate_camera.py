@@ -48,13 +48,15 @@ parser.add_argument(
     "-cbx",
     "--chessboardx",
     type=int,
-    help="specify number of internal chessboard squares (corners) in x-direction",
+    help="specify number of internal chessboard squares \
+            (corners) in x-direction",
     default=6)
 parser.add_argument(
     "-cby",
     "--chessboardy",
     type=int,
-    help="specify number of internal chessboard squares (corners) in y-direction",
+    help="specify number of internal chessboard squares \
+            (corners) in y-direction",
     default=9)
 parser.add_argument(
     "-cbw",
@@ -72,7 +74,8 @@ parser.add_argument(
     "-e",
     "--minimum_error",
     type=float,
-    help="specify lower error threshold upon which to stop optimisation stages",
+    help="specify lower error threshold upon which to stop \
+        optimisation stages",
     default=0.001)
 args = parser.parse_args()
 

@@ -10,6 +10,9 @@
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
+# Acknowledgements: based in part from tutorial at:
+# https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_pyramids/py_pyramids.html
+
 ##########################################################################
 
 import cv2
@@ -83,9 +86,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     cv2.namedWindow(window_name, cv2.WINDOW_AUTOSIZE)
 
-    # set number of pyramid levels
+    # set initial number of pyramid levels
 
     nlevels = 5
+
+    # print user key commands
+
+    print()
+    print("'-' - reduce pyramid levels")
+    print("'+' - increase pyramid levels (max 6 levels)")
+    print()
 
     while (keep_processing):
 
@@ -121,7 +131,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             cv2.imshow("Gaussian Level: " + str(layer), g_level)
             g_pyramid.append(g_level.copy())
 
-        # generate Laplacian Pyramid image frame
+        # generate Laplacian pyramid image frame
 
         lp_pyramid = [g_pyramid[nlevels - 1]]
         for layer in range(nlevels, 0, -1):

@@ -133,7 +133,7 @@ imgpoints = []  # 2d points in image plane.
 chessboard_pattern_detections = 0
 
 print()
-print("--> hold up chessboard (grabbing images at 10 fps)")
+print("--> hold up chessboard (grabbing images at 2 fps)")
 print("press c : to continue to calibration")
 
 #####################################################################
@@ -199,7 +199,7 @@ if cap.open(args.camera_to_use):
 
         # start the event loop
 
-        key = cv2.waitKey(100) & 0xFF  # wait 1s. between frames
+        key = cv2.waitKey(500) & 0xFF  # wait 1s. between frames
         if (key == ord('c')):
             do_calibration = True
 
@@ -225,17 +225,23 @@ ret, K, D, rvecs, tvecs = cv2.calibrateCamera(
     objpoints, imgpoints, gray.shape[::-1], None, None)
 
 print("FINISHED - intrinsic calibration")
+
+# print output in readable format
+
 print()
 print("Intrinsic Camera Calibration Matrix, K - from intrinsic calibration:")
 print("(format as follows: fx, fy - focal lengths / cx, cy - optical centers)")
 print("[fx, 0, cx]\n[0, fy, cy]\n[0,  0,  1]")
+np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
 print(K)
 print()
 print("Intrinsic Distortion Co-effients, D - from intrinsic calibration:")
 print("(k1, k2, k3 - radial p1, p2 - tangential - distortion coefficients)")
 print("[k1, k2, p1, p2, k3]")
+np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
 print(D)
-
+print()
+print("Image resolution used for calibration (width, height): ", frame.shape[:2])
 
 #####################################################################
 

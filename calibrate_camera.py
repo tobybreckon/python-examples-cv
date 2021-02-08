@@ -148,8 +148,6 @@ if cap.open(args.camera_to_use):
 
         ret, frame = cap.read()
 
-        print(ret)
-
         # rescale if specified
 
         if (args.rescale != 1.0):
@@ -207,6 +205,14 @@ if cap.open(args.camera_to_use):
 
 else:
     print("Cannot open connected camera.")
+    exit()
+
+#####################################################################
+
+# check we detected some patterns within the first loop
+
+if (chessboard_pattern_detections == 0):
+    print("No calibration patterns detected - exiting.")
     exit()
 
 #####################################################################

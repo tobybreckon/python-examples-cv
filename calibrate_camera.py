@@ -4,8 +4,8 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2018 Department of Computer Science,
-#                    Durham University, UK
+# Copyright (c) 2018-2021 Department of Computer Science,
+#                         Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
 # Acknowledgements:
@@ -199,7 +199,7 @@ if cap.open(args.camera_to_use):
 
         # start the event loop
 
-        key = cv2.waitKey(500) & 0xFF  # wait 1s. between frames
+        key = cv2.waitKey(500) & 0xFF  # wait 500 ms. between frames
         if (key == ord('c')):
             do_calibration = True
 

@@ -148,6 +148,8 @@ if cap.open(args.camera_to_use):
 
         ret, frame = cap.read()
 
+        print(ret)
+
         # rescale if specified
 
         if (args.rescale != 1.0):
@@ -205,6 +207,7 @@ if cap.open(args.camera_to_use):
 
 else:
     print("Cannot open connected camera.")
+    exit()
 
 #####################################################################
 

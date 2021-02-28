@@ -133,11 +133,11 @@ net = cv2.dnn.readNet(
 # set up compute target as one of [GPU, OpenCL, CPU]
 
 if (args.target == 'gpu'):
-        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 elif (args.target == 'opencl'):
-        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 else:
     net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
     net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)

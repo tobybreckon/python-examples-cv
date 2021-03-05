@@ -63,7 +63,7 @@ optional arguments:
 
 For several of the demos that largely rely on effective demonstration using just a single output window - press the _"f"_ key to run fullscreen. In all examples press _"x"_ to exit.
 
-Use script ``sh download-models.sh`` to download CNN model files associated with some examples.
+Use script ```sh download-models.sh``` to download CNN model files associated with some examples.
 
 ---
 
@@ -72,6 +72,8 @@ Use script ``sh download-models.sh`` to download CNN model files associated with
 This codebase contains the following re-usable exemplar elements:
 
 - ```camera_stream.py``` - a re-usable threaded camera class, that is call compatible with the existing OpenCV VideoCapture class, designed to always deliver the latest frame from a single camera without buffering delays (used by all examples if available).
+
+- ```h_concatenate()``` - a re-usable function for horiozontal image concatenation for display in single window handling variations in size/channels (see ```chromaticity_lightness.py```).
 
 ---
 

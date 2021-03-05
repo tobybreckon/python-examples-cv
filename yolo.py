@@ -61,6 +61,13 @@ parser.add_argument(
     action='store_true',
     help="run in full screen mode")
 parser.add_argument(
+    "-use",
+    "--target",
+    type=str,
+    choices=['cpu', 'gpu', 'opencl'],
+    help="select computational backend",
+    default='cpu')
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -243,13 +250,17 @@ with open(classesFile, 'rt') as f:
 net = cv2.dnn.readNetFromDarknet(args.config_file, args.weights_file)
 output_layer_names = getOutputsNames(net)
 
-# defaults DNN_BACKEND_INFERENCE_ENGINE if Intel Inference Engine lib
-# available or DNN_BACKEND_OPENCV otherwise
-net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+# set up compute target as one of [GPU, OpenCL, CPU]
 
-# change to cv2.dnn.DNN_TARGET_CPU or cv2.dnn.DNN_TARGET_OPENCL (slower)
-# if this causes issues (should fail gracefully if CUDA/OpenCL not available)
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+if (args.target == 'gpu'):
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+elif (args.target == 'opencl'):
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+else:
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
 ##########################################################################
 

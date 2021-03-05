@@ -55,6 +55,13 @@ parser.add_argument(
     action='store_true',
     help="run in full screen mode")
 parser.add_argument(
+    "-use",
+    "--target",
+    type=str,
+    choices=['cpu', 'gpu', 'opencl'],
+    help="select computational backend",
+    default='cpu')
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -119,9 +126,18 @@ net = cv2.dnn.readNet(
     "pose_iter_440000.caffemodel",
     "pose_deploy_linevec.prototxt",
     'caffe')
-net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
-# change to .._CPU if needed
-net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+
+# set up compute target as one of [GPU, OpenCL, CPU]
+
+if (args.target == 'gpu'):
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+elif (args.target == 'opencl'):
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
+else:
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_DEFAULT)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
 ##########################################################################
 

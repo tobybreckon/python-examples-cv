@@ -63,6 +63,8 @@ optional arguments:
 
 For several of the demos that largely rely on effective demonstration using just a single output window - press the _"f"_ key to run fullscreen. In all examples press _"x"_ to exit.
 
+Use script ``download-models.sh`` to download CNN model files associated with some examples.
+
 ---
 
 ### Re-usable Exemplar Components (Python Classes):

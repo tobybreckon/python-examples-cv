@@ -12,7 +12,7 @@
 # http://docs.opencv.org/3.1.0/d7/d8b/tutorial_py_face_detection.html#gsc.tab=0
 
 # get trained cascade files from:
-# https://github.com/opencv/opencv/tree/master/data/haarcascades
+# https://github.com/opencv/opencv/tree/master/data/
 
 #####################################################################
 
@@ -79,7 +79,7 @@ window_name = "Face Detection using LBP Cascades"  # window name
 # required cascade classifier files (and many others) available from:
 # https://github.com/opencv/opencv/tree/master/data/lbpcascades
 
-face_cascade = cv2.CascadeClassifier('lbpcascade_frontalface.xml')
+face_cascade = cv2.CascadeClassifier('lbpcascade_frontalface_improved.xml')
 
 if (face_cascade.empty()):
     print("Failed to load cascade from file.")

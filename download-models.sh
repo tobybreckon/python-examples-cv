@@ -93,6 +93,7 @@ md5sum -c md5sums.txt
 
 # Post Download - link all files to current directory
 
+cd $PWD_SCRIPT
 echo
 echo "Linking files to current directory ..."
 ln -sv $DIR_LOCAL_TARGET/* .

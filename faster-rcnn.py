@@ -88,8 +88,8 @@ parser.add_argument(
     "--weights_file",
     type=str,
     help="network weights",
-    default='faster_rcnn_inception_v2_coco_2018_01_28/\
-                frozen_inference_graph.pb')
+    default="faster_rcnn_inception_v2_coco_2018_01_28/"
+                + "/frozen_inference_graph.pb")
 
 args = parser.parse_args()
 

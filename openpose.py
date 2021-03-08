@@ -225,11 +225,15 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                         frame, points[idTo], (3, 3), 0, 0, 360,
                         (0, 0, 255), cv2.FILLED)
 
-        # add efficiency information.
+        # stop the timer and convert to ms.
 
-        t, _ = net.getPerfProfile()
-        label = 'Inference time: %.2f ms' % (
-            t * 1000.0 / cv2.getTickFrequency())
+        stop_t = ((cv2.getTickCount() - start_t) /
+                  cv2.getTickFrequency()) * 1000
+
+        # add efficiency information
+
+        label = ('Inference time: %.2f ms' % stop_t) + \
+            (' (Framerate: %.2f fps' % (1000 / stop_t)) + ')'
         cv2.putText(frame, label, (0, 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
 
@@ -238,12 +242,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         cv2.imshow(window_name, frame)
         cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                               cv2.WINDOW_FULLSCREEN & args.fullscreen)
-
-        # stop the timer and convert to ms. (to see how long processing and
-        # display takes)
-
-        stop_t = ((cv2.getTickCount() - start_t) /
-                  cv2.getTickFrequency()) * 1000
 
         # start the event loop - essentials
         # wait 40ms or less depending on processing time taken (i.e. 1000ms /

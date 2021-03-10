@@ -13,8 +13,8 @@
 # Mask R-CNN - Kaiming He, Georgia Gkioxari, Piotr Dollár, Ross Girshick
 # https://arxiv.org/abs/1703.06870
 
-# This code: significant portions based in part on the example available at:
-# https://github.com/opencv/opencv/blob/master/samples/dnn/segmentation.py
+# This code: significant portions based on the example available at:
+# https://github.com/opencv/opencv/blob/master/samples/dnn/mask_rcnn.py
 
 # To use first download and unpack the following files:
 # https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/object_detection_classes_coco.txt

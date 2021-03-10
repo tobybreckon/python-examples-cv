@@ -20,6 +20,10 @@ MODELS=(  https://pjreddie.com/media/files/yolov3.weights
           https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml
           https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_eye.xml
           https://raw.githubusercontent.com/opencv/opencv/master/data/lbpcascades/lbpcascade_frontalface_improved.xml
+          http://download.tensorflow.org/models/object_detection/mask_rcnn_inception_v2_coco_2018_01_28.tar.gz
+          https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/mask_rcnn_inception_v2_coco_2018_01_28.pbtxt
+          http://dl.caffe.berkeleyvision.org/fcn8s-heavy-pascal.caffemodel
+          http://dl.caffe.berkeleyvision.org/fcn8s-heavy-pascal.prototxt
         )
 
 # associated MD5 checksums (output of md5sum filename)
@@ -37,6 +41,10 @@ MD5SUMS=( "4fdfb6d202e9d8e65da14c78b604af95  classification_classes_ILSVRC2012.t
           "2d6fac0caaec1f9558872755ff34818d  haarcascade_eye.xml"
           "a03f92a797e309e76e6a034ab9e02616  haarcascade_frontalface_default.xml"
           "acee557d79a3684cac72ebd811a4eee0  lbpcascade_frontalface_improved.xml"
+          "5708e4e579d8e4eabeec6c555d4234b2  mask_rcnn_inception_v2_coco_2018_01_28.pbtxt"
+          "b47e443b313a709e4c39c1caeaa3ecb3  mask_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb"
+          "c03b2953ebd846c270da1a8e8f200c09  fcn8s-heavy-pascal.caffemodel"
+          "7e2c427186d4e1bac52813383423e82e  fcn8s-heavy-pascal.prototxt"
         )
 
 ################################################################################
@@ -90,6 +98,7 @@ echo
 echo "Performing MD5 file verification checks ..."
 printf '%s\n' "${MD5SUMS[@]}" > md5sums.txt
 md5sum -c md5sums.txt
+rm -f md5sums.txt
 
 # Post Download - link all files to current directory
 

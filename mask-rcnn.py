@@ -249,10 +249,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # get confidence threshold from trackbar
         confThreshold = cv2.getTrackbarPos(trackbarName, window_name) / 100
 
+        # get number of classes detected and number of detections
         numClasses = masks.shape[1]
         numDetections = boxes.shape[2]
 
-        # draw segmentation - generate colours
+        # draw segmentation - first generate colours if needed
 
         if not colors:
             np.random.seed(324)
@@ -273,7 +274,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             confidence = box[2]
             if confidence > confThreshold:
 
-                # draw bounding box (as per Faster R-CNN)
+                #### draw bounding box (as per Faster R-CNN)
 
                 classId = int(box[1])
                 left = int(frameW * box[3])
@@ -287,20 +288,23 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 bottom = max(0, min(bottom, frameH - 1))
 
                 drawPred(frame, classes[classId], confidence,
-                         left, top, right, bottom, colors[classId])
+                         left, top, right, bottom, (0,255,0))
 
-                # draw object instance mask
+                #### draw object instance mask
+                # get mask, re-size from 28x28 to size of bounding box
+                # then theshold at 0.5
 
                 classMask = mask[classId]
                 classMask = cv2.resize(classMask,
-                                       (right - left + 1, bottom - top + 1))
+                                       (right - left + 1, bottom - top + 1),
+                                       cv2.INTER_CUBIC)
                 mask = (classMask > 0.5)
 
                 roi = frame[top:bottom+1, left:right+1][mask]
                 frame[top:bottom+1, left:right+1][mask] = (
-                    0.7 * colors[classId] + 0.3 * roi).astype(np.uint8)
+                    0.8 * colors[classId] + 0.2 * roi).astype(np.uint8)
 
-        # stop the timer and convert to ms. (to see how long processing takes
+        # stop the timer and convert to ms. (to see how long processing takes)
 
         stop_t = ((cv2.getTickCount() - start_t) /
                   cv2.getTickFrequency()) * 1000

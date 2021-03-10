@@ -274,7 +274,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             confidence = box[2]
             if confidence > confThreshold:
 
-                #### draw bounding box (as per Faster R-CNN)
+                # **** draw bounding box (as per Faster R-CNN)
 
                 classId = int(box[1])
                 left = int(frameW * box[3])
@@ -288,9 +288,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 bottom = max(0, min(bottom, frameH - 1))
 
                 drawPred(frame, classes[classId], confidence,
-                         left, top, right, bottom, (0,255,0))
+                         left, top, right, bottom, (0, 255, 0))
 
-                #### draw object instance mask
+                # **** draw object instance mask
                 # get mask, re-size from 28x28 to size of bounding box
                 # then theshold at 0.5
 

@@ -166,7 +166,7 @@ window_name = "FCN Semantic Image Segmentation"  # window name
 classes = None
 with open("object_detection_classes_pascal_voc.txt", 'rt') as f:
     classes = f.read().rstrip('\n').split('\n')
-classes.insert(0,"background")  # insery a background class as 0
+classes.insert(0, "background")  # insery a background class as 0
 
 ##########################################################################
 

@@ -92,7 +92,7 @@ def h_concatenate(img1, img2):
     # height of first image is master height, width can remain unchanged
 
     if (height1 != height2):
-        out2 = cv2.resize(out2, (height1, width2))
+        out2 = cv2.resize(out2, (width2, height1))
 
     return np.hstack((out1, out2))
 

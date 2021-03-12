@@ -19,7 +19,8 @@
 # To use download the following files:
 
 # http://dl.caffe.berkeleyvision.org/fcn8s-heavy-pascal.caffemodel
-# http://dl.caffe.berkeleyvision.org/fcn8s-heavy-pascal.prototxt
+# https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/fcn8s-heavy-pascal.prototxt
+# https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/object_detection_classes_pascal_voc.txt
 
 ##########################################################################
 
@@ -279,7 +280,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         segm = segm.reshape(height, width, 3)
 
         segm = cv2.resize(segm, (frameWidth, frameHeight),
-                          interpolation=cv2.INTER_CUBIC)
+                          interpolation=cv2.INTER_NEAREST)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -294,7 +295,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         cv2.putText(frame, label, (0, 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
-        # display image
+        # display image(s) as concatenated single image
 
         cv2.imshow(window_name,
                    h_concatenate(h_concatenate(frame, segm.astype(np.uint8)),

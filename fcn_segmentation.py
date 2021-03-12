@@ -237,8 +237,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # width: 500
         # height: 500
         # rgb: false
-        # object_detection_classes_pascal_voc.txt
-        # classes:
+        #
+        # classes: object_detection_classes_pascal_voc.txt
         #######################################################################
 
         # create a 4D tensor "blob" from a frame.

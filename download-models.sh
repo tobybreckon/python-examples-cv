@@ -25,6 +25,8 @@ MODELS=(  https://pjreddie.com/media/files/yolov3.weights
           http://dl.caffe.berkeleyvision.org/fcn8s-heavy-pascal.caffemodel
           https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/fcn8s-heavy-pascal.prototxt
           https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/object_detection_classes_pascal_voc.txt
+          https://raw.githubusercontent.com/PINTO0309/MobileNet-SSD-RealSense/master/caffemodel/MobileNetSSD/MobileNetSSD_deploy.caffemodel
+          https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/voc/MobileNetSSD_deploy.prototxt
         )
 
 # associated MD5 checksums (output of md5sum filename)
@@ -47,6 +49,9 @@ MD5SUMS=( "4fdfb6d202e9d8e65da14c78b604af95  classification_classes_ILSVRC2012.t
           "c03b2953ebd846c270da1a8e8f200c09  fcn8s-heavy-pascal.caffemodel"
           "532698b83c2e8fa5a010bd996d19d30a  fcn8s-heavy-pascal.prototxt"
           "5ae5d62183cfb6f6d3ac109359d06a1b  object_detection_classes_pascal_voc.txt"
+          "8bed6fa43361685f4c78f1c084be7775  MobileNetSSD_deploy.caffemodel"
+          "aa2a13fe1fba2c3b7e067067a6749e7e  MobileNetSSD_deploy.prototxt"
+
         )
 
 ################################################################################

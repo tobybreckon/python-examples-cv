@@ -117,7 +117,7 @@ class CameraVideoStream:
         elif sys.platform.startswith('win'):        # MS Windows
             self.backend_default = cv2.CAP_DSHOW
         elif sys.platform.startswith('darwin'):     # macOS
-            self.backend_default = cv2.CAP_QT
+            self.backend_default = cv2.CAP_AVFOUNDATION
         else:
             self.backend_default = cv2.CAP_ANY      # auto-detect via OpenCV
 

@@ -193,7 +193,6 @@ def postprocess(image, results, threshold_confidence, threshold_nms):
         threshold_confidence,
         threshold_nms)
     for i in indices:
-        i = i[0]
         classIds_nms.append(classIds[i])
         confidences_nms.append(confidences[i])
         boxes_nms.append(boxes[i])
@@ -211,7 +210,7 @@ def getOutputsNames(net):
     layersNames = net.getLayerNames()
     # Get the names of the output layers, i.e. the layers with unconnected
     # outputs
-    return [layersNames[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+    return [layersNames[i - 1] for i in net.getUnconnectedOutLayers()]
 
 ##########################################################################
 

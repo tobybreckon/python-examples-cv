@@ -188,7 +188,6 @@ def postprocess(image, results, threshold_confidence, threshold_nms):
         threshold_confidence,
         threshold_nms)
     for i in indices:
-        print(i)
         classIds_nms.append(classIds[i[0]])
         confidences_nms.append(confidences[i[0]])
         boxes_nms.append(boxes[i[0]])

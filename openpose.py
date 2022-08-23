@@ -209,8 +209,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             for pair in POSE_PAIRS:
                 partFrom = pair[0]
                 partTo = pair[1]
-                assert(partFrom in BODY_PARTS)
-                assert(partTo in BODY_PARTS)
+                assert (partFrom in BODY_PARTS)
+                assert (partTo in BODY_PARTS)
 
                 idFrom = BODY_PARTS[partFrom]
                 idTo = BODY_PARTS[partTo]

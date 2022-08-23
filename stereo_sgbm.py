@@ -355,7 +355,7 @@ print("--> hold up chessboard")
 print("press space when ready to start calibration stage  ...")
 print()
 
-while ( not (do_calibration)):
+while (not (do_calibration)):
 
     # get frames from camera
 

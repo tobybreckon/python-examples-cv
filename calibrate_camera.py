@@ -142,7 +142,7 @@ print("press c : to continue to calibration")
 
 if cap.open(args.camera_to_use):
 
-    while (not(do_calibration)):
+    while (not (do_calibration)):
 
         # grab frames from camera
 

@@ -127,7 +127,7 @@ class CameraVideoStream:
             self.backend_default = cv2.CAP_ANY      # auto-detect via OpenCV
 
         # if a source was specified at init, proceed to open device
-        if not(src is None):
+        if not (src is None):
             self.open(src, backend)
 
     def open(self, src=0, backend=None):
@@ -182,7 +182,7 @@ class CameraVideoStream:
             # otherwise, read the next frame from the stream
             # provided we are not suspended (and get timestamp)
 
-            if not(self.suspend):
+            if not (self.suspend):
                 (self.grabbed, self.frame) = self.camera.read()
                 self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
 

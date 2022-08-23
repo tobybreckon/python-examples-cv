@@ -63,7 +63,7 @@ def nothing(x):
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
-    if not(args.video_file):
+    if not (args.video_file):
         import camera_stream
         cap = camera_stream.CameraVideoStream(use_tapi=True)
     else:
@@ -136,11 +136,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # check neighbourhood is greater than 3 and odd
 
         smoothing_neighbourhood = max(3, smoothing_neighbourhood)
-        if not(smoothing_neighbourhood % 2):
+        if not (smoothing_neighbourhood % 2):
             smoothing_neighbourhood = smoothing_neighbourhood + 1
 
         sobel_size = max(3, sobel_size)
-        if not(sobel_size % 2):
+        if not (sobel_size % 2):
             sobel_size = sobel_size + 1
 
         # convert to grayscale

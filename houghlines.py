@@ -65,7 +65,7 @@ def nothing(x):
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
-    if not(args.video_file):
+    if not (args.video_file):
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:
@@ -138,11 +138,11 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # check neighbourhood is greater than 3 and odd
 
         smoothing_neighbourhood = max(3, smoothing_neighbourhood)
-        if not(smoothing_neighbourhood % 2):
+        if not (smoothing_neighbourhood % 2):
             smoothing_neighbourhood = smoothing_neighbourhood + 1
 
         sobel_size = max(3, sobel_size)
-        if not(sobel_size % 2):
+        if not (sobel_size % 2):
             sobel_size = sobel_size + 1
 
         # convert to grayscale
@@ -167,7 +167,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # based on tutorial at:
         # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_houghlines/py_houghlines.html
 
-        if not(use_probablistic_hough):
+        if not (use_probablistic_hough):
             lines = cv2.HoughLines(canny, 1, np.pi/180, 40)
             if lines is not None:
                 for rho, theta in lines[0]:
@@ -226,7 +226,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 cv2.WND_PROP_FULLSCREEN,
                 cv2.WINDOW_FULLSCREEN)
         elif (key == ord('p')):
-            use_probablistic_hough = not(use_probablistic_hough)
+            use_probablistic_hough = not (use_probablistic_hough)
 
     # close all windows
 

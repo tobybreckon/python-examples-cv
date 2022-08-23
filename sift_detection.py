@@ -131,7 +131,7 @@ print("t - transform cropped image region into live image via H")
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
-    if not(args.video_file):
+    if not (args.video_file):
         import camera_stream
         cap = camera_stream.CameraVideoStream()  # T-API breaks code
     else:
@@ -461,24 +461,24 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # compute homography position for object
 
         elif (key == ord('h')):
-            compute_object_position_via_homography = not(
+            compute_object_position_via_homography = not (
                 compute_object_position_via_homography)
 
         # compute transform of whole image via homography
 
         elif (key == ord('t')):
-            transform_image_via_homography = not(
+            transform_image_via_homography = not (
                 transform_image_via_homography)
 
         # compute ellipse fit to matched points
 
         elif (key == ord('e')):
-            show_ellipse_fit = not(show_ellipse_fit)
+            show_ellipse_fit = not (show_ellipse_fit)
 
         # just shown feature points
 
         elif (key == ord('d')):
-            show_detection_only = not(show_detection_only)
+            show_detection_only = not (show_detection_only)
 
         # use SURF points
 

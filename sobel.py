@@ -64,7 +64,7 @@ try:
     # to use a non-buffered camera stream (via a separate thread)
     # enabling subsequent hardware acceleration where available
 
-    if not(args.video_file):
+    if not (args.video_file):
         import camera_stream
         cap = camera_stream.CameraVideoStream(use_tapi=True)
     else:
@@ -128,7 +128,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # check neighbourhood is greater than 3 and odd
 
         neighbourhood = max(3, neighbourhood)
-        if not(neighbourhood % 2):
+        if not (neighbourhood % 2):
             neighbourhood = neighbourhood + 1
 
         # perform sobel across all three colour channels of the image

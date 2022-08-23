@@ -51,7 +51,7 @@ class StereoCamera:
             self.camL = cv2.VideoCapture()
             self.camR = cv2.VideoCapture()
 
-            if not(
+            if not (
                 (self.camL.open(
                     cv2.CAP_XIAPI)) and (
                     self.camR.open(
@@ -78,7 +78,7 @@ class StereoCamera:
                         camera input may be buffered")
                 self.camZED = cv2.VideoCapture()
 
-            if not(self.camZED.open(args.camera_to_use)):
+            if not (self.camZED.open(args.camera_to_use)):
                 print(
                     "Cannot open connected ZED stereo camera as camera #: ",
                     args.camera_to_use)
@@ -101,7 +101,7 @@ class StereoCamera:
 
             self.camL = cv2.VideoCapture()
             self.camR = cv2.VideoCapture()
-            if not(
+            if not (
                 (self.camL.open(
                     args.camera_to_use)) and (
                     self.camR.open(
@@ -116,7 +116,7 @@ class StereoCamera:
         self.cameras_opened = True
 
     def swap_cameras(self):
-        if not(self.zed):
+        if not (self.zed):
             # swap the cameras - for all but ZED camera
             tmp = self.camL
             self.camL = self.camR
@@ -786,7 +786,7 @@ while (keep_processing):
     if (key == ord(' ')):
         keep_processing = False
     elif (key == ord('c')):
-        apply_colourmap = not(apply_colourmap)
+        apply_colourmap = not (apply_colourmap)
     elif (key == ord('x')):
         exit()
     elif (key == ord('f')):

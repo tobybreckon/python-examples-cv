@@ -64,7 +64,7 @@ window_name = "Live Camera Input"  # window name
 try:
     # to use a non-buffered camera stream (via a separate thread)
 
-    if not(args.video_file):
+    if not (args.video_file):
         import camera_stream
         cap = camera_stream.CameraVideoStream()
     else:

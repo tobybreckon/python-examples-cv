@@ -105,6 +105,11 @@ class CameraVideoStream:
         self.grabbed = 0
         self.frame = None
 
+        # set the initial timestamps to zero
+
+        self.timestamp = 0
+        self.timestamp_last_read = 0
+
         # set OpenCV Transparent API usage
 
         self.tapi = use_tapi
@@ -135,10 +140,17 @@ class CameraVideoStream:
         if (self.grabbed > 0):
             return True
 
-        # initialize the video camera stream and read the first frame
-        # from the stream
+        # initialize the video camera stream
         self.camera = cv2.VideoCapture(src, backend)
+
+        # when the backend is v4l (linux) set the buffer size to 1
+        # (as this is implemented for this backend and not others)
+        if (backend == cv2.CAP_V4L):
+            self.camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+        # read the first frame from the stream (and its timestamp)
         (self.grabbed, self.frame) = self.camera.read()
+        self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
 
         # only start the thread if in-fact the camera read was successful
         if (self.grabbed):
@@ -168,10 +180,11 @@ class CameraVideoStream:
                 return
 
             # otherwise, read the next frame from the stream
-            # provided we are not suspended
+            # provided we are not suspended (and get timestamp)
 
             if not(self.suspend):
                 (self.grabbed, self.frame) = self.camera.read()
+                self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
 
     def grab(self):
         # return status of most recent grab by the thread
@@ -182,6 +195,12 @@ class CameraVideoStream:
         return self.read()
 
     def read(self):
+
+        # remember the timestamp of the lastest image returned by read()
+        # so that subsequent calls to .get() can return the timestamp
+        # that is consistent with the last image the caller got via read()
+        self.timestamp_last_read = self.timestamp
+
         # return the frame most recently read
         if (self.tapi):
             # return OpenCV Transparent API UMat frame for H/W acceleration
@@ -214,6 +233,7 @@ class CameraVideoStream:
         # condition will exist between the thread's next call to update() after
         # it un-suspends and the next call to read() by the object user
         (self.grabbed, self.frame) = self.camera.read()
+        self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
 
         # restart thread by unsuspending it
         self.suspend = False
@@ -223,6 +243,14 @@ class CameraVideoStream:
     def get(self, property_name):
         # get a video capture property (behavior as per OpenCV manual for
         # VideoCapture)
+
+        # intercept calls to get the current timestamp of the video frame
+        # and explicitly return the timestamp of the last image6
+        # returned to the caller via read() or retrieve() from this object
+
+        if (property_name == cv2.CAP_PROP_POS_MSEC):
+            return self.timestamp_last_read
+
         return self.camera.get(property_name)
 
     def getBackendName(self):

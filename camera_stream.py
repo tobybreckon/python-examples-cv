@@ -29,6 +29,17 @@
 # available (i.e. camera_stream.py is in the module search path) and
 # falls back to using cv2.VideoCapture otherwise
 
+# use with other OpenCV video backends just explicitly pass the required
+# OpenCV flag as follows:
+#    ....
+#    import camera_stream
+#    cap = camera_stream.CameraVideoStream()
+#    ....
+#
+#    cap.open("your | gstreamer | pipeline", cv2.CAP_GSTREAMER)
+#
+# Ref: https://docs.opencv.org/4.x/d4/d15/group__videoio__flags__base.html
+
 # OpenCV T-API usage - alternative usage to enable OpenCV Transparent API
 # h/w acceleration where available on all subsequent processing of image
 # ....
@@ -44,6 +55,7 @@ from threading import Thread
 import cv2
 import sys
 import atexit
+import logging
 
 ##########################################################################
 
@@ -54,6 +66,15 @@ import atexit
 if ((majorCV <= '3') and (minorCV <= '4')):
     raise NameError('OpenCV version < 3.4,'
                     + ' not compatible with CameraVideoStream()')
+
+##########################################################################
+
+# set up logging
+
+log_level = logging.CRITICAL  # change to .INFO / .DEBUG for useful info
+
+log_msg_format = '%(asctime)s - Thead ID: %(thread)d - %(message)s'
+logging.basicConfig(format=log_msg_format, level=log_level)
 
 ##########################################################################
 
@@ -106,9 +127,12 @@ class CameraVideoStream:
         self.frame = None
 
         # set the initial timestamps to zero
-
         self.timestamp = 0
         self.timestamp_last_read = 0
+
+        # set internal framecounters to -1
+        self.framecounter = -1
+        self.framecounter_last_read = -1
 
         # set OpenCV Transparent API usage
 
@@ -151,6 +175,9 @@ class CameraVideoStream:
         # read the first frame from the stream (and its timestamp)
         (self.grabbed, self.frame) = self.camera.read()
         self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
+        self.framecounter += 1
+        logging.info("GRAB - frame %d @ time %f",
+                     self.framecounter, self.timestamp)
 
         # only start the thread if in-fact the camera read was successful
         if (self.grabbed):
@@ -183,8 +210,19 @@ class CameraVideoStream:
             # provided we are not suspended (and get timestamp)
 
             if not (self.suspend):
-                (self.grabbed, self.frame) = self.camera.read()
-                self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
+                self.camera.grab()
+                latest_timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
+                if (latest_timestamp > self.timestamp):
+                    (self.grabbed, self.frame) = self.camera.retrieve()
+                    self.framecounter += 1
+                    logging.info("GRAB - frame %d @ time %f",
+                                 self.framecounter, latest_timestamp)
+                    logging.debug("GRAB - inter-frame diff (ms) %f",
+                                  latest_timestamp - self.timestamp)
+                    self.timestamp = latest_timestamp
+                else:
+                    logging.info("GRAB - same timestamp skip %d",
+                                 latest_timestamp)
 
     def grab(self):
         # return status of most recent grab by the thread
@@ -196,10 +234,19 @@ class CameraVideoStream:
 
     def read(self):
 
-        # remember the timestamp of the lastest image returned by read()
+        # remember the timestamp/count of the lastest image returned by read()
         # so that subsequent calls to .get() can return the timestamp
         # that is consistent with the last image the caller got via read()
+        frame_offset = (self.framecounter - self.framecounter_last_read)
         self.timestamp_last_read = self.timestamp
+        self.framecounter_last_read = self.framecounter
+
+        for skip in range(1, frame_offset):
+            logging.info("SKIP - frame %d", self.framecounter_last_read
+                         - frame_offset + skip)
+
+        logging.info("READ - frame %d @ time %f",
+                     self.framecounter, self.timestamp)
 
         # return the frame most recently read
         if (self.tapi):
@@ -234,6 +281,9 @@ class CameraVideoStream:
         # it un-suspends and the next call to read() by the object user
         (self.grabbed, self.frame) = self.camera.read()
         self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
+        self.framecounter += 1
+        logging.info("GRAB - frame %d @ time %f",
+                     self.framecounter, self.timestamp)
 
         # restart thread by unsuspending it
         self.suspend = False
@@ -241,16 +291,18 @@ class CameraVideoStream:
         return ret_val
 
     def get(self, property_name):
-        # get a video capture property (behavior as per OpenCV manual for
-        # VideoCapture)
+        # get a video capture property
 
-        # intercept calls to get the current timestamp of the video frame
-        # and explicitly return the timestamp of the last image6
+        # intercept calls to get the current timestamp or frame nunber
+        # of the frame and explicitly return that of the last image
         # returned to the caller via read() or retrieve() from this object
-
         if (property_name == cv2.CAP_PROP_POS_MSEC):
             return self.timestamp_last_read
+        elif (property_name == cv2.CAP_PROP_POS_FRAMES):
+            return self.framecounter_last_read
 
+        # default to behavior as per OpenCV manual for
+        # VideoCapture()
         return self.camera.get(property_name)
 
     def getBackendName(self):

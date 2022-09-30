@@ -125,6 +125,7 @@ class CameraVideoStream:
         # set these to null values initially
         self.grabbed = 0
         self.frame = None
+        self.threadID = -1
 
         # set the initial timestamps to zero
         self.timestamp = 0
@@ -154,7 +155,7 @@ class CameraVideoStream:
         if not (src is None):
             self.open(src, backend)
 
-    def open(self, src=0, backend=None):
+    def open(self, src, backend=None):
 
         # determine backend to specified by user
         if (backend is None):
@@ -176,8 +177,8 @@ class CameraVideoStream:
         (self.grabbed, self.frame) = self.camera.read()
         self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
         self.framecounter += 1
-        logging.info("GRAB - frame %d @ time %f",
-                     self.framecounter, self.timestamp)
+        logging.info("CAM %d - GRAB - frame %d @ time %f",
+                      self.threadID, self.framecounter, self.timestamp)
 
         # only start the thread if in-fact the camera read was successful
         if (self.grabbed):
@@ -215,14 +216,14 @@ class CameraVideoStream:
                 if (latest_timestamp > self.timestamp):
                     (self.grabbed, self.frame) = self.camera.retrieve()
                     self.framecounter += 1
-                    logging.info("GRAB - frame %d @ time %f",
-                                 self.framecounter, latest_timestamp)
-                    logging.debug("GRAB - inter-frame diff (ms) %f",
-                                  latest_timestamp - self.timestamp)
+                    logging.info("CAM %d - GRAB - frame %d @ time %f",
+                                 self.threadID, self.framecounter, latest_timestamp)
+                    logging.debug("CAM %d - GRAB - inter-frame diff (ms) %f",
+                                  self.threadID, latest_timestamp - self.timestamp)
                     self.timestamp = latest_timestamp
                 else:
-                    logging.info("GRAB - same timestamp skip %d",
-                                 latest_timestamp)
+                    logging.info("CAM %d - GRAB - same timestamp skip %d",
+                                 self.threadID, latest_timestamp)
 
     def grab(self):
         # return status of most recent grab by the thread
@@ -242,11 +243,11 @@ class CameraVideoStream:
         self.framecounter_last_read = self.framecounter
 
         for skip in range(1, frame_offset):
-            logging.info("SKIP - frame %d", self.framecounter_last_read
+            logging.info("CAM %d - SKIP - frame %d", self.threadID, self.framecounter_last_read
                          - frame_offset + skip)
 
-        logging.info("READ - frame %d @ time %f",
-                     self.framecounter, self.timestamp)
+        logging.info("CAM %d - READ - frame %d @ time %f",
+                      self.threadID, self.framecounter, self.timestamp)
 
         # return the frame most recently read
         if (self.tapi):
@@ -282,7 +283,7 @@ class CameraVideoStream:
         (self.grabbed, self.frame) = self.camera.read()
         self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
         self.framecounter += 1
-        logging.info("GRAB - frame %d @ time %f",
+        logging.info("CAM %d - GRAB - frame %d @ time %f", self.threadID,
                      self.framecounter, self.timestamp)
 
         # restart thread by unsuspending it

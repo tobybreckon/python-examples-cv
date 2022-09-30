@@ -178,7 +178,7 @@ class CameraVideoStream:
         self.timestamp = self.camera.get(cv2.CAP_PROP_POS_MSEC)
         self.framecounter += 1
         logging.info("CAM %d - GRAB - frame %d @ time %f",
-                      self.threadID, self.framecounter, self.timestamp)
+                     self.threadID, self.framecounter, self.timestamp)
 
         # only start the thread if in-fact the camera read was successful
         if (self.grabbed):
@@ -217,9 +217,11 @@ class CameraVideoStream:
                     (self.grabbed, self.frame) = self.camera.retrieve()
                     self.framecounter += 1
                     logging.info("CAM %d - GRAB - frame %d @ time %f",
-                                 self.threadID, self.framecounter, latest_timestamp)
+                                 self.threadID, self.framecounter,
+                                 latest_timestamp)
                     logging.debug("CAM %d - GRAB - inter-frame diff (ms) %f",
-                                  self.threadID, latest_timestamp - self.timestamp)
+                                  self.threadID,
+                                  latest_timestamp - self.timestamp)
                     self.timestamp = latest_timestamp
                 else:
                     logging.info("CAM %d - GRAB - same timestamp skip %d",
@@ -243,11 +245,11 @@ class CameraVideoStream:
         self.framecounter_last_read = self.framecounter
 
         for skip in range(1, frame_offset):
-            logging.info("CAM %d - SKIP - frame %d", self.threadID, self.framecounter_last_read
-                         - frame_offset + skip)
+            logging.info("CAM %d - SKIP - frame %d", self.threadID,
+                         self.framecounter_last_read - frame_offset + skip)
 
         logging.info("CAM %d - READ - frame %d @ time %f",
-                      self.threadID, self.framecounter, self.timestamp)
+                     self.threadID, self.framecounter, self.timestamp)
 
         # return the frame most recently read
         if (self.tapi):

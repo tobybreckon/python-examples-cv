@@ -65,7 +65,7 @@ parser.add_argument(
     type=str,
     choices=['cpu', 'gpu', 'opencl'],
     help="select computational backend",
-    default='cpu')
+    default='gpu')
 parser.add_argument(
     'video_file',
     metavar='video_file',

@@ -125,6 +125,8 @@ except BaseException:
     print("INFO: camera_stream class not found - camera input may be buffered")
     cap = cv2.VideoCapture()
 
+#####################################################################
+
 # define display window name
 
 window_name = "HOG pedestrain detection"  # window name
@@ -263,3 +265,5 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
 else:
     print("No video file specified or camera connected.")
+
+#####################################################################

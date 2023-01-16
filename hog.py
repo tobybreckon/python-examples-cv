@@ -185,7 +185,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        neighbourhood = cv2.getTrackbarPos("Smoothing : neighbourhood, N", window_name)
+        neighbourhood = cv2.getTrackbarPos(
+            "Smoothing : neighbourhood, N", window_name)
         sigma = cv2.getTrackbarPos("Smoothing : sigma", window_name)
         gamma = cv2.getTrackbarPos("gamma, (* 0.01)", window_name) * 0.01
         svm_threshold = cv2.getTrackbarPos(

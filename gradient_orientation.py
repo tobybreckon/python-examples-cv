@@ -126,10 +126,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     sigma = 1
     cv2.createTrackbar(
-        "sigma", 
-        window_nameGy, 
-        sigma, 
-        10, 
+        "sigma",
+        window_nameGy,
+        sigma,
+        10,
         nothing)
 
     while (keep_processing):

@@ -53,6 +53,16 @@ args = parser.parse_args()
 
 #####################################################################
 
+# this function is called as a call-back everytime the trackbar is moved
+# (here we just do nothing)
+
+
+def nothing(x):
+    pass
+
+
+#####################################################################
+
 # define video capture object
 
 try:
@@ -87,6 +97,23 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     cv2.namedWindow(window_nameGx, cv2.WINDOW_NORMAL)
     cv2.namedWindow(window_nameGy, cv2.WINDOW_NORMAL)
     cv2.namedWindow(window_nameAngle, cv2.WINDOW_NORMAL)
+
+    # add some track bar controllers for settings
+
+    lower_threshold = 0
+    cv2.createTrackbar(
+        "lower",
+        window_nameAngle,
+        lower_threshold,
+        180,
+        nothing)
+    upper_threshold = 180
+    cv2.createTrackbar(
+        "upper",
+        window_nameAngle,
+        upper_threshold,
+        180,
+        nothing)
 
     while (keep_processing):
 
@@ -137,6 +164,14 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         (aB, aG, aR) = cv2.split(angle)
         angle = np.maximum(np.maximum(aR, aG), aB)
+
+        # get threshold from trackbars and threshold to keep inner range
+
+        lower_threshold = cv2.getTrackbarPos("lower", window_nameAngle)
+        upper_threshold = cv2.getTrackbarPos("upper", window_nameAngle)
+
+        mask = cv2.inRange(angle, lower_threshold, upper_threshold)
+        angle = cv2.bitwise_and(angle.astype(np.uint8), mask)
 
         # display images (as 8-bit)
 

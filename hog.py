@@ -146,6 +146,13 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # add some track bar controllers for settings
 
+    neighbourhood = 3
+    cv2.createTrackbar("Smoothing : neighbourhood, N", window_name,
+                       neighbourhood, 40, nothing)
+
+    sigma = 1
+    cv2.createTrackbar("Smoothing : sigma", window_name, sigma, 10, nothing)
+
     gamma = 100  # default gamma = 100 * 0.01 = 1 -> no change
     cv2.createTrackbar("gamma, (* 0.01)", window_name, gamma, 150, nothing)
 
@@ -178,15 +185,33 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
+        neighbourhood = cv2.getTrackbarPos("Smoothing : neighbourhood, N", window_name)
+        sigma = cv2.getTrackbarPos("Smoothing : sigma", window_name)
         gamma = cv2.getTrackbarPos("gamma, (* 0.01)", window_name) * 0.01
         svm_threshold = cv2.getTrackbarPos(
-                    "SVM threshold, (distance from hyper-plane, * 0.1)",
-                    window_name) * 0.1
+            "SVM threshold, (distance from hyper-plane, * 0.1)",
+            window_name) * 0.1
+
+        # check neighbourhood is greater than 3 and odd
+
+        neighbourhood = max(3, neighbourhood)
+        if not (neighbourhood % 2):
+            neighbourhood = neighbourhood + 1
 
         # use power-law function to perform gamma correction
         # and convert np array to T-API universal array for H/W acceleration
 
         frame = cv2.UMat(powerlaw_transform(frame, gamma))
+
+        # perform Gaussian smoothing using NxN neighbourhood
+
+        frame = cv2.GaussianBlur(
+            frame,
+            (neighbourhood,
+             neighbourhood),
+            sigma,
+            sigma,
+            borderType=cv2.BORDER_REPLICATE)
 
         # perform HOG based pedestrain detection
 

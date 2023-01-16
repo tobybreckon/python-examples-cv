@@ -107,12 +107,29 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         lower_threshold,
         180,
         nothing)
+
     upper_threshold = 180
     cv2.createTrackbar(
         "upper",
         window_nameAngle,
         upper_threshold,
         180,
+        nothing)
+
+    neighbourhood = 3
+    cv2.createTrackbar(
+        "neighbourhood, N",
+        window_nameGy,
+        neighbourhood,
+        40,
+        nothing)
+
+    sigma = 1
+    cv2.createTrackbar(
+        "sigma", 
+        window_nameGy, 
+        sigma, 
+        10, 
         nothing)
 
     while (keep_processing):
@@ -138,11 +155,32 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                 frame = cv2.resize(
                     frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
+        # get parameter from track bars - Gaussian pre-smoothing
+
+        neighbourhood = cv2.getTrackbarPos("neighbourhood, N", window_nameGy)
+        sigma = cv2.getTrackbarPos("sigma", window_nameGy)
+
+        # check neighbourhood is greater than 3 and odd
+
+        neighbourhood = max(3, neighbourhood)
+        if not (neighbourhood % 2):
+            neighbourhood = neighbourhood + 1
+
+        # perform Gaussian smoothing using NxN neighbourhood
+
+        smoothed_img = cv2.GaussianBlur(
+            frame,
+            (neighbourhood,
+             neighbourhood),
+            sigma,
+            sigma,
+            borderType=cv2.BORDER_REPLICATE)
+
         # compute the gradients in the x and y directions separately
         # N.B from here onward these images are 32-bit float
 
-        gx = cv2.Sobel(frame, cv2.CV_32F, 1, 0)
-        gy = cv2.Sobel(frame, cv2.CV_32F, 0, 1)
+        gx = cv2.Sobel(smoothed_img, cv2.CV_32F, 1, 0)
+        gy = cv2.Sobel(smoothed_img, cv2.CV_32F, 0, 1)
 
         # calculate gradient magnitude and direction (in degrees)
 

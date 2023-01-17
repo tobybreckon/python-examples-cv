@@ -145,7 +145,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             blockSize=neighbourhood,
             useHarrisDetector=True,
             k=0.01)
-        corners = np.int0(corners)
+        corners = np.intp(corners)
 
         for i in corners:
             x, y = i.ravel()

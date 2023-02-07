@@ -241,7 +241,7 @@ print("[k1, k2, p1, p2, k3]")
 np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
 print(D)
 print()
-print("Image resolution used (width, height): ", frame.shape[:2])
+print("Image resolution used (width, height): ", np.flip(frame.shape[:2]))
 
 #####################################################################
 

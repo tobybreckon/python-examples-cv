@@ -57,7 +57,7 @@ parser.add_argument(
     type=int,
     help="specify number of internal chessboard squares \
             (corners) in y-direction",
-    default=9)
+    default=8)
 parser.add_argument(
     "-cbw",
     "--chessboardw",

@@ -161,7 +161,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # take channels r = 2 and g = 1 due to OpenCV BGR channel ordering
 
         chromaticity = np.zeros(frame.shape).astype(np.float32)
-        sum_channel = np.zeros(frame.shape).astype(np.float32)
         sum_channel = (frame[:, :, 0].astype(np.float32)
                        + frame[:, :, 1].astype(np.float32)
                        + frame[:, :, 2].astype(np.float32)

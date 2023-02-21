@@ -158,6 +158,8 @@ class CameraVideoStream:
         # if a source was specified at init, proceed to open device
         if not (src is None):
             self.open(src, backend)
+            if not (backend == cv2.CAP_V4L):
+                self.use_timestamps = False
 
     def open(self, src=0, backend=None):
 

@@ -307,7 +307,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # extract centre of this observation as points
 
             pts = cv2.boxPoints(ret)
-            pts = np.int0(pts)
+            pts = np.intp(pts)
             # (cx, cy), radius = cv2.minEnclosingCircle(pts)
 
             # use to correct kalman filter

@@ -321,10 +321,10 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             # draw predicton on image - in GREEN
 
             frame = cv2.rectangle(frame,
-                                  (int(prediction[0] - (0.5 * w)),
-                                   int(prediction[1] - (0.5 * h))),
-                                  (int(prediction[0] + (0.5 * w)),
-                                   int(prediction[1] + (0.5 * h))),
+                                  (int(prediction[0][0] - (0.5 * w)),
+                                   int(prediction[1][0] - (0.5 * h))),
+                                  (int(prediction[0][0] + (0.5 * w)),
+                                   int(prediction[1][0] + (0.5 * h))),
                                   (0,
                                       255,
                                       0),

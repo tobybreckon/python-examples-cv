@@ -45,6 +45,11 @@ parser.add_argument(
     nargs=2,
     help='override default camera resolution as H W')
 parser.add_argument(
+    "-fs",
+    "--fullscreen",
+    action='store_true',
+    help="run in full screen mode")
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -96,6 +101,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     cv2.namedWindow(window_name2, cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty(window_name2, cv2.WND_PROP_FULLSCREEN,
+                          cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
     # add some track bar controllers for settings
 

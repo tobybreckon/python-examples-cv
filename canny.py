@@ -115,7 +115,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
     # override default camera resolution
 
-    if not(args.set_resolution is None):
+    if (args.set_resolution is not None):
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
 

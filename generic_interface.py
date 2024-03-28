@@ -84,6 +84,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     # create window by name (as resizable)
 
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
+                          cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
     while (keep_processing):
 
@@ -115,8 +117,6 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # display image
 
         cv2.imshow(window_name, frame)
-        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
-                              cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
         # stop the timer and convert to ms. (to see how long processing and
         # display takes)
@@ -148,6 +148,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             keep_processing = False
         elif (key == ord('f')):
             args.fullscreen = not (args.fullscreen)
+            cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
+                                  cv2.WINDOW_FULLSCREEN & args.fullscreen)
 
     # close all windows
 

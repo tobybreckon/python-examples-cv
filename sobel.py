@@ -39,6 +39,12 @@ parser.add_argument(
     help="rescale image by this factor",
     default=1.0)
 parser.add_argument(
+    "-s",
+    "--set_resolution",
+    type=int,
+    nargs=2,
+    help='override default camera resolution as H W')
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -101,6 +107,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         neighbourhood,
         15,
         nothing)
+    
+    # override default camera resolution
+
+    if (args.set_resolution is not None):
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
 
     while (keep_processing):
 

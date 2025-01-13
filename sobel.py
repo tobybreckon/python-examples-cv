@@ -107,7 +107,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         neighbourhood,
         15,
         nothing)
-    
+
     # override default camera resolution
 
     if (args.set_resolution is not None):

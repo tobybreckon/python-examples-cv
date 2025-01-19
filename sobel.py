@@ -114,9 +114,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
 
-    print("INFO: camera resolution : (",
-          cap.get(cv2.CAP_PROP_FRAME_WIDTH), "x",
-          cap.get(cv2.CAP_PROP_FRAME_HEIGHT), ")")
+    print("INFO: input resolution : (",
+          int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), "x",
+          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), ")")
 
     while (keep_processing):
 

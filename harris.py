@@ -6,7 +6,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015 School of Engineering & Computing Science,
+# Copyright (c) 2015-2024 Engineering & Computing Science,
 #                    Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
@@ -39,6 +39,12 @@ parser.add_argument(
     type=float,
     help="rescale image by this factor",
     default=1.0)
+parser.add_argument(
+    "-s",
+    "--set_resolution",
+    type=int,
+    nargs=2,
+    help='override default camera resolution as H W')
 parser.add_argument(
     'video_file',
     metavar='video_file',
@@ -99,6 +105,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         neighbourhood,
         15,
         nothing)
+
+    # override default camera resolution
+
+    if (args.set_resolution is not None):
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
+
+    print("INFO: input resolution : (",
+          int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), "x",
+          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), ")")
 
     while (keep_processing):
 

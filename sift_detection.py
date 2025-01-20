@@ -8,7 +8,7 @@
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2016-2021 Toby Breckon
+# Copyright (c) 2016-2024 Toby Breckon
 #                       Computer Science, Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 
@@ -63,6 +63,12 @@ parser.add_argument(
     type=float,
     help="rescale image by this factor",
     default=1.0)
+parser.add_argument(
+    "-s",
+    "--set_resolution",
+    type=int,
+    nargs=2,
+    help='override default camera resolution as H W')
 parser.add_argument(
     'video_file',
     metavar='video_file',
@@ -211,6 +217,16 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         matcher = cv2.FlannBasedMatcher(index_params, search_params)
     else:
         matcher = cv2.BFMatcher()
+
+    # override default camera resolution
+
+    if (args.set_resolution is not None):
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
+
+    print("INFO: input resolution : (",
+          int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), "x",
+          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), ")")
 
     while (keep_processing):
 

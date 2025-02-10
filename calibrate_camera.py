@@ -45,6 +45,12 @@ parser.add_argument(
     help="rescale image by this factor",
     default=1.0)
 parser.add_argument(
+    "-s",
+    "--set_resolution",
+    type=int,
+    nargs=2,
+    help='override default camera resolution as H W')
+parser.add_argument(
     "-cbx",
     "--chessboardx",
     type=int,
@@ -141,6 +147,16 @@ print("press c : to continue to calibration")
 # open connected camera
 
 if cap.open(args.camera_to_use):
+
+    # override default camera resolution
+
+    if (args.set_resolution is not None):
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
+
+    print("INFO: input resolution : (",
+          int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), "x",
+          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), ")")
 
     while (not (do_calibration)):
 

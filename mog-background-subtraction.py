@@ -15,8 +15,96 @@
 import cv2
 import argparse
 import sys
+import numpy as np
 
 #####################################################################
+
+# concatenate two RGB/grayscale images horizontally (left to right)
+# handling differing channel numbers or image heights in the input
+
+
+def h_concat(img1, img2):
+
+    # get size and channels for both images
+
+    height1 = img1.shape[0]
+    # width1 = img1.shape[1]
+    if (len(img1.shape) == 2):
+        channels1 = 1
+    else:
+        channels1 = img1.shape[2]
+
+    height2 = img2.shape[0]
+    width2 = img2.shape[1]
+    if (len(img2.shape) == 2):
+        channels2 = 1
+    else:
+        channels2 = img2.shape[2]
+
+    # make all images 3 channel, or assume all same channel
+
+    if ((channels1 > channels2) and (channels1 == 3)):
+        out2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+        out1 = img1
+    elif ((channels2 > channels1) and (channels2 == 3)):
+        out1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
+        out2 = img2
+    else:  # both must be equal
+        out1 = img1
+        out2 = img2
+
+    # height of first image is master height, width remains unchanged
+
+    if (height1 != height2):
+        out2 = cv2.resize(out2, (height1, width2))
+
+    return np.hstack((out1, out2))
+
+#####################################################################
+
+# concatenate two RGB/grayscale images vertically (top to bottom)
+# handling differing channel numbers or image heights in the input
+
+
+def v_concat(img1, img2):
+
+    # get size and channels for both images
+
+    # height1 = img1.shape[0]
+    width1 = img1.shape[1]
+    if (len(img1.shape) == 2):
+        channels1 = 1
+    else:
+        channels1 = img1.shape[2]
+
+    height2 = img2.shape[0]
+    width2 = img2.shape[1]
+    if (len(img2.shape) == 2):
+        channels2 = 1
+    else:
+        channels2 = img2.shape[2]
+
+    # make all images 3 channel, or assume all same channel
+
+    if ((channels1 > channels2) and (channels1 == 3)):
+        out2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+        out1 = img1
+    elif ((channels2 > channels1) and (channels2 == 3)):
+        out1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
+        out2 = img2
+    else:  # both must be equal
+        out1 = img1
+        out2 = img2
+
+    # width of first image is master height, height remains unchanged
+
+    if (width1 != width2):
+        out2 = cv2.resize(out2, (height2, width1))
+
+    return np.vstack((out1, out2))
+
+#####################################################################
+
 
 keep_processing = True
 
@@ -44,6 +132,11 @@ parser.add_argument(
     type=int,
     nargs=2,
     help='override default camera resolution as H W')
+parser.add_argument(
+    "-fs",
+    "--fullscreen",
+    action='store_true',
+    help="run in full screen mode")
 parser.add_argument(
     'video_file',
     metavar='video_file',
@@ -143,6 +236,9 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         fgdilated = cv2.dilate(
             fgthres, kernel=cv2.getStructuringElement(
                 cv2.MORPH_ELLIPSE, (3, 3)), iterations=3)
+        fgderoded = cv2.erode(
+            fgdilated, kernel=cv2.getStructuringElement(
+                cv2.MORPH_ELLIPSE, (3, 3)), iterations=3)
 
         # get current background image (representative of current GMM model)
 
@@ -150,10 +246,23 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # display images - input, background and original
 
-        cv2.imshow(window_name, frame)
-        cv2.imshow(window_nameFG, fgdilated)
-        cv2.imshow(window_nameFGP, fgmask)
-        cv2.imshow(window_nameBG, bgmodel)
+        if (args.fullscreen):
+
+            window_name = "[ Live | BG | Pr(FG) | FG ]"
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            cv2.imshow(window_name, v_concat(
+                                             h_concat(frame, bgmodel),
+                                             h_concat(fgmask, fgderoded)
+                                            ))
+            cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
+                                  cv2.WINDOW_FULLSCREEN & args.fullscreen)
+
+        else:
+
+            cv2.imshow(window_name, frame)
+            cv2.imshow(window_nameFG, fgderoded)
+            cv2.imshow(window_nameFGP, fgmask)
+            cv2.imshow(window_nameBG, bgmodel)
 
         # start the event loop - essential
 
@@ -180,6 +289,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             print("\nResetting MoG background model ...\n")
             mog = cv2.createBackgroundSubtractorMOG2(
                 history=2000, varThreshold=16, detectShadows=True)
+        elif (key == ord('f')):
+            args.fullscreen = not (args.fullscreen)
 
     # close all windows
 

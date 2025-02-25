@@ -39,6 +39,12 @@ parser.add_argument(
     help="rescale image by this factor",
     default=1.0)
 parser.add_argument(
+    "-s",
+    "--set_resolution",
+    type=int,
+    nargs=2,
+    help='override default camera resolution as H W')
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -91,6 +97,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     cv2.namedWindow(window_nameBG, cv2.WINDOW_NORMAL)
     cv2.namedWindow(window_nameFG, cv2.WINDOW_NORMAL)
     cv2.namedWindow(window_nameFGP, cv2.WINDOW_NORMAL)
+
+    # override default camera resolution
+
+    if (args.set_resolution is not None):
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.set_resolution[1])
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.set_resolution[0])
 
     # create GMM background subtraction object
     # (using default parameters which are suitable for quick lecture demos

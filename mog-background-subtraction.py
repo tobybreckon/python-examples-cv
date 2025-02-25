@@ -1,12 +1,12 @@
 #####################################################################
 
-# Example : perform GMM based foreground/background subtraction from a video
+# Example : perform MoG based foreground/background subtraction from a video
 # file specified on the command line (e.g. python FILE.py video_file) or from
 # an attached web camera
 
 # Author : Toby Breckon, toby.breckon@durham.ac.uk
 
-# Copyright (c) 2015-18 Toby Breckon, Engineering & Computer Science,
+# Copyright (c) 2015-25 Toby Breckon, Engineering & Computer Science,
 #                       Durham University, UK
 # License : LGPL - http://www.gnu.org/licenses/lgpl.html
 

@@ -226,20 +226,20 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
                     frame, (0, 0), fx=args.rescale, fy=args.rescale)
 
         # add current frame to background model and retrieve current foreground
-        # objects
+        # objects (use learningRate parameter for tuning, see manual )
 
         fgmask = mog.apply(frame)
 
-        # threshold this and clean it up using dilation with a elliptical mask
+        # threshold this and clean it up using erosion/dilation with a elliptical mask
 
         fgthres = cv2.threshold(fgmask.copy(), 200, 255, cv2.THRESH_BINARY)[1]
-        fgdilated = cv2.dilate(
+        fgeroded = cv2.erode(
             fgthres, kernel=cv2.getStructuringElement(
                 cv2.MORPH_ELLIPSE, (3, 3)), iterations=3)
-        fgderoded = cv2.erode(
-            fgdilated, kernel=cv2.getStructuringElement(
+        fgdilated = cv2.dilate(
+            fgeroded, kernel=cv2.getStructuringElement(
                 cv2.MORPH_ELLIPSE, (3, 3)), iterations=3)
-
+        
         # get current background image (representative of current GMM model)
 
         bgmodel = mog.getBackgroundImage()
@@ -252,7 +252,7 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
             cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
             cv2.imshow(window_name, v_concat(
                                              h_concat(frame, bgmodel),
-                                             h_concat(fgmask, fgderoded)
+                                             h_concat(fgmask, fgeroded)
                                             ))
             cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN,
                                   cv2.WINDOW_FULLSCREEN & args.fullscreen)
@@ -280,8 +280,8 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
         # It can also be set to detect specific key strokes by recording which
         # key is pressed
 
-        # e.g. if user presses "x" then exit or reset MoG modelw when space is
-        # presses
+        # e.g. if user presses "x" then exit, "f" for fullscreen  
+        # or reset MoG model when space is pressed
 
         if (key == ord('x')):
             keep_processing = False

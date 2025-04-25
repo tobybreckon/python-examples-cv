@@ -50,6 +50,11 @@ parser.add_argument(
     action='store_true',
     help="run in full screen mode")
 parser.add_argument(
+    "-nc",
+    "--nocontrols",
+    action='store_true',
+    help="no onscreen controls")
+parser.add_argument(
     'video_file',
     metavar='video_file',
     type=str,
@@ -107,18 +112,19 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
     # add some track bar controllers for settings
 
     lower_threshold = 25
-    cv2.createTrackbar("lower", window_name2, lower_threshold, 255, nothing)
     upper_threshold = 120
-    cv2.createTrackbar("upper", window_name2, upper_threshold, 255, nothing)
     smoothing_neighbourhood = 3
-    cv2.createTrackbar(
-        "smoothing",
-        window_name2,
-        smoothing_neighbourhood,
-        15,
-        nothing)
     sobel_size = 3  # greater than 7 seems to crash
-    cv2.createTrackbar("sobel size", window_name2, sobel_size, 7, nothing)
+
+    if (not (args.nocontrols)):
+        cv2.createTrackbar("lower", window_name2, lower_threshold,
+                           255, nothing)
+        cv2.createTrackbar("upper", window_name2, upper_threshold,
+                           255, nothing)
+        cv2.createTrackbar("smoothing", window_name2, smoothing_neighbourhood,
+                           15, nothing)
+        cv2.createTrackbar("sobel size", window_name2, sobel_size,
+                           7, nothing)
 
     # override default camera resolution
 
@@ -151,10 +157,12 @@ if (((args.video_file) and (cap.open(str(args.video_file))))
 
         # get parameters from track bars
 
-        lower_threshold = cv2.getTrackbarPos("lower", window_name2)
-        upper_threshold = cv2.getTrackbarPos("upper", window_name2)
-        smoothing_neighbourhood = cv2.getTrackbarPos("smoothing", window_name2)
-        sobel_size = cv2.getTrackbarPos("sobel size", window_name2)
+        if (not (args.nocontrols)):
+            lower_threshold = cv2.getTrackbarPos("lower", window_name2)
+            upper_threshold = cv2.getTrackbarPos("upper", window_name2)
+            smoothing_neighbourhood = cv2.getTrackbarPos("smoothing",
+                                                         window_name2)
+            sobel_size = cv2.getTrackbarPos("sobel size", window_name2)
 
         # check neighbourhood is greater than 3 and odd
 

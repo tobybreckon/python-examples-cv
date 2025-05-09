@@ -6,7 +6,7 @@
 
 # models and associated files for automated download
 
-MODELS=(  https://pjreddie.com/media/files/yolov3.weights
+MODELS=(  https://data.pjreddie.com/files/yolov3.weights
           https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov3.cfg
           https://raw.githubusercontent.com/AlexeyAB/darknet/master/data/coco.names
           https://raw.githubusercontent.com/opencv/opencv/master/samples/data/dnn/classification_classes_ILSVRC2012.txt
